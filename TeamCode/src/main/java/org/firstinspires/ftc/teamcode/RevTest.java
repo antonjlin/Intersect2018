@@ -24,6 +24,7 @@ public class RevTest extends LinearOpMode {
         while (opModeIsActive()) {
             motor1.setPower(1);
             Functions.waitFor(3000);
+            motor1.setPower(0);
 
         }
     }
