@@ -16,7 +16,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "RevTest")
 public class RevTest extends LinearOpMode {
     static DcMotor motor1;
-    //static Servo servo1;
+    static Servo servo1;
+    //static GyroSensor gyro;
     @Override
     public void runOpMode() throws InterruptedException {
         initHardware();
@@ -25,16 +26,21 @@ public class RevTest extends LinearOpMode {
             motor1.setPower(1);
             Functions.waitFor(3000);
             motor1.setPower(0);
+            Functions.waitFor(2000);
+            servo1.setPosition(0.3);
+            Functions.waitFor(2000);
+            servo1.setPosition(0.8);
+
 
 
         }
     }
 
     public void initHardware() {
-
+        //gyro = hardwareMap.gyroSensor.get("gyro");
         motor1 = hardwareMap.dcMotor.get("motor1");
 
-        //servo1 = hardwareMap.servo.get("servo1");
+        servo1 = hardwareMap.servo.get("servo1");
 
     }
 
