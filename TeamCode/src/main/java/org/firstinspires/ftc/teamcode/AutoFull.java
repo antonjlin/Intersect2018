@@ -16,6 +16,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Full Mission")
 public class AutoFull extends LinearOpMode {
+    static DcMotor rF, rB, lF, lB, flywheel1, flywheel2, sweeperLow;
     static GyroSensor gyro;
     static ColorSensor beaconColor,floorColor;
     static int conversionFactor = 50;
