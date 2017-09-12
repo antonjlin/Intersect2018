@@ -16,20 +16,36 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "RevTest")
 public class RevTest extends LinearOpMode {
     static DcMotor motor1;
+    DriveTrain driveTrain;
+    static ColorSensor floorColor;
+
+    static DcMotor rF, rB, lF, lB;
+    static GyroSensor gyro;
+
     static Servo servo1;
     //static GyroSensor gyro;
     @Override
     public void runOpMode() throws InterruptedException {
+
         initHardware();
         waitForStart();
         while (opModeIsActive()) {
-            motor1.setPower(1);
-            Functions.waitFor(3000);
-            motor1.setPower(0);
-            Functions.waitFor(2000);
-            servo1.setPosition(0.3);
-            Functions.waitFor(2000);
-            servo1.setPosition(0.8);
+            //driveTrain.moveBkwd(0.2,5,10);
+            //Functions.waitFor(10000);
+            //driveTrain.moveFwd(0.2,5,10);
+            //Functions.waitFor(10000000);
+
+            driveTrain.rotateGyroRamp(45, 0.2, 15, gyro, telemetry);
+            Functions.waitFor(10000);
+
+            //driveTrain.moveFwd(0.2,5,10);
+            //driveTrain.moveFwd();
+            //driveTrain.moveFwd(0.2,10,10);
+            //driveTrain.moveBkwRight(0.2, 0.2, 5, 10);
+
+
+
+
 
 
 
@@ -37,10 +53,25 @@ public class RevTest extends LinearOpMode {
     }
 
     public void initHardware() {
-        //gyro = hardwareMap.gyroSensor.get("gyro");
-        motor1 = hardwareMap.dcMotor.get("motor1");
-
-        servo1 = hardwareMap.servo.get("servo1");
+        gyro = hardwareMap.gyroSensor.get("gyro");
+        floorColor = hardwareMap.colorSensor.get("floorColor");
+        rF = hardwareMap.dcMotor.get("rF");
+        rB = hardwareMap.dcMotor.get("rB");
+        lF = hardwareMap.dcMotor.get("lF");
+        lB = hardwareMap.dcMotor.get("lB");
+        lB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        lF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        lF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        lB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rF.setDirection(DcMotor.Direction.FORWARD);
+        rB.setDirection(DcMotor.Direction.FORWARD);
+        lB.setDirection(DcMotor.Direction.REVERSE);
+        lF.setDirection(DcMotor.Direction.REVERSE);
+        driveTrain = new DriveTrain(lB, rB, lF, rF, this, gyro, floorColor);
 
     }
 
