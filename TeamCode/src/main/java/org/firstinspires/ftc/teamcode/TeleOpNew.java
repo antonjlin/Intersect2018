@@ -38,7 +38,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Teleop Variable Flywheel Improved Drive")
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "teleopnew")
 public class TeleOpNew extends LinearOpMode {
     static DcMotor rFmotor, rBmotor, lFmotor, lBmotor;
 
@@ -69,14 +69,9 @@ public class TeleOpNew extends LinearOpMode {
         while (opModeIsActive()) {
             fwdPower = gamepad1.left_stick_y;
             strafePower = gamepad1.left_stick_x;
-            rotationPower = gamepad1.right_stick_x;
-
-            if (gamepad1.start) {
-                lFmotor.setPower((fwdPower + strafePower + rotationPower) / 2);
-                lBmotor.setPower((fwdPower - strafePower + rotationPower) / 2);
-                rFmotor.setPower((fwdPower - strafePower - rotationPower) / 2);
-                rBmotor.setPower((fwdPower + strafePower - rotationPower) / 2);
-            } else {
+            rotationPower = -gamepad1.right_stick_x;
+            //Negative because robot was turning wrong way
+            //Should be positive
                 double vD = Math.sqrt(Math.pow(fwdPower, 2) + Math.pow(strafePower, 2));
                 double thetaD = Math.atan2(strafePower, fwdPower);
                 double frontLeft = vD * Math.sin(thetaD + Math.PI / 4) + rotationPower;
@@ -86,6 +81,7 @@ public class TeleOpNew extends LinearOpMode {
                 double maxF = Math.max(Math.abs(frontLeft), Math.abs(frontRight));
                 double maxB = Math.max(Math.abs(backLeft), Math.abs(backRight));
                 double max = Math.max(maxF, maxB);
+
 //
                 if (max > 1.0) {
                     frontLeft = frontLeft / max;
@@ -98,7 +94,13 @@ public class TeleOpNew extends LinearOpMode {
                 lBmotor.setPower(backLeft);
                 rFmotor.setPower(frontRight);
                 rBmotor.setPower(backRight);
+
+            telemetry.addData("lf", frontLeft);
+            telemetry.addData("rf", frontRight);
+            telemetry.addData("lb", backLeft);
+            telemetry.addData("rb", backRight);
+            telemetry.update();
             }
         }
-    }
+
 }
