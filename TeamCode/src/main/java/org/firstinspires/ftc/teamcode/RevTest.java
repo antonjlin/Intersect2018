@@ -40,8 +40,10 @@ public class RevTest extends LinearOpMode {
             driveTrain.moveFwd(0.2,5,10);
             Functions.waitFor(10000000);
 
-            driveTrain.rotateGyroRamp(45, 0.2, 15, gyro, telemetry);
+            driveTrain.rotateGyroRamp(180, 0.2, 15, gyro, telemetry);
             Functions.waitFor(10000);
+            driveTrain.rotateGyroRamp(-180, 0.2, 15, gyro, telemetry);
+
 
 
             //driveTrain.moveFwd(0.2,5,10);

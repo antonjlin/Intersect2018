@@ -29,6 +29,10 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.*;
+import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.GyroSensor;
+import com.qualcomm.robotcore.hardware.Servo;
 //import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.robotcontroller.external.samples.ConceptVuforiaNavigation;
@@ -51,6 +55,16 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 public class VuMark extends LinearOpMode {
 
     public static final String TAG = "Vuforia VuMark Sample";
+
+    static DcMotor motor1;
+    DriveTrain driveTrain;
+    static ColorSensor floorColor;
+
+    static DcMotor rF, rB, lF, lB;
+    static GyroSensor gyro;
+
+    static Servo servo1;
+
 
     OpenGLMatrix lastLocation = null;
 
@@ -87,6 +101,29 @@ public class VuMark extends LinearOpMode {
 
         relicTrackables.activate();
 
+
+
+        gyro = hardwareMap.gyroSensor.get("gyro");
+        floorColor = hardwareMap.colorSensor.get("floorColor");
+        rF = hardwareMap.dcMotor.get("rF");
+        rB = hardwareMap.dcMotor.get("rB");
+        lF = hardwareMap.dcMotor.get("lF");
+        lB = hardwareMap.dcMotor.get("lB");
+        lB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        lF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        lF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        lB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rF.setDirection(DcMotor.Direction.FORWARD);
+        rB.setDirection(DcMotor.Direction.FORWARD);
+        lB.setDirection(DcMotor.Direction.REVERSE);
+        lF.setDirection(DcMotor.Direction.REVERSE);
+        driveTrain = new DriveTrain(lB, rB, lF, rF, this, gyro, floorColor);
+        int targetZ = 10;
+        int targetX = 0;
         while (opModeIsActive()) {
 
             RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
@@ -124,6 +161,22 @@ public class VuMark extends LinearOpMode {
                     telemetry.addData("rX", (int)rX);
                     telemetry.addData("rY", (int)rY);
                     telemetry.addData("rZ", (int)rZ);
+
+                    if(tZ > targetZ){
+                        driveTrain.moveFwd(0.1,1,0.3);
+                        Functions.waitFor(500);
+                    } else if( tZ<targetZ){
+                        driveTrain.moveBkwd(0.1,1,0.3);
+                        Functions.waitFor(500);
+                    }
+                    if(tX < targetX){
+                        driveTrain.moveRight(0.1,1,0.3);
+                        Functions.waitFor(500);
+                    }else if(tX>targetX){
+                        driveTrain.moveLeft(0.1,1,0.3);
+                        Functions.waitFor(500);
+                    }
+
                 }
 
             }
