@@ -1,4 +1,4 @@
-package com.qualcomm.ftcrobotcontroller.opmodes;
+package org.firstinspires.ftc.teamcode;
 
 import org.lasarobotics.vision.android.Cameras;
 import org.lasarobotics.vision.detection.ColorBlobDetector;
@@ -84,3 +84,4 @@ public class ManualVisionSample extends ManualVisionOpMode {
         return rgba;
     }
 }
+//
