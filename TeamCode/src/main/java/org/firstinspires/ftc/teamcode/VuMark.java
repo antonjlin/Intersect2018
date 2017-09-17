@@ -29,11 +29,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.*;
-import com.qualcomm.robotcore.hardware.ColorSensor;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.GyroSensor;
-import com.qualcomm.robotcore.hardware.Servo;
-//import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+
 
 import org.firstinspires.ftc.robotcontroller.external.samples.ConceptVuforiaNavigation;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
@@ -50,15 +46,12 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
-@Autonomous
-//@Disabled
 public class VuMark {
 
     VuforiaTrackables relicTrackables;
     VuforiaLocalizer vuforia;
     VuforiaTrackable relicTemplate;
     RelicRecoveryVuMark vuMark;
-
     LinearOpMode opMode;
 
     public void initVuMark(LinearOpMode opMode) {
@@ -89,26 +82,16 @@ public class VuMark {
     public RelicRecoveryVuMark detectColumn(int timeoutS) {
         long endtime = System.currentTimeMillis() + (timeoutS * 1000);
         boolean timedOut = false;
-        while (opMode.opModeIsActive() && System.currentTimeMillis()<endtime) {
-
-            if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
-                timedOut = false;
-                opMode.telemetry.addData("Detected ", vuMark);
-                return vuMark;
-;
-            } else {
-
-                opMode.telemetry.addLine("Detecting VuMark.....");
-
-            }
-
+        while (opMode.opModeIsActive() && System.currentTimeMillis()<endtime && vuMark == RelicRecoveryVuMark.UNKNOWN) {
+            opMode.telemetry.addLine("Detecting VuMark.....");
             opMode.telemetry.update();
         }
-        if(timedOut){
+        if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
+            opMode.telemetry.addData("Detected ", vuMark);
+        }else{
             opMode.telemetry.addLine("Detection timed out");
         }
-
-
-
+        opMode.telemetry.update();
+        return vuMark;
     }
 }
