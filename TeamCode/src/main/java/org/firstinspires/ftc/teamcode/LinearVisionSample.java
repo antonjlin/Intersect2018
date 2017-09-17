@@ -27,20 +27,12 @@ public class LinearVisionSample extends LinearVisionOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         //Wait for vision to initialize - this should be the first thing you do
+
         waitForVisionStart();
 
-        /**
-         * Set the camera used for detection
-         * PRIMARY = Front-facing, larger camera
-         * SECONDARY = Screen-facing, "selfie" camera :D
-         **/
         this.setCamera(Cameras.PRIMARY);
 
-        /**
-         * Set the frame size
-         * Larger = sometimes more accurate, but also much slower
-         * After this method runs, it will set the "width" and "height" of the frame
-         **/
+
         this.setFrameSize(new Size(900, 900));
 
         /**

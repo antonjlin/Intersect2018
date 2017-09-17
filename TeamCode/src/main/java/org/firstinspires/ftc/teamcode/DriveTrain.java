@@ -8,6 +8,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.hardware.adafruit.AdafruitBNO055IMU;
+//import com.qualcomm.hardware.adafruit.JustLoggingAccelerationIntegrator;
+import com.qualcomm.hardware.bosch.BNO055IMU;
 
 import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -21,6 +24,7 @@ public class DriveTrain {
     static GyroSensor gyro;
     static ModernRoboticsI2cGyro mrGyro;
     static ColorSensor beaconColor, floorColor;
+    IMU imu;
 
     // Tunable parameters
     private int conversionFactor = 50;
@@ -41,6 +45,9 @@ public class DriveTrain {
         DriveTrain.floorColor = floorColor;
         DriveTrain.mrGyro = (ModernRoboticsI2cGyro)gyro; // map to MR Gyro to use special method
         DriveTrain.gyro = gyro; // map to generic Gyro class
+
+        BNO055IMU adaImu = opMode.hardwareMap.get(BNO055IMU.class, "imu");
+        imu = new IMU(adaImu);
 
         lB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -238,6 +245,65 @@ public class DriveTrain {
     // @param timeout - time out in seconds
     // @param gyro pointer to Gyro object
     // @param telemetry - pointer to telemetry object
+    public int rotateIMURamp(int degrees, double power, int timeout, GyroSensor gyro, Telemetry telemetry) {
+        int heading;
+        int e;
+        long endtime = System.currentTimeMillis() + (timeout * 1000);
+        int start = gyro.getHeading();
+
+        int target = start + degrees;
+        if ( target < 0) {
+            target += 360;
+        } else if (target >=360 ) {
+            target -=360;
+        }
+//        setDriveMotorMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        telemetry.clear();
+        telemetry.addData("Start", start);
+        telemetry.addData("Target", target);
+
+        if (Math.abs(degrees) <= gyroTurnErrorMargin ){
+            telemetry.addData("Too small to turn ", degrees);
+            telemetry.update();
+            return start;
+        }
+        telemetry.update();
+        do {
+            heading = gyro.getHeading();
+            if ( degrees > 0 ) { // Turn clockwise
+                e = headingCWError(start, degrees, heading); // Heading error
+            } else { // turn counter clockwise
+                e = headingCCWError(start, -degrees, heading); // Heading error
+            }
+            if ( e > 0 ) {
+                rotateCW(Math.max(minRotationPower, power * powerAdjust(e)));
+            } else {  // overshoot
+                rotateCCW(Math.max(minRotationPower, power * powerAdjust(e)));
+            }
+            if (Math.abs(e) <= gyroTurnErrorMargin) {
+                this.stopAll();
+                Functions.waitFor(100); // wait for 500 msec.
+                heading = gyro.getHeading(); // read heading again
+                if ( degrees > 0 ) { // Turn clockwise
+                    e = headingCWError(start, degrees, heading); // Heading error
+                } else { // turn counter clockwise
+                    e = headingCCWError(start, -degrees, heading); // Heading error
+                }
+            }
+        } while (  (Math.abs(e) > gyroTurnErrorMargin) &&  (System.currentTimeMillis() < endtime) && opMode.opModeIsActive());
+
+        this.stopAll();
+
+//        setDriveMotorMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        telemetry.clear();
+        telemetry.addData("Start", start);
+        telemetry.addData("Heading", gyro.getHeading());
+        telemetry.addData("Target", target);
+        telemetry.addData("timeout", timeout * 1000);
+        telemetry.addData("End Time", endtime);
+        telemetry.update();
+        return heading;
+    }
     public int rotateGyroRamp(int degrees, double power, int timeout, GyroSensor gyro, Telemetry telemetry){
         int heading;
         int e;

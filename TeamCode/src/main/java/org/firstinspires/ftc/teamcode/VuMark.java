@@ -29,11 +29,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.*;
-import com.qualcomm.robotcore.hardware.ColorSensor;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.GyroSensor;
-import com.qualcomm.robotcore.hardware.Servo;
-//import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+
 
 import org.firstinspires.ftc.robotcontroller.external.samples.ConceptVuforiaNavigation;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
@@ -50,145 +46,52 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
-@Autonomous
-//@Disabled
-public class VuMark extends LinearOpMode {
+public class VuMark {
 
-    public static final String TAG = "Vuforia VuMark Sample";
-
-    static DcMotor motor1;
-    DriveTrain driveTrain;
-    static ColorSensor floorColor;
-
-    static DcMotor rF, rB, lF, lB;
-    static GyroSensor gyro;
-
-    static Servo servo1;
-
-
-    OpenGLMatrix lastLocation = null;
-
-    /**
-     * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
-     * localization engine.
-     */
+    VuforiaTrackables relicTrackables;
     VuforiaLocalizer vuforia;
+    VuforiaTrackable relicTemplate;
+    RelicRecoveryVuMark vuMark;
+    LinearOpMode opMode;
 
-    @Override public void runOpMode() {
+    public void initVuMark(LinearOpMode opMode) {
+        this.opMode = opMode;
 
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        int cameraMonitorViewId = opMode.hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", opMode.hardwareMap.appContext.getPackageName());
+
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
 
         parameters.vuforiaLicenseKey = "AQgn1d//////AAAAGS+F+GWwAEbtqn64lm+fvolRqft5tIJLGdUCsB51qVZHMP3UU8cTCBMKvjCBUTxHfkooO1dljaRLNzaDMMTbWw978Agd7qMrUQF/I4dsE+oVUhLVTHxHPl4r8T4LJ1+B5KHvXQyTr7S3bTU1xy/id/uACCppztVO6mH6Aj0FwY/v3lDYnL9sQNVi2DNXNrnQmmshyJC74C4Se8a6A/II7vcaQ00Ot3PlSB9LjH6K28EQ3oiLnc6tKTGjbU+uTBdoix2KUDL7xVa8c6biG2lcuu7j6dRrw/uvUrh7RpWcmvQDdoshtLlXLsvacLwr5NzMX+4quVkydj/3KRrixOKnepk0ZSPiSlt+J+ThynHcgevu";
 
         parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
-        this.vuforia = ClassFactory.createVuforiaLocalizer(parameters);
 
-        /**
-         * Load the data set containing the VuMarks for Relic Recovery. There's only one trackable
-         * in this data set: all three of the VuMarks in the game were created from this one template,
-         * but differ in their instance id information.
-         * @see VuMarkInstanceId
-         */
+        vuforia = ClassFactory.createVuforiaLocalizer(parameters);
 
-        VuforiaTrackables relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
-        VuforiaTrackable relicTemplate = relicTrackables.get(0);
-        relicTemplate.setName("relicVuMarkTemplate"); // can help in debugging; otherwise not necessary
+        relicTrackables = vuforia.loadTrackablesFromAsset("RelicVuMark");
 
-        telemetry.addData(">", "Press Play to start");
-        telemetry.update();
-        waitForStart();
+        relicTemplate = relicTrackables.get(0);
+
+        relicTemplate.setName("relicVuMarkTemplate");
 
         relicTrackables.activate();
 
+        vuMark = RelicRecoveryVuMark.from(relicTemplate);
 
-
-        gyro = hardwareMap.gyroSensor.get("gyro");
-        floorColor = hardwareMap.colorSensor.get("floorColor");
-        rF = hardwareMap.dcMotor.get("rF");
-        rB = hardwareMap.dcMotor.get("rB");
-        lF = hardwareMap.dcMotor.get("lF");
-        lB = hardwareMap.dcMotor.get("lB");
-        lB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        lF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        lF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        lB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rF.setDirection(DcMotor.Direction.FORWARD);
-        rB.setDirection(DcMotor.Direction.FORWARD);
-        lB.setDirection(DcMotor.Direction.REVERSE);
-        lF.setDirection(DcMotor.Direction.REVERSE);
-        driveTrain = new DriveTrain(lB, rB, lF, rF, this, gyro, floorColor);
-        int targetZ = 10;
-        int targetX = 0;
-        while (opModeIsActive()) {
-
-            RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
-            if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
-
-                telemetry.addData("VuMark", "is visible", vuMark);
-
-                /* For fun, we also exhibit the navigational pose. In the Relic Recovery game,
-                 * it is perhaps unlikely that you will actually need to act on this pose information, but
-                 * we illustrate it nevertheless, for completeness. */
-                OpenGLMatrix pose = ((VuforiaTrackableDefaultListener)relicTemplate.getListener()).getPose();
-                telemetry.addData("Detected " , RelicRecoveryVuMark.from(relicTemplate));
-                // telemetry.addData("Pose", format(pose));
-
-
-                /* We further illustrate how to decompose the pose into useful rotational and
-                 * translational components */
-                if (pose != null) {
-                    VectorF trans = pose.getTranslation();
-                    Orientation rot = Orientation.getOrientation(pose, AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
-
-                    // Extract the X, Y, and Z components of the offset of the target relative to the robot
-                    double tX = trans.get(0);
-                    double tY = trans.get(1);
-                    double tZ = trans.get(2);
-
-                    // Extract the rotational components of the target relative to the robot
-                    double rX = rot.firstAngle;
-                    double rY = rot.secondAngle;
-                    double rZ = rot.thirdAngle;
-
-                    telemetry.addData("tX", (int)tX);
-                    telemetry.addData("tY", (int)tY);
-                    telemetry.addData("tZ", (int)tZ);
-                    telemetry.addData("rX", (int)rX);
-                    telemetry.addData("rY", (int)rY);
-                    telemetry.addData("rZ", (int)rZ);
-
-                    if(tZ > targetZ){
-                        driveTrain.moveFwd(0.1,1,0.3);
-                        Functions.waitFor(500);
-                    } else if( tZ<targetZ){
-                        driveTrain.moveBkwd(0.1,1,0.3);
-                        Functions.waitFor(500);
-                    }
-                    if(tX < targetX){
-                        driveTrain.moveRight(0.1,1,0.3);
-                        Functions.waitFor(500);
-                    }else if(tX>targetX){
-                        driveTrain.moveLeft(0.1,1,0.3);
-                        Functions.waitFor(500);
-                    }
-
-                }
-
-            }
-            else {
-                telemetry.addData("VuMark", "not visible");
-            }
-
-            telemetry.update();
-        }
     }
 
-    String format(OpenGLMatrix transformationMatrix) {
-        return (transformationMatrix != null) ? transformationMatrix.formatAsTransform() : "null";
+    public RelicRecoveryVuMark detectColumn(int timeoutS) {
+        long endtime = System.currentTimeMillis() + (timeoutS * 1000);
+        boolean timedOut = false;
+        while (opMode.opModeIsActive() && System.currentTimeMillis()<endtime && vuMark == RelicRecoveryVuMark.UNKNOWN) {
+            opMode.telemetry.addLine("Detecting VuMark.....");
+            opMode.telemetry.update();
+        }
+        if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
+            opMode.telemetry.addData("Detected ", vuMark);
+        }else{
+            opMode.telemetry.addLine("Detection timed out");
+        }
+        opMode.telemetry.update();
+        return vuMark;
     }
 }

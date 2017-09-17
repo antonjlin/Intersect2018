@@ -44,6 +44,7 @@ public class AutoFull extends LinearOpMode {
         int wallPositionDriveDistance = 50;
 
 
+
         initHardware();
         while(!gamepad1.start && !isStopRequested()) {
             if (gamepad1.x) {
