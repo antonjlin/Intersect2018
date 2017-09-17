@@ -84,4 +84,3 @@ public class ManualVisionSample extends ManualVisionOpMode {
         return rgba;
     }
 }
-//
