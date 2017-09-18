@@ -44,6 +44,7 @@ public class DriveTrainTesting extends LinearOpMode {
         while (opModeIsActive()) {
 
             //    TEST 1
+
             //test encoder functions once drive train is set up
             driveTrain.moveBkwd(0.2,5,10);
             Functions.waitFor(10000);
@@ -51,26 +52,23 @@ public class DriveTrainTesting extends LinearOpMode {
             Functions.waitFor(10000000);
 
             //    TEST 2
+
             //test imu.getAngle function by turning robot a few times
             //Turn right by around 90 degrees
-            telemetry.addData("Heading", imu.getAngle());
-            telemetry.update();
-            Functions.waitFor(5000);
             //turn left by around 90 degrees
-            telemetry.addData("Heading", imu.getAngle());
-            telemetry.update();
-            Functions.waitFor(5000);
             //turn left by around 90 degrees again
-            telemetry.addData("Heading", imu.getAngle());
-            telemetry.update();
-            Functions.waitFor(5000);
             //turn left by around 180 degrees
-            telemetry.addData("Heading", imu.getAngle());
-            telemetry.update();
-
+            int x = 1;
+            while(x > 0) {
+                telemetry.addData("Heading", imu.getAngle());
+                telemetry.update();
+                Functions.waitFor(100);
+            }
 
             Functions.waitFor(100000000);
+
             //    TEST 3
+
             //test imu turning
             driveTrain.rotateIMURamp(90, 0.2, 10, telemetry);
             Functions.waitFor(5000);
