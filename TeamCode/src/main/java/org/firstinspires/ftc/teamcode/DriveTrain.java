@@ -245,13 +245,13 @@ public class DriveTrain {
     // @param timeout - time out in seconds
     // @param gyro pointer to Gyro object
     // @param telemetry - pointer to telemetry object
-    public int rotateIMURamp(int degrees, double power, int timeout, GyroSensor gyro, Telemetry telemetry) {
-        int heading;
+    public double rotateIMURamp(int degrees, double power, int timeoutS, Telemetry telemetry) {
+        double heading;
         int e;
-        long endtime = System.currentTimeMillis() + (timeout * 1000);
-        int start = gyro.getHeading();
+        long endtime = System.currentTimeMillis() + (timeoutS * 1000);
+        double start = imu.getAngle();
 
-        int target = start + degrees;
+        double target = start + degrees;
         if ( target < 0) {
             target += 360;
         } else if (target >=360 ) {
@@ -269,11 +269,11 @@ public class DriveTrain {
         }
         telemetry.update();
         do {
-            heading = gyro.getHeading();
+            heading = imu.getAngle();
             if ( degrees > 0 ) { // Turn clockwise
-                e = headingCWError(start, degrees, heading); // Heading error
+                e = headingCWError((int) start, degrees, (int) heading); // Heading error
             } else { // turn counter clockwise
-                e = headingCCWError(start, -degrees, heading); // Heading error
+                e = headingCCWError((int) start, -degrees, (int) heading); // Heading error
             }
             if ( e > 0 ) {
                 rotateCW(Math.max(minRotationPower, power * powerAdjust(e)));
@@ -283,11 +283,11 @@ public class DriveTrain {
             if (Math.abs(e) <= gyroTurnErrorMargin) {
                 this.stopAll();
                 Functions.waitFor(100); // wait for 500 msec.
-                heading = gyro.getHeading(); // read heading again
+                heading = imu.getAngle(); // read heading again
                 if ( degrees > 0 ) { // Turn clockwise
-                    e = headingCWError(start, degrees, heading); // Heading error
+                    e = headingCWError((int) start, degrees, (int) heading); // Heading error
                 } else { // turn counter clockwise
-                    e = headingCCWError(start, -degrees, heading); // Heading error
+                    e = headingCCWError((int) start, -degrees, (int) heading); // Heading error
                 }
             }
         } while (  (Math.abs(e) > gyroTurnErrorMargin) &&  (System.currentTimeMillis() < endtime) && opMode.opModeIsActive());
@@ -297,17 +297,17 @@ public class DriveTrain {
 //        setDriveMotorMode(DcMotor.RunMode.RUN_USING_ENCODER);
         telemetry.clear();
         telemetry.addData("Start", start);
-        telemetry.addData("Heading", gyro.getHeading());
+        telemetry.addData("Heading", imu.getAngle());
         telemetry.addData("Target", target);
-        telemetry.addData("timeout", timeout * 1000);
+        telemetry.addData("timeout", timeoutS * 1000);
         telemetry.addData("End Time", endtime);
         telemetry.update();
         return heading;
     }
-    public int rotateGyroRamp(int degrees, double power, int timeout, GyroSensor gyro, Telemetry telemetry){
+    public int rotateGyroRamp(int degrees, double power, int timeoutS, GyroSensor gyro, Telemetry telemetry){
         int heading;
         int e;
-        long endtime = System.currentTimeMillis() + (timeout * 1000);
+        long endtime = System.currentTimeMillis() + (timeoutS * 1000);
         int start = gyro.getHeading();
 
         int target = start + degrees;
@@ -358,7 +358,7 @@ public class DriveTrain {
         telemetry.addData("Start", start);
         telemetry.addData("Heading", gyro.getHeading());
         telemetry.addData("Target", target);
-        telemetry.addData("timeout", timeout * 1000);
+        telemetry.addData("timeout", timeoutS * 1000);
         telemetry.addData("End Time", endtime);
         telemetry.update();
         return heading;
