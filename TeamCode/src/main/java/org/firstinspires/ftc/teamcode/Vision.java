@@ -158,18 +158,21 @@ public class Vision extends OpMode {
 
 
     public void loop() {
-        VideoCapture capture = new VideoCapture(0);
+        VideoCapture capture = new VideoCapture(1);
         Mat frame = new Mat();
         Mat greyframe = new Mat();
-        capture.read(frame);
-        Imgproc.cvtColor(frame, greyframe, Imgproc.COLOR_RGB2GRAY);
-        //JavaCameraView camera;
         int id = hardwareMap.appContext.getResources().getIdentifier("MyVision", "id", hardwareMap.appContext.getPackageName());
         View view = ((Activity) hardwareMap.appContext).findViewById(id);
         ImageView view1 = (ImageView) view;
-        Bitmap bm = Bitmap.createBitmap(greyframe.cols(), greyframe.rows(), Bitmap.Config.ARGB_8888);
-        Utils.matToBitmap(greyframe , bm);
-        view1.setImageBitmap(bm);
+        capture.read(frame);
+        if(frame.empty() == false){
+            Imgproc.cvtColor(frame, greyframe, Imgproc.COLOR_RGB2GRAY);
+            Bitmap bm = Bitmap.createBitmap(greyframe.cols(), greyframe.rows(), Bitmap.Config.ARGB_8888);
+            Utils.matToBitmap(greyframe , bm);
+            view1.setImageBitmap(bm);
+        }
+
+        JavaCameraView camera;
 
 
 
@@ -182,21 +185,25 @@ public class Vision extends OpMode {
 
 
 
-        List<MatOfPoint> countours = new ArrayList<MatOfPoint>(){};
+
+
+
+
+      /*  List<MatOfPoint> countours = new ArrayList<MatOfPoint>(){};
         Mat Hierarchy = new Mat();
         findContours(greyframe,countours,Hierarchy,RETR_CCOMP, CHAIN_APPROX_SIMPLE);
         //drawContours();
-        /*ColorHSV min = new ColorHSV(255,50,80);
+       ColorHSV min = new ColorHSV(255,50,80);
         ColorHSV max = new ColorHSV(205,100,100);
         ColorBlobDetector detector = new ColorBlobDetector(min, max);
         System.out.print(detector.getContours(
-        telemetry.addData("getCountours",detector.getContours());*/
-        Imgproc.cvtColor(frame, greyframe, Imgproc.COLOR_RGB2GRAY);
+        telemetry.addData("getCountours",detector.getContours());
+     //   Imgproc.cvtColor(frame, greyframe, Imgproc.COLOR_RGB2GRAY);
 
 
 
         ScheduledExecutorService timer = Executors.newSingleThreadScheduledExecutor();
-        timer.scheduleAtFixedRate(run, 0, 33, TimeUnit.MILLISECONDS);
+        timer.scheduleAtFixedRate(run, 0, 33, TimeUnit.MILLISECONDS);*/
 
 
     }
