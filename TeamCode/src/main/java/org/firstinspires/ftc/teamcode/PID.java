@@ -34,7 +34,7 @@ public class PID {
      */
     public double update(double desiredValue, double actualValue, double dt) {
         double e = desiredValue - actualValue;
-        runningIntegral = clampValue(runningIntegral + e * dt,
+        runningIntegral = clampValue(runningIntegral + ((e + previousError) / 2) * dt,
                 integralMin, integralMax);
         double d = (e - previousError) / dt;
         double output = kp * (e + (runningIntegral / ti) + (td * d));
