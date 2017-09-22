@@ -35,7 +35,8 @@ public class DriveTrainTesting extends LinearOpMode {
     private BNO055IMU adaImu;
     private IMU imu;
 
-    static Servo servo1;
+    static Servo servoMain;
+    static Servo servoSec;
     //static GyroSensor gyro;
     @Override
     public void runOpMode() throws InterruptedException {
@@ -43,6 +44,33 @@ public class DriveTrainTesting extends LinearOpMode {
         waitForStart();
         while (opModeIsActive()) {
 
+            //    TEST Double REV Hub (look at page 14 of the REV manual)
+            //    Plug in 1 motor and 1 servo for each hub
+
+            //    TAKE PIC OF THE TESTING!!!!!!!!
+
+            lB.setPower(0.1);
+            Functions.waitFor(3000);
+            lB.setPower(0);
+            Functions.waitFor(1000);
+            rB.setPower(0.1);
+            Functions.waitFor(3000);
+            rB.setPower(0);
+            Functions.waitFor(2000);
+            lB.setPower(0.3);
+            rB.setPower(0.3);
+            Functions.waitFor(3000);
+            lB.setPower(0);
+            lB.setPower(0);
+            Functions.waitFor(3000);
+            servoMain.setPosition(0);
+            Functions.waitFor(2000);
+            servoMain.setPosition(0.9);
+            Functions.waitFor(2000);
+            servoSec.setPosition(0);
+            Functions.waitFor(2000);
+            servoSec.setPosition(0.9);
+            Functions.waitFor(100000000);
             //    TEST 1
 
             //test encoder functions once drive train is set up
@@ -98,9 +126,11 @@ public class DriveTrainTesting extends LinearOpMode {
         adaImu = hardwareMap.get(BNO055IMU.class, "imu");
         imu = new IMU(adaImu);
 
-        gyro = hardwareMap.gyroSensor.get("gyro");
+        //gyro = hardwareMap.gyroSensor.get("gyro");
         floorColor = hardwareMap.colorSensor.get("floorColor");
 
+        Servo servoMain = hardwareMap.servo.get("servoMain");
+        Servo servoSec = hardwareMap.servo.get("servoSec");
 
         rF = hardwareMap.dcMotor.get("rF");
         rB = hardwareMap.dcMotor.get("rB");
