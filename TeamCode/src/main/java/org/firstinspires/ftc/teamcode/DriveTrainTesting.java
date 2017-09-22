@@ -22,7 +22,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "RevTest")
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "DriveTrainTesting")
 
 
 public class DriveTrainTesting extends LinearOpMode {
@@ -46,18 +46,27 @@ public class DriveTrainTesting extends LinearOpMode {
             //    TEST 1
 
             //test encoder functions once drive train is set up
-            driveTrain.moveBkwd(0.2,5,10);
+            driveTrain.moveBkwd(0.2,10,10);
             Functions.waitFor(10000);
-            driveTrain.moveFwd(0.2,5,10);
-            Functions.waitFor(10000000);
+            driveTrain.moveFwd(0.2,10,10);
+            Functions.waitFor(13000);
+            driveTrain.moveRight(0.2,7, 15);
+            Functions.waitFor(10000);
+            driveTrain.moveLeft(0.2, 7, 15);
+            Functions.waitFor(13000);
+            driveTrain.moveBkwRight(0.2, 0.2, 8, 10);
+            Functions.waitFor(10000);
+            driveTrain.moveFwdRight(0.2, 0.2, 8, 10);
+            Functions.waitFor(1000000000);
 
-            //    TEST 2
+            //    TEST 2   FINISHED
 
             //test imu.getAngle function by turning robot a few times
             //Turn right by around 90 degrees
             //turn left by around 90 degrees
             //turn left by around 90 degrees again
             //turn left by around 180 degrees
+            /*
             int x = 1;
             while(x > 0) {
                 telemetry.addData("Heading", imu.getAngle());
@@ -66,6 +75,9 @@ public class DriveTrainTesting extends LinearOpMode {
             }
 
             Functions.waitFor(100000000);
+
+            */
+
 
             //    TEST 3
 
