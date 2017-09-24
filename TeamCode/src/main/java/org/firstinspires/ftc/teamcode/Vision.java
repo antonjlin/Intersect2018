@@ -2,6 +2,9 @@ package org.firstinspires.ftc.teamcode;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
+import android.hardware.camera2.CameraAccessException;
+import android.hardware.camera2.CameraCharacteristics;
+import android.hardware.camera2.CameraManager;
 import android.media.Image;
 import android.os.Bundle;
 import android.support.annotation.VisibleForTesting;
@@ -99,6 +102,18 @@ public class Vision extends OpMode {
         public void run() {
         }
     };
+    private void error(String message) {
+        Log.e("FTCVision", message);
+        telemetry.addData("Vision Status", message);
+    }
+    private String getFrontFacingCameraId (CameraManager cManager) throws CameraAccessException {
+        for(final String cameraId : cManager.getCameraIdList()){
+            CameraCharacteristics characteristics = cManager.getCameraCharacteristics(cameraId);
+            int cOrientation = characteristics.get(CameraCharacteristics.LENS_FACING);
+            if(cOrientation == CameraCharacteristics.LENS_FACING_FRONT) return cameraId;
+        }
+        return null;
+    }
 
 
    // ImageView view  = (ImageView) View.findViewById(R.id.MyImageDisplay);
@@ -151,9 +166,15 @@ public class Vision extends OpMode {
                 return;
             }
         }
+            
+
+
 
 
     }
+
+
+
 
 
 
@@ -173,6 +194,7 @@ public class Vision extends OpMode {
         }
 
         JavaCameraView camera;
+        openCVCamera.connectCamera();
 
 
 
