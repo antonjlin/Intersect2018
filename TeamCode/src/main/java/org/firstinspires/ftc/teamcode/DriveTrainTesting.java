@@ -46,11 +46,12 @@ public class DriveTrainTesting extends LinearOpMode {
             //    TEST 1
 
             //test encoder functions once drive train is set up
+            /*
             driveTrain.moveBkwd(0.2,5,10);
             Functions.waitFor(10000);
             driveTrain.moveFwd(0.2,5,10);
             Functions.waitFor(10000000);
-
+            */
             //    TEST 2
 
             //test imu.getAngle function by turning robot a few times
@@ -68,7 +69,7 @@ public class DriveTrainTesting extends LinearOpMode {
             Functions.waitFor(100000000);
 
             //    TEST 3
-
+            /*
             //test imu turning
             driveTrain.rotateIMURamp(90, 0.2, 10, telemetry);
             Functions.waitFor(5000);
@@ -77,6 +78,7 @@ public class DriveTrainTesting extends LinearOpMode {
             driveTrain.rotateIMURamp(-90, 0.2, 10, telemetry);
 
             Functions.waitFor(100000000);
+            */
 
         }
     }
@@ -86,7 +88,7 @@ public class DriveTrainTesting extends LinearOpMode {
         adaImu = hardwareMap.get(BNO055IMU.class, "imu");
         imu = new IMU(adaImu);
 
-        gyro = hardwareMap.gyroSensor.get("gyro");
+        //gyro = hardwareMap.gyroSensor.get("gyro");
         floorColor = hardwareMap.colorSensor.get("floorColor");
 
 

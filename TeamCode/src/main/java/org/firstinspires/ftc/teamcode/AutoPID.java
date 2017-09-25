@@ -4,15 +4,18 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.GyroSensor;
+import com.qualcomm.hardware.bosch.BNO055IMU;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "AutoPID")
 public class AutoPID extends LinearOpMode {
     static DcMotor rFmotor, rBmotor, lFmotor, lBmotor;
-    static GyroSensor gyro;
+    private BNO055IMU adaImu;
+
+    Orientation angle;
 
     // PID Functions (NEEDS TO BE TUNED)
     private final double PIDKp = 0.004;
@@ -28,6 +31,17 @@ public class AutoPID extends LinearOpMode {
         initHardware();
         waitForStart();
 
+        int x = 0;
+
+        while (x == 0) {
+            telemetry.addData("", adaImu.getAngularOrientation().firstAngle);
+            telemetry.addData("", adaImu.getAngularOrientation().secondAngle);
+            telemetry.addData("", adaImu.getAngularOrientation().thirdAngle);
+
+            Functions.waitFor(500);
+        }
+
+
     }
 
     public void initHardware() {
@@ -36,8 +50,7 @@ public class AutoPID extends LinearOpMode {
         lFmotor = hardwareMap.dcMotor.get("lF");
         lBmotor = hardwareMap.dcMotor.get("lB");
 
-        // Need to add gyro to config file, X is placeholder
-        gyro = hardwareMap.gyroSensor.get("X");
+        adaImu = hardwareMap.get(BNO055IMU.class, "imu");
 
         lBmotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rBmotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -51,31 +64,41 @@ public class AutoPID extends LinearOpMode {
         rBmotor.setDirection(DcMotorSimple.Direction.REVERSE);
         lBmotor.setDirection(DcMotorSimple.Direction.FORWARD);
         lFmotor.setDirection(DcMotorSimple.Direction.FORWARD);
-
-        calibrateGyro(telemetry);
     }
 
-    /***
-     *     Gyro calibration routing
-     *     @param telemetry - telemetry printing handle
-     *
-      */
+    private void turnByImuPID (int targetHeading) {
 
-    private void calibrateGyro(Telemetry telemetry){
-        gyro.calibrate();
-        // make sure the gyro is calibrated before continuing
-        while (gyro.isCalibrating() && !isStopRequested())  {
-            Functions.waitFor(50);
+        PID ImuTurn = new PID(PIDKp, PIDTi, PIDTd, -PIDIntMax, PIDIntMax);
+
+        double prevTime = 0;
+
+        int loopTime = 50; // Loops every 50 ms
+        double startTime = System.nanoTime() * 1000000;
+
+        double leftPower;
+        double rightPower;
+
+        while (adaImu.getAngularOrientation().firstAngle != targetHeading) {
+
+            int currentHeading = Math.round(angle.firstAngle);
+            double deltaTime = (System.nanoTime() * 1000000) - prevTime;
+            leftPower = ImuTurn.update(targetHeading, adaImu.getAngularOrientation().firstAngle, deltaTime);
+            rightPower = -ImuTurn.update(targetHeading, adaImu.getAngularOrientation().firstAngle, deltaTime);
+
+            lFmotor.setPower(leftPower);
+            lBmotor.setPower(leftPower);
+            rFmotor.setPower(rightPower);
+            rBmotor.setPower(rightPower);
+
         }
-        telemetry.addLine("Robot Ready.");
-        telemetry.update();
+
     }
 
     private void driveForwardPID(double distance, double power, double timeOutMs) {
 
         PID headingControl = new PID(PIDKp, PIDTi, PIDTd, -PIDIntMax, PIDIntMax);
 
-        int targetHeading = gyro.getHeading();
+        int targetHeading = Math.round(angle.firstAngle);
         double distanceTraveled = 0; // in inches
         double distanceTraveledLeft;
         double distanceTraveledRight;
@@ -92,27 +115,47 @@ public class AutoPID extends LinearOpMode {
 
         while (distance > distanceTraveled && (System.nanoTime() * 1000000) - startTime < timeOutMs) {
 
-            int currentHeading = gyro.getHeading();
+            int currentHeading = Math.round(adaImu.getAngularOrientation().firstAngle);
+
             double deltaTime = (System.nanoTime() * 1000000) - prevTime;
 
-            if (targetHeading < gyro.getHeading() - 3) {
+            double percentTravelled = distanceTraveled/distance;
+
+            boolean turning = false;
+
+            if (targetHeading < currentHeading - 3) {
                 // PID Control if robot drifted clockwise (right)
 
-                leftPower = -headingControl.update(targetHeading, gyro.getHeading(), deltaTime);
-                rightPower = headingControl.update(targetHeading, gyro.getHeading(), deltaTime);
+                turning = true;
 
-            } else if (targetHeading > gyro.getHeading() + 3) {
+                leftPower = -headingControl.update(targetHeading, currentHeading, deltaTime);
+                rightPower = headingControl.update(targetHeading, currentHeading, deltaTime);
+
+            } else if (targetHeading > currentHeading + 3) {
                 // PID Control if robot drifted counterclockwise (left)
 
-                leftPower = headingControl.update(targetHeading, gyro.getHeading(), deltaTime);
-                rightPower = -headingControl.update(targetHeading, gyro.getHeading(), deltaTime);
+                turning = true;
+
+                leftPower = headingControl.update(targetHeading, currentHeading, deltaTime);
+                rightPower = -headingControl.update(targetHeading, currentHeading, deltaTime);
 
             }
 
-            lFmotor.setPower(leftPower);
-            lBmotor.setPower(leftPower);
-            rFmotor.setPower(rightPower);
-            rBmotor.setPower(rightPower);
+            if (turning) {
+                lFmotor.setPower(leftPower);
+                lBmotor.setPower(leftPower);
+                rFmotor.setPower(rightPower);
+                rBmotor.setPower(rightPower);
+            }
+            else {
+                leftPower = percentTravelled * leftPower;
+                rightPower = percentTravelled * rightPower;
+
+                lFmotor.setPower(leftPower);
+                lBmotor.setPower(leftPower);
+                rFmotor.setPower(rightPower);
+                rBmotor.setPower(rightPower);
+            }
 
             // Calculate distance travelled
             distanceTraveledLeft = (lFmotor.getCurrentPosition() - prevLeftEncoderPosition) / TICKS_PER_INCH_FORWARD;
@@ -123,6 +166,9 @@ public class AutoPID extends LinearOpMode {
             prevLeftEncoderPosition = lFmotor.getCurrentPosition();
             prevRightEncoderPosition = rFmotor.getCurrentPosition();
             prevTime = System.nanoTime() * 1000000;
+
+            telemetry.addData("currentHeading: ", currentHeading);
+            telemetry.update();
 
             Functions.waitFor(loopTime);
 

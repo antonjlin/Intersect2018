@@ -20,7 +20,7 @@ public class VuMarkOpmodeTest extends LinearOpMode {
 
     public void runOpMode() throws InterruptedException {
 
-        cryptograph.initVuMark(this);
+        cryptograph.initVuMark(VuMarkOpmodeTest.this);
         waitForStart();
         if (opModeIsActive()) {
             cryptograph.detectColumn(10);
