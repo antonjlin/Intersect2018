@@ -44,33 +44,7 @@ public class DriveTrainTesting extends LinearOpMode {
         waitForStart();
         while (opModeIsActive()) {
 
-            //    TEST Double REV Hub (look at page 14 of the REV manual)
-            //    Plug in 1 motor and 1 servo for each hub
 
-            //    TAKE PIC OF THE TESTING!!!!!!!!
-
-            lB.setPower(0.1);
-            Functions.waitFor(3000);
-            lB.setPower(0);
-            Functions.waitFor(1000);
-            rB.setPower(0.1);
-            Functions.waitFor(3000);
-            rB.setPower(0);
-            Functions.waitFor(2000);
-            lB.setPower(0.3);
-            rB.setPower(0.3);
-            Functions.waitFor(3000);
-            lB.setPower(0);
-            lB.setPower(0);
-            Functions.waitFor(3000);
-            servoMain.setPosition(0);
-            Functions.waitFor(2000);
-            servoMain.setPosition(0.9);
-            Functions.waitFor(2000);
-            servoSec.setPosition(0);
-            Functions.waitFor(2000);
-            servoSec.setPosition(0.9);
-            Functions.waitFor(100000000);
             //    TEST 1
 
             //test encoder functions once drive train is set up
@@ -103,18 +77,18 @@ public class DriveTrainTesting extends LinearOpMode {
             }
 
             Functions.waitFor(100000000);
-
             */
-
-
             //    TEST 3
 
             //test imu turning
             driveTrain.rotateIMURamp(90, 0.2, 10, telemetry);
+            //driveTrain.rotateIMURamp(90, 0.2, 10, imu, telemetry);
             Functions.waitFor(5000);
             driveTrain.rotateIMURamp(-90, 0.2, 10, telemetry);
+            //driveTrain.rotateIMURamp(-90, 0.2, 10, imu, telemetry);
             Functions.waitFor(5000);
             driveTrain.rotateIMURamp(-90, 0.2, 10, telemetry);
+            //driveTrain.rotateIMURamp(-90, 0.2, 10, imu, telemetry);
 
             Functions.waitFor(100000000);
 
@@ -129,8 +103,8 @@ public class DriveTrainTesting extends LinearOpMode {
         //gyro = hardwareMap.gyroSensor.get("gyro");
         floorColor = hardwareMap.colorSensor.get("floorColor");
 
-        Servo servoMain = hardwareMap.servo.get("servoMain");
-        Servo servoSec = hardwareMap.servo.get("servoSec");
+        servoMain = hardwareMap.servo.get("servoMain");
+        servoSec = hardwareMap.servo.get("servoSec");
 
         rF = hardwareMap.dcMotor.get("rF");
         rB = hardwareMap.dcMotor.get("rB");
