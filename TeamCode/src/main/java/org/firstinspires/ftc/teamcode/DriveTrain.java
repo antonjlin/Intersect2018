@@ -23,6 +23,7 @@ public class DriveTrain {
     static GyroSensor gyro;
     static ModernRoboticsI2cGyro mrGyro;
     static ColorSensor beaconColor, floorColor;
+    public double minMotorPower = 0.05; //minimum power that robot still moves
     IMU imu;
 
     // Tunable parameters
@@ -63,6 +64,33 @@ public class DriveTrain {
         lB.setDirection(DcMotor.Direction.REVERSE);
         lf.setDirection(DcMotor.Direction.REVERSE);
 
+    }
+
+    public enum Direction {
+        FORWARD, RIGHT, LEFT, BACKWARD;
+    }
+    public void moveAtSpeed(Direction direction, double speed) {
+        if(direction == Direction.FORWARD) {
+            lF.setPower(speed);
+            lB.setPower(speed);
+            rF.setPower(speed);
+            rB.setPower(speed);
+        }    else    if(direction == Direction.BACKWARD) {
+            lF.setPower(-speed);
+            lB.setPower(-speed);
+            rF.setPower(-speed);
+            rB.setPower(-speed);
+        }    else    if(direction == Direction.RIGHT) {
+            lF.setPower(-speed);
+            lB.setPower(-speed);
+            rF.setPower(speed);
+            rB.setPower(speed);
+        }    else    {
+            lF.setPower(speed);
+            lB.setPower(speed);
+            rF.setPower(-speed);
+            rB.setPower(-speed);
+        }
     }
 
     public void strafeRight(double power, int time) {
@@ -1090,6 +1118,104 @@ public class DriveTrain {
         rB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //  sleep(250);   // optional pause after each move
+    }
+
+    public void encoderDriveRamped(Direction direction, double speed, double inches, double rampTime, double timeoutS) {
+        double startRampDist = 10 * speed; //how manu inches left to start ramping at.
+        resetEncoders();
+        lB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        lF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        int newLBTarget;
+        int newRBTarget;
+        int newRFTarget;
+        int newLFTarget;
+
+        // Determine new target position, and pass to motor controller
+        if (direction == Direction.RIGHT) {
+            newLBTarget = lB.getCurrentPosition() + (int) (inches * TICKS_PER_INCH_FORWARD);
+            newRBTarget = rB.getCurrentPosition() - (int) (inches * TICKS_PER_INCH_FORWARD);
+            newLFTarget = lF.getCurrentPosition() - (int) (inches * TICKS_PER_INCH_FORWARD);
+            newRFTarget = rF.getCurrentPosition() + (int) (inches * TICKS_PER_INCH_FORWARD);
+        } else if (direction == Direction.LEFT) {
+            newLBTarget = lB.getCurrentPosition() - (int) (inches * TICKS_PER_INCH_FORWARD);
+            newRBTarget = rB.getCurrentPosition() + (int) (inches * TICKS_PER_INCH_FORWARD);
+            newLFTarget = lF.getCurrentPosition() + (int) (inches * TICKS_PER_INCH_FORWARD);
+            newRFTarget = rF.getCurrentPosition() - (int) (inches * TICKS_PER_INCH_FORWARD);
+        } else if (direction == Direction.FORWARD) {
+            newLBTarget = lB.getCurrentPosition() + (int) (inches * TICKS_PER_INCH_FORWARD);
+            newRBTarget = rB.getCurrentPosition() + (int) (inches * TICKS_PER_INCH_FORWARD);
+            newLFTarget = lF.getCurrentPosition() + (int) (inches * TICKS_PER_INCH_FORWARD);
+            newRFTarget = rF.getCurrentPosition() + (int) (inches * TICKS_PER_INCH_FORWARD);
+        } else if (direction == Direction.BACKWARD) {
+            newLBTarget = lB.getCurrentPosition() - (int) (inches * TICKS_PER_INCH_FORWARD);
+            newRBTarget = rB.getCurrentPosition() - (int) (inches * TICKS_PER_INCH_FORWARD);
+            newLFTarget = lF.getCurrentPosition() - (int) (inches * TICKS_PER_INCH_FORWARD);
+            newRFTarget = rF.getCurrentPosition() - (int) (inches * TICKS_PER_INCH_FORWARD);
+        } else {
+            newLBTarget = lB.getCurrentPosition();
+            newRBTarget = rB.getCurrentPosition();
+            newLFTarget = lF.getCurrentPosition();
+            newRFTarget = rF.getCurrentPosition();
+        }
+
+        lF.setTargetPosition(newLFTarget);
+        rF.setTargetPosition(newRFTarget);
+        lB.setTargetPosition(newLBTarget);
+        rB.setTargetPosition(newRBTarget);
+        int avgTarget = (newLBTarget + newLFTarget + newRBTarget + newRFTarget) / 4;
+        // Turn On RUN_TO_POSITION
+        lF.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rF.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        lB.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rB.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        // reset the timeout time and start motion.
+        timer.reset();
+        lF.setPower(Math.abs(speed));
+        rF.setPower(Math.abs(speed));
+        lB.setPower(Math.abs(speed));
+        rB.setPower(Math.abs(speed));
+
+        //RAMP CODE STARTS NOW
+
+        double distToTarget; // current distance to target
+        double intervalDist = startRampDist / 10; //at what distance interval to ramp down one notch.
+        double rampedSpeed = speed; //sets variable speed to current speed
+        int rampNotchCounter = 0; //counts how many times speed has been decreased
+        while (opMode.opModeIsActive() && (timer.time() < timeoutS * 1000) && (lF.isBusy() && rF.isBusy() && rB.isBusy() && lB.isBusy())) { //while running
+            distToTarget = Math.abs(avgTarget - avgEncoderPosInch(Direction.FORWARD));
+            if (distToTarget <= startRampDist && startRampDist<inches) {   //if distance left to travel is within desired ramping distance
+                if (distToTarget == startRampDist - (intervalDist*(rampNotchCounter+1))) { //checks if robot should ramp speed down one notch
+                    rampedSpeed -= ((speed - minMotorPower) / 10); //set speed to 10% lower while keeping motor above min speed
+                    setAllMotorSpeed(rampedSpeed);
+                    rampNotchCounter++;
+                }
+            }
+        }
+            // Stop all motion
+            this.stopAll();
+
+            // Turn off RUN_TO_POSITION
+            lF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            lB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    public void setAllMotorSpeed(double speed){
+        lF.setPower((speed));
+        rF.setPower((speed));
+        lB.setPower((speed));
+        rB.setPower((speed));
+    }
+
+    public double avgEncoderPosInch(Direction direction){ //gets current inches traveled in encoder functions.
+        if(direction == Direction.BACKWARD || direction == Direction.FORWARD){
+            return ((lF.getCurrentPosition()+ lB.getCurrentPosition()+ rF.getCurrentPosition()+ rB.getCurrentPosition())/4/TICKS_PER_INCH_FORWARD);
+        } else
+            return ((lF.getCurrentPosition()+ lB.getCurrentPosition()+ rF.getCurrentPosition()+ rB.getCurrentPosition())/4/TICKS_PER_INCH_STRAFE);
     }
 
     public void moveRight(double speed, double inches, double timeoutS) {
