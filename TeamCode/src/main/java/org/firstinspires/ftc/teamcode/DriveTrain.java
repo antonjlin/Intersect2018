@@ -245,6 +245,7 @@ public class DriveTrain {
     // @param gyro pointer to Gyro object
     // @param telemetry - pointer to telemetry object
     public double rotateIMURamp(int degrees, double power, int timeoutS, Telemetry telemetry) {
+    //public double rotateIMURamp(int degrees, double power, int timeoutS, IMU imu, Telemetry telemetry) {
         double heading;
         int e;
         long endtime = System.currentTimeMillis() + (timeoutS * 1000);
