@@ -17,7 +17,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class DriveTrain {
     ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
-    static final double TICKS_PER_INCH_FORWARD = 56;
+    static final double TICKS_PER_INCH_FORWARD = 62;
     static final double TICKS_PER_INCH_STRAFE = 61.3;
     static DcMotor rF, rB, lF, lB, flywheel1, flywheel2, sweeperLow, sweeperHigh;
     static GyroSensor gyro;

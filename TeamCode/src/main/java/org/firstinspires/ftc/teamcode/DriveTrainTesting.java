@@ -46,12 +46,12 @@ public class DriveTrainTesting extends LinearOpMode {
 
 
             //    TEST 1
-
+            /*
             //test encoder functions once drive train is set up
-            driveTrain.moveBkwd(0.2,10,10);
-            Functions.waitFor(10000);
-            driveTrain.moveFwd(0.2,10,10);
-            Functions.waitFor(13000);
+            //driveTrain.moveBkwd(0.2,10,10);
+            //Functions.waitFor(10000);
+            //driveTrain.moveFwd(0.2,10,10);
+            //Functions.waitFor(13000);
             driveTrain.moveRight(0.2,7, 15);
             Functions.waitFor(10000);
             driveTrain.moveLeft(0.2, 7, 15);
@@ -60,6 +60,7 @@ public class DriveTrainTesting extends LinearOpMode {
             Functions.waitFor(10000);
             driveTrain.moveFwdRight(0.2, 0.2, 8, 10);
             Functions.waitFor(1000000000);
+            */
 
             //    TEST 2   FINISHED
 
@@ -75,9 +76,9 @@ public class DriveTrainTesting extends LinearOpMode {
                 telemetry.update();
                 Functions.waitFor(100);
             }
-
-            Functions.waitFor(100000000);
             */
+            //Functions.waitFor(100000000);
+
             //    TEST 3
 
             //test imu turning
