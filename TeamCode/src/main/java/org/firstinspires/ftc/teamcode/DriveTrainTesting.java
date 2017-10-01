@@ -44,40 +44,14 @@ public class DriveTrainTesting extends LinearOpMode {
         waitForStart();
         while (opModeIsActive()) {
 
-            //    TEST Double REV Hub (look at page 14 of the REV manual)
-            //    Plug in 1 motor and 1 servo for each hub
 
-            //    TAKE PIC OF THE TESTING!!!!!!!!
-
-            lB.setPower(0.1);
-            Functions.waitFor(3000);
-            lB.setPower(0);
-            Functions.waitFor(1000);
-            rB.setPower(0.1);
-            Functions.waitFor(3000);
-            rB.setPower(0);
-            Functions.waitFor(2000);
-            lB.setPower(0.3);
-            rB.setPower(0.3);
-            Functions.waitFor(3000);
-            lB.setPower(0);
-            lB.setPower(0);
-            Functions.waitFor(3000);
-            servoMain.setPosition(0);
-            Functions.waitFor(2000);
-            servoMain.setPosition(0.9);
-            Functions.waitFor(2000);
-            servoSec.setPosition(0);
-            Functions.waitFor(2000);
-            servoSec.setPosition(0.9);
-            Functions.waitFor(100000000);
             //    TEST 1
-
+            /*
             //test encoder functions once drive train is set up
-            driveTrain.moveBkwd(0.2,10,10);
-            Functions.waitFor(10000);
-            driveTrain.moveFwd(0.2,10,10);
-            Functions.waitFor(13000);
+            //driveTrain.moveBkwd(0.2,10,10);
+            //Functions.waitFor(10000);
+            //driveTrain.moveFwd(0.2,10,10);
+            //Functions.waitFor(13000);
             driveTrain.moveRight(0.2,7, 15);
             Functions.waitFor(10000);
             driveTrain.moveLeft(0.2, 7, 15);
@@ -86,6 +60,7 @@ public class DriveTrainTesting extends LinearOpMode {
             Functions.waitFor(10000);
             driveTrain.moveFwdRight(0.2, 0.2, 8, 10);
             Functions.waitFor(1000000000);
+            */
 
             //    TEST 2   FINISHED
 
@@ -94,23 +69,27 @@ public class DriveTrainTesting extends LinearOpMode {
             //turn left by around 90 degrees
             //turn left by around 90 degrees again
             //turn left by around 180 degrees
+            /*
             int x = 1;
             while(x > 0) {
                 telemetry.addData("Heading", imu.getAngle());
                 telemetry.update();
                 Functions.waitFor(100);
             }
-
-            Functions.waitFor(100000000);
+            */
+            //Functions.waitFor(100000000);
 
             //    TEST 3
 
             //test imu turning
             driveTrain.rotateIMURamp(90, 0.2, 10, telemetry);
+            //driveTrain.rotateIMURamp(90, 0.2, 10, imu, telemetry);
             Functions.waitFor(5000);
             driveTrain.rotateIMURamp(-90, 0.2, 10, telemetry);
+            //driveTrain.rotateIMURamp(-90, 0.2, 10, imu, telemetry);
             Functions.waitFor(5000);
             driveTrain.rotateIMURamp(-90, 0.2, 10, telemetry);
+            //driveTrain.rotateIMURamp(-90, 0.2, 10, imu, telemetry);
 
             Functions.waitFor(100000000);
 
@@ -125,8 +104,8 @@ public class DriveTrainTesting extends LinearOpMode {
         //gyro = hardwareMap.gyroSensor.get("gyro");
         floorColor = hardwareMap.colorSensor.get("floorColor");
 
-        Servo servoMain = hardwareMap.servo.get("servoMain");
-        Servo servoSec = hardwareMap.servo.get("servoSec");
+        servoMain = hardwareMap.servo.get("servoMain");
+        servoSec = hardwareMap.servo.get("servoSec");
 
         rF = hardwareMap.dcMotor.get("rF");
         rB = hardwareMap.dcMotor.get("rB");
