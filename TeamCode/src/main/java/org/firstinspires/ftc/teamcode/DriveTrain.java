@@ -272,6 +272,7 @@ public class DriveTrain {
     // @param timeout - time out in seconds
     // @param gyro pointer to Gyro object
     // @param telemetry - pointer to telemetry object
+
     public double rotateIMURamp(int degrees, double power, int timeoutS, Telemetry telemetry) {
     //public double rotateIMURamp(int degrees, double power, int timeoutS, IMU imu, Telemetry telemetry) {
         double heading;
@@ -1119,6 +1120,61 @@ public class DriveTrain {
         rB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //  sleep(250);   // optional pause after each move
+    }
+
+    public void balancingByImu() {
+        // call when the robot is fully on the platform
+
+        /* also assumes that after 0 degrees to the right starts incrementing positively
+         * and before 0 degrees to the left is incrementing negatively
+        */
+
+        double[] currentHeading;
+
+        /* this is giving an error tolerance of 2 degrees because
+         * the robot should stabilize by 2 degrees
+        */
+        int targetHeading = 2;
+
+        boolean pitchDone;
+        boolean rollDone;
+
+        while (opMode.opModeIsActive()) {
+            currentHeading = imu.getOrientation();
+            double pitch = currentHeading[1];
+            double roll = currentHeading[2];
+
+            //initialized as false to check again
+            pitchDone = false;
+            rollDone = false;
+            if (pitch > targetHeading) {
+                moveAtSpeed(Direction.FORWARD, powerPerDegree(pitch));
+            } else if (pitch < -targetHeading) {
+                moveAtSpeed(Direction.BACKWARD, powerPerDegree(pitch));
+            } else {
+                pitchDone = true;
+            }
+
+            if (roll > targetHeading) {
+                moveAtSpeed(Direction.LEFT, powerPerDegree(roll));
+            } else if (roll < -targetHeading) {
+                moveAtSpeed(Direction.RIGHT, powerPerDegree(roll));
+            } else {
+                rollDone = true;
+            }
+
+            //checks if both are balanced
+            if (pitchDone && rollDone) {
+                break;
+            }
+
+        }
+
+    }
+
+    public double powerPerDegree(double degree) {
+        // 0.7 must be tested
+        return 0.7 * degree;
     }
 
     public void encoderDriveRamped(Direction direction, double speed, double inches, double rampTime, double timeoutS) {
