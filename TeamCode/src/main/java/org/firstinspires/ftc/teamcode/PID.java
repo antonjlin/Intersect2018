@@ -34,14 +34,27 @@ public class PID {
      */
     public double update(double desiredValue, double actualValue, double dt) {
         double e = desiredValue - actualValue;
-        runningIntegral = clampValue(runningIntegral + ((e + previousError) / 2) * dt,
-                integralMin, integralMax);
+        runningIntegral = runningIntegral + ((e + previousError) / 2) * dt;
         double d = (e - previousError) / dt;
+
         double output = kp * (e + (runningIntegral / ti) + (td * d));
+
+        // clamp between 0.2 and 1.0 or -0.2 and -1.0
+        if(output > 1) {
+
+            output = clampValue(output, integralMin, integralMax);
+
+        } else {
+
+            output = clampValue(Math.abs(output), integralMin, integralMax);
+            output = output * -1;
+
+        }
 
         previousError = e;
         return output;
     }
+
 
     /**
      * Clamps a value to a given range.
