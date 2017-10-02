@@ -65,9 +65,7 @@ public class AutoPID extends LinearOpMode {
         lBmotor.setDirection(DcMotorSimple.Direction.FORWARD);
         lFmotor.setDirection(DcMotorSimple.Direction.FORWARD);
     }
-    public void selfBalance(){
-        while(Imu.)
-    }
+
 
     private void turnByImuPID (int targetHeading) {
 
