@@ -1133,29 +1133,36 @@ public class DriveTrain {
 
         boolean pitchDone = false;
         boolean rollDone = false;
+        int checkTimeMS = 1000;
 
-        while (opMode.opModeIsActive()&&!pitchDone &&!rollDone) {
+        while (opMode.opModeIsActive()) {
             double pitch = imu.getOrientation()[1];
             double roll = imu.getOrientation()[2];
 
             //initialized as false to check again
+            while (!pitchDone && !rollDone) {
+                if (pitch > balanceThreshold) {
+                    moveAtSpeed(Direction.FORWARD, powerPerDegree(pitch));
+                } else if (pitch < -balanceThreshold) {
+                    moveAtSpeed(Direction.BACKWARD, powerPerDegree(pitch));
+                } else {
+                    pitchDone = true;
+                }
 
-            if (pitch > balanceThreshold) {
-                moveAtSpeed(Direction.FORWARD, powerPerDegree(pitch));
-            } else if (pitch < -balanceThreshold) {
-                moveAtSpeed(Direction.BACKWARD, powerPerDegree(pitch));
-            } else {
-                pitchDone = true;
+                if (roll > balanceThreshold) {
+                    moveAtSpeed(Direction.LEFT, powerPerDegree(roll));
+                } else if (roll < -balanceThreshold) {
+                    moveAtSpeed(Direction.RIGHT, powerPerDegree(roll));
+                } else {
+                    rollDone = true;
+                }
+
             }
-
-            if (roll > balanceThreshold) {
-                moveAtSpeed(Direction.LEFT, powerPerDegree(roll));
-            } else if (roll < -balanceThreshold) {
-                moveAtSpeed(Direction.RIGHT, powerPerDegree(roll));
-            } else {
-                rollDone = true;
+            Functions.waitFor(checkTimeMS);
+            //CHECK TO SEE IF OVERSHOT AND IS STILL WITHIN THRESHOLD
+            if(Math.abs(pitch)<balanceThreshold && Math.abs(roll)<balanceThreshold){
+                break;
             }
-
         }
 
     }
