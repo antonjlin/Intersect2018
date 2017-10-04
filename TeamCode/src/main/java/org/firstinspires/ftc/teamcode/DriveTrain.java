@@ -23,17 +23,17 @@ public class DriveTrain {
     static GyroSensor gyro;
     static ModernRoboticsI2cGyro mrGyro;
     static ColorSensor beaconColor, floorColor;
-    public double minMotorPower = 0.05; //minimum power that robot still moves
+    public double minMotorPower = 0.085; //minimum power that robot still moves
     IMU imu;
 
     // Tunable parameters
-    private int balanceThreshold = 5;
-    double balanceMultiplier = 0.07;
+    private double balanceThreshold = 1.5;
+    double balanceMultiplier = 0.08;
     private int conversionFactor = 50;
     private int gyroTurnErrorMargin = 1; // turn stop if within the margin of error
-    private int gyroTurnRampMax = 15;  // starting point of scaling back speed of motor for turning
+    private int gyroTurnRampMax = 30;  // starting point of scaling back speed of motor for turning
     private int gyroTurnRampMin = 3;   // stopping point to turn off motor abs(heading-target)<vlaue
-    private double minRotationPower = 0.05; // minimum power to move robot
+    private double minRotationPower = 0.03; // minimum power to move robot
 
     double average;
     LinearOpMode opMode;
@@ -84,14 +84,14 @@ public class DriveTrain {
             rB.setPower(-Math.abs(speed));
         }    else    if(direction == Direction.RIGHT) {
             lF.setPower(-Math.abs(speed));
-            lB.setPower(-Math.abs(speed));
+            lB.setPower(Math.abs(speed));
             rF.setPower(Math.abs(speed));
-            rB.setPower(Math.abs(speed));
+            rB.setPower(-Math.abs(speed));
         }    else    {
             lF.setPower(Math.abs(speed));
-            lB.setPower(Math.abs(speed));
+            lB.setPower(-Math.abs(speed));
             rF.setPower(-Math.abs(speed));
-            rB.setPower(-Math.abs(speed));
+            rB.setPower(Math.abs(speed));
         }
     }
 
@@ -277,6 +277,7 @@ public class DriveTrain {
 
     public double rotateIMURamp(int degrees, double power, int timeoutS, Telemetry telemetry) {
     //public double rotateIMURamp(int degrees, double power, int timeoutS, IMU imu, Telemetry telemetry) {
+        //COUNTERCLOCKWISE IS POSITIVE DEGREES
         double heading;
         int e;
         long endtime = System.currentTimeMillis() + (timeoutS * 1000);
@@ -325,7 +326,7 @@ public class DriveTrain {
 
         this.stopAll();
 
-//        setDriveMotorMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//      setDriveMotorMode(DcMotor.RunMode.RUN_USING_ENCODER);
         telemetry.clear();
         telemetry.addData("Start", start);
         telemetry.addData("Heading", imu.getAngle());
@@ -1124,13 +1125,12 @@ public class DriveTrain {
         //  sleep(250);   // optional pause after each move
     }
 
-    public void selfBalance() {
+    public void selfBalance(Telemetry telemetry, LinearOpMode opMode) {
         // call when the robot is fully on the platform
         /* also assumes that after 0 degrees to the right starts incrementing positively
          * and before 0 degrees to the left is incrementing negatively
         */
         //using trig you know that the robot will be stable if the angle is less than 10 degrees. Thus, we will have a threshold of 5
-
         boolean pitchDone = false;
         boolean rollDone = false;
         int checkTimeMS = 1000;
@@ -1138,31 +1138,47 @@ public class DriveTrain {
         while (opMode.opModeIsActive()) {
             double pitch = imu.getOrientation()[1];
             double roll = imu.getOrientation()[2];
+            telemetry.addData("Initial Pitch", pitch);
+            telemetry.addData("Initial Roll", roll);
 
             //initialized as false to check again
-            while (!pitchDone && !rollDone) {
-                if (pitch > balanceThreshold) {
-                    moveAtSpeed(Direction.FORWARD, powerPerDegree(pitch));
-                } else if (pitch < -balanceThreshold) {
+            while ((!pitchDone || !rollDone)&& opMode.opModeIsActive()) {
+                pitch = imu.getOrientation()[1];
+                roll = imu.getOrientation()[2];
+                telemetry.addData("Pitch", pitch);
+                telemetry.addData("Roll", roll);
+                if (pitch > balanceThreshold && !pitchDone) {
                     moveAtSpeed(Direction.BACKWARD, powerPerDegree(pitch));
+                } else if (pitch < -balanceThreshold) {
+                    moveAtSpeed(Direction.FORWARD, powerPerDegree(pitch));
                 } else {
                     pitchDone = true;
+                    stopAll();
+                    telemetry.addLine("Pitch Done");
                 }
 
-                if (roll > balanceThreshold) {
+                if (roll > balanceThreshold && !rollDone) {
                     moveAtSpeed(Direction.LEFT, powerPerDegree(roll));
                 } else if (roll < -balanceThreshold) {
                     moveAtSpeed(Direction.RIGHT, powerPerDegree(roll));
                 } else {
                     rollDone = true;
+                    telemetry.addLine("Roll Done");
+                    stopAll();
                 }
-
+                telemetry.update();
+                //Functions.waitFor(50);
             }
             Functions.waitFor(checkTimeMS);
             //CHECK TO SEE IF OVERSHOT AND IS STILL WITHIN THRESHOLD
             if(Math.abs(pitch)<balanceThreshold && Math.abs(roll)<balanceThreshold){
+                telemetry.addLine("Overall Done");
+                telemetry.update();
+                stopAll();
                 break;
             }
+            pitchDone=false;
+            rollDone=false;
         }
 
     }

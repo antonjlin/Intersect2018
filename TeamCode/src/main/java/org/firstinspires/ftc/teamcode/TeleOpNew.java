@@ -33,6 +33,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -41,6 +42,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "teleopnew")
 public class TeleOpNew extends LinearOpMode {
     static DcMotor rFmotor, rBmotor, lFmotor, lBmotor;
+    DriveTrain driveTrain;
 
     // RampFlywheel rampFlywheel = new RampFlywheel();
     // RampDownFlywheel rampDownFlywheel = new RampDownFlywheel();
@@ -69,31 +71,25 @@ public class TeleOpNew extends LinearOpMode {
         while (opModeIsActive()) {
             fwdPower = gamepad1.left_stick_y;
             strafePower = gamepad1.left_stick_x;
-            rotationPower = -gamepad1.right_stick_x;
+            rotationPower = gamepad1.right_stick_x;
             //Negative because robot was turning wrong way
             //Should be positive
-                double vD = Math.sqrt(Math.pow(fwdPower, 2) + Math.pow(strafePower, 2));
-                double thetaD = Math.atan2(strafePower, fwdPower);
-                double frontLeft = vD * Math.sin(thetaD + Math.PI / 4) + rotationPower;
-                double frontRight = vD * Math.cos(thetaD + Math.PI / 4) - rotationPower;
-                double backLeft = vD * Math.cos(thetaD + Math.PI / 4) + rotationPower;
-                double backRight = vD * Math.sin(thetaD + Math.PI / 4) - rotationPower;
-                double maxF = Math.max(Math.abs(frontLeft), Math.abs(frontRight));
-                double maxB = Math.max(Math.abs(backLeft), Math.abs(backRight));
-                double max = Math.max(maxF, maxB);
+            double r = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y);
+            double robotAngle = Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4;
+            double rightX = -gamepad1.right_stick_x;
+            final double frontLeft = r * Math.cos(robotAngle) + rightX;
+            final double frontRight = r * Math.sin(robotAngle) - rightX;
+            final double backLeft = r * Math.sin(robotAngle) + rightX;
+            final double backRight = r * Math.cos(robotAngle) - rightX;
 
-//
-                if (max > 1.0) {
-                    frontLeft = frontLeft / max;
-                    frontRight = frontRight / max;
-                    backLeft = backLeft / max;
-                    backRight = backRight / max;
-                }
+            lFmotor.setPower(frontLeft);
+            rFmotor.setPower(frontRight);
+            lBmotor.setPower(backLeft);
+            rBmotor.setPower(backRight);
 
-                lFmotor.setPower(frontLeft);
-                lBmotor.setPower(backLeft);
-                rFmotor.setPower(frontRight);
-                rBmotor.setPower(backRight);
+            if(gamepad1.a){
+                driveTrain.selfBalance(telemetry, );
+            }
 
             telemetry.addData("lf", frontLeft);
             telemetry.addData("rf", frontRight);

@@ -43,15 +43,16 @@ public class DriveTrainTesting extends LinearOpMode {
         initHardware();
         waitForStart();
         if (opModeIsActive()) {
-
+            //driveTrain.selfBalance(telemetry);
+            //Functions.waitFor(10000);
 
             //    TEST 1
-            /*
+
             //test encoder functions once drive train is set up
-            //driveTrain.moveBkwd(0.2,10,10);
-            //Functions.waitFor(10000);
-            //driveTrain.moveFwd(0.2,10,10);
-            //Functions.waitFor(13000);
+           /* driveTrain.moveBkwd(0.2,10,10);
+            Functions.waitFor(10000);
+            driveTrain.moveFwd(0.2,10,10);
+            Functions.waitFor(13000);
             driveTrain.moveRight(0.2,7, 15);
             Functions.waitFor(10000);
             driveTrain.moveLeft(0.2, 7, 15);
@@ -60,8 +61,7 @@ public class DriveTrainTesting extends LinearOpMode {
             Functions.waitFor(10000);
             driveTrain.moveFwdRight(0.2, 0.2, 8, 10);
             Functions.waitFor(1000000000);
-            */
-
+*/
             //    TEST 2   FINISHED
 
             //test imu.getAngle function by turning robot a few times
@@ -69,27 +69,28 @@ public class DriveTrainTesting extends LinearOpMode {
             //turn left by around 90 degrees
             //turn left by around 90 degrees again
             //turn left by around 180 degrees
-            /*
+   /*
             int x = 1;
             while(x > 0) {
                 telemetry.addData("Heading", imu.getAngle());
                 telemetry.update();
                 Functions.waitFor(100);
             }
-            */
-            //Functions.waitFor(100000000);
+
+            Functions.waitFor(100000000);
 
             //    TEST 3
-
+*/
             //test imu turning
             driveTrain.rotateIMURamp(90, 0.2, 10, telemetry);
             //driveTrain.rotateIMURamp(90, 0.2, 10, imu, telemetry);
             Functions.waitFor(5000);
-            driveTrain.rotateIMURamp(-90, 0.2, 10, telemetry);
+            driveTrain.rotateIMURamp(-180, 0.5, 10, telemetry);
             //driveTrain.rotateIMURamp(-90, 0.2, 10, imu, telemetry);
             Functions.waitFor(5000);
-            driveTrain.rotateIMURamp(-90, 0.2, 10, telemetry);
+            driveTrain.rotateIMURamp(-90, 1, 10, telemetry);
             //driveTrain.rotateIMURamp(-90, 0.2, 10, imu, telemetry);
+            driveTrain.rotateIMURamp(180,0.4,10,telemetry);
 
             Functions.waitFor(100000000);
 
