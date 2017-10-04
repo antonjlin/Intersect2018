@@ -27,6 +27,8 @@ public class DriveTrain {
     IMU imu;
 
     // Tunable parameters
+    private int balanceThreshold = 5;
+    double balanceMultiplier = 0.07;
     private int conversionFactor = 50;
     private int gyroTurnErrorMargin = 1; // turn stop if within the margin of error
     private int gyroTurnRampMax = 15;  // starting point of scaling back speed of motor for turning
@@ -71,25 +73,25 @@ public class DriveTrain {
     }
     public void moveAtSpeed(Direction direction, double speed) {
         if(direction == Direction.FORWARD) {
-            lF.setPower(speed);
-            lB.setPower(speed);
-            rF.setPower(speed);
-            rB.setPower(speed);
+            lF.setPower(Math.abs(speed));
+            lB.setPower(Math.abs(speed));
+            rF.setPower(Math.abs(speed));
+            rB.setPower(Math.abs(speed));
         }    else    if(direction == Direction.BACKWARD) {
-            lF.setPower(-speed);
-            lB.setPower(-speed);
-            rF.setPower(-speed);
-            rB.setPower(-speed);
+            lF.setPower(-Math.abs(speed));
+            lB.setPower(-Math.abs(speed));
+            rF.setPower(-Math.abs(speed));
+            rB.setPower(-Math.abs(speed));
         }    else    if(direction == Direction.RIGHT) {
-            lF.setPower(-speed);
-            lB.setPower(-speed);
-            rF.setPower(speed);
-            rB.setPower(speed);
+            lF.setPower(-Math.abs(speed));
+            lB.setPower(-Math.abs(speed));
+            rF.setPower(Math.abs(speed));
+            rB.setPower(Math.abs(speed));
         }    else    {
-            lF.setPower(speed);
-            lB.setPower(speed);
-            rF.setPower(-speed);
-            rB.setPower(-speed);
+            lF.setPower(Math.abs(speed));
+            lB.setPower(Math.abs(speed));
+            rF.setPower(-Math.abs(speed));
+            rB.setPower(-Math.abs(speed));
         }
     }
 
@@ -272,6 +274,7 @@ public class DriveTrain {
     // @param timeout - time out in seconds
     // @param gyro pointer to Gyro object
     // @param telemetry - pointer to telemetry object
+
     public double rotateIMURamp(int degrees, double power, int timeoutS, Telemetry telemetry) {
     //public double rotateIMURamp(int degrees, double power, int timeoutS, IMU imu, Telemetry telemetry) {
         double heading;
@@ -1121,6 +1124,55 @@ public class DriveTrain {
         //  sleep(250);   // optional pause after each move
     }
 
+    public void selfBalance() {
+        // call when the robot is fully on the platform
+        /* also assumes that after 0 degrees to the right starts incrementing positively
+         * and before 0 degrees to the left is incrementing negatively
+        */
+        //using trig you know that the robot will be stable if the angle is less than 10 degrees. Thus, we will have a threshold of 5
+
+        boolean pitchDone = false;
+        boolean rollDone = false;
+        int checkTimeMS = 1000;
+
+        while (opMode.opModeIsActive()) {
+            double pitch = imu.getOrientation()[1];
+            double roll = imu.getOrientation()[2];
+
+            //initialized as false to check again
+            while (!pitchDone && !rollDone) {
+                if (pitch > balanceThreshold) {
+                    moveAtSpeed(Direction.FORWARD, powerPerDegree(pitch));
+                } else if (pitch < -balanceThreshold) {
+                    moveAtSpeed(Direction.BACKWARD, powerPerDegree(pitch));
+                } else {
+                    pitchDone = true;
+                }
+
+                if (roll > balanceThreshold) {
+                    moveAtSpeed(Direction.LEFT, powerPerDegree(roll));
+                } else if (roll < -balanceThreshold) {
+                    moveAtSpeed(Direction.RIGHT, powerPerDegree(roll));
+                } else {
+                    rollDone = true;
+                }
+
+            }
+            Functions.waitFor(checkTimeMS);
+            //CHECK TO SEE IF OVERSHOT AND IS STILL WITHIN THRESHOLD
+            if(Math.abs(pitch)<balanceThreshold && Math.abs(roll)<balanceThreshold){
+                break;
+            }
+        }
+
+    }
+
+    public double powerPerDegree(double degree) {
+        return ((degree-balanceThreshold)*balanceMultiplier)+minMotorPower;
+        //proportional speed, minimum movement speed at threshold
+
+    }
+
     public void encoderDriveRamped(Direction direction, double speed, double inches, double rampTime, double timeoutS) {
         double startRampDist = 10 * speed; //how manu inches left to start ramping at.
         resetEncoders();
@@ -1205,6 +1257,14 @@ public class DriveTrain {
             rB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
+    //FUNCTION IN PROGRESS - ANTON
+    /*public void rampSpeed(Direction direction, double initialSpeed, double finalSpeed, double rampDist, double timeoutS){
+        double avgInitialPosition = avgEncoderPosInch(direction);
+        setAllMotorSpeed(initialSpeed);
+        while (opMode.opModeIsActive() && (timer.time() < timeoutS * 1000) && (lF.isBusy() && rF.isBusy() && rB.isBusy() && lB.isBusy()) && avgEncoderPosInch(direction)<(avgInitialPosition+rampDist)) {
+
+
+    }*/
     public void setAllMotorSpeed(double speed){
         lF.setPower((speed));
         rF.setPower((speed));

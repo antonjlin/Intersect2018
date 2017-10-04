@@ -42,7 +42,7 @@ public class DriveTrainTesting extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         initHardware();
         waitForStart();
-        while (opModeIsActive()) {
+        if (opModeIsActive()) {
 
 
             //    TEST 1
