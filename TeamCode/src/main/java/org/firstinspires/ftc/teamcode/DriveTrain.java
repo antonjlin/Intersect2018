@@ -30,8 +30,8 @@ public class DriveTrain {
     private double balanceThreshold = 1.5;
     double balanceMultiplier = 0.08;
     private int conversionFactor = 50;
-    private int gyroTurnErrorMargin = 1; // turn stop if within the margin of error
-    private int gyroTurnRampMax = 30;  // starting point of scaling back speed of motor for turning
+    private int gyroTurnErrorMargin = 3; // turn stop if within the margin of error
+    private int gyroTurnRampMax = 60;  // starting point of scaling back speed of motor for turning
     private int gyroTurnRampMin = 3;   // stopping point to turn off motor abs(heading-target)<vlaue
     private double minRotationPower = 0.03; // minimum power to move robot
 
@@ -208,7 +208,6 @@ public class DriveTrain {
             current+=360;
         } // avoid wrap around problem
         return target - current;
-
     }
 
 
@@ -224,6 +223,19 @@ public class DriveTrain {
             current-=360;
         } // avoid wrap around problem
         return target - current;
+
+    }
+
+    private int headingError (int start, int turn, int current) {
+
+        int e;
+
+        // current angle from start
+        int offset = current - start;
+
+        e = turn - offset;
+
+        return e;
 
     }
 
@@ -275,7 +287,7 @@ public class DriveTrain {
     // @param gyro pointer to Gyro object
     // @param telemetry - pointer to telemetry object
 
-    public double rotateIMURamp(int degrees, double power, int timeoutS, Telemetry telemetry) {
+    /*public double rotateIMURamp(int degrees, double power, int timeoutS, Telemetry telemetry) {
     //public double rotateIMURamp(int degrees, double power, int timeoutS, IMU imu, Telemetry telemetry) {
         //COUNTERCLOCKWISE IS POSITIVE DEGREES
         double heading;
@@ -322,20 +334,67 @@ public class DriveTrain {
                     e = headingCCWError((int) start, -degrees, (int) heading); // Heading error
                 }
             }
-        } while (  (Math.abs(e) > gyroTurnErrorMargin) &&  (System.currentTimeMillis() < endtime) && opMode.opModeIsActive());
+
+            telemetry.clear();
+            telemetry.addData("Start", start);
+            telemetry.addData("Heading", imu.getAngle());
+            telemetry.addData("Target", target);
+            telemetry.addData("timeout", timeoutS * 1000);
+            telemetry.addData("End Time", endtime);
+            telemetry.addData("Error", e);
+            telemetry.update();
+        } while ((Math.abs(e) > gyroTurnErrorMargin) &&  (System.currentTimeMillis() < endtime) && opMode.opModeIsActive());
 
         this.stopAll();
+        return heading;
 
 //      setDriveMotorMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        telemetry.clear();
-        telemetry.addData("Start", start);
-        telemetry.addData("Heading", imu.getAngle());
-        telemetry.addData("Target", target);
-        telemetry.addData("timeout", timeoutS * 1000);
-        telemetry.addData("End Time", endtime);
-        telemetry.update();
-        return heading;
+
+    }*/
+
+    public void rotateIMURamp (int turn, double power, int timeOutS, Telemetry telemetry) {
+
+        // When the program will time out
+        double endTime = System.currentTimeMillis() + (timeOutS * 1000);
+
+        // Starting heading
+        int startAngle = (int) imu.getAngle();
+
+        // Error
+        int e = turn;
+
+        if (Math.abs(turn) <= gyroTurnErrorMargin ){ // If angle is too small to turn
+            telemetry.addData("Too small to turn ", turn);
+            telemetry.update();
+        } else {
+
+            while (Math.abs(e) > gyroTurnErrorMargin && System.currentTimeMillis() < endTime && opMode.opModeIsActive()) {
+
+                // Calculate e
+
+                e = headingError(startAngle, turn, (int) imu.getAngle());
+
+                // Turn based on e
+                if (e > gyroTurnErrorMargin) { // Turn CW
+                    rotateCW(Math.max(minRotationPower, power * powerAdjust(e)));
+                } else if (e < -gyroTurnErrorMargin) { // Turn CCW
+                    rotateCCW(Math.max(minRotationPower, power * powerAdjust(e)));
+                } else { // If error is within acceptable range
+                    this.stopAll();
+                }
+
+                telemetry.addData("Start: ", startAngle);
+                telemetry.addData("Current heading: ", (int) imu.getAngle());
+                telemetry.addData("Target: ", startAngle + turn);
+                telemetry.addData("Error: ", e);
+                telemetry.update();
+
+            }
+
+        }
+
     }
+
     public int rotateGyroRamp(int degrees, double power, int timeoutS, GyroSensor gyro, Telemetry telemetry){
         int heading;
         int e;

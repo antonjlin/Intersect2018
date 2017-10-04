@@ -93,7 +93,7 @@ public class TeleOpNew extends LinearOpMode {
             rBmotor.setPower(backRight);
 
             if(gamepad1.a){
-                driveTrain.selfBalance(telemetry, this);
+                driveTrain.selfBalance(telemetry);
             }
 
             telemetry.addData("lf", frontLeft);
