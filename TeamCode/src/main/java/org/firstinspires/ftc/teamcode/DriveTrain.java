@@ -1125,7 +1125,7 @@ public class DriveTrain {
         //  sleep(250);   // optional pause after each move
     }
 
-    public void selfBalance(Telemetry telemetry, LinearOpMode opMode) {
+    public void selfBalance(Telemetry telemetry) {
         // call when the robot is fully on the platform
         /* also assumes that after 0 degrees to the right starts incrementing positively
          * and before 0 degrees to the left is incrementing negatively

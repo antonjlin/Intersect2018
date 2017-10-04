@@ -32,23 +32,28 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "teleopnew")
 public class TeleOpNew extends LinearOpMode {
     static DcMotor rFmotor, rBmotor, lFmotor, lBmotor;
     DriveTrain driveTrain;
+    static GyroSensor gyro;
+    static ColorSensor floorColor;
 
     // RampFlywheel rampFlywheel = new RampFlywheel();
     // RampDownFlywheel rampDownFlywheel = new RampDownFlywheel();
     public void runOpMode() throws InterruptedException {
         double fwdPower, strafePower, rotationPower;
-
+        driveTrain = new DriveTrain(lBmotor, rBmotor, lFmotor, rFmotor, this, gyro, floorColor);
         rFmotor = hardwareMap.dcMotor.get("rF");
         rBmotor = hardwareMap.dcMotor.get("rB");
         lFmotor = hardwareMap.dcMotor.get("lF");
@@ -88,7 +93,7 @@ public class TeleOpNew extends LinearOpMode {
             rBmotor.setPower(backRight);
 
             if(gamepad1.a){
-                driveTrain.selfBalance(telemetry, );
+                driveTrain.selfBalance(telemetry, this);
             }
 
             telemetry.addData("lf", frontLeft);
