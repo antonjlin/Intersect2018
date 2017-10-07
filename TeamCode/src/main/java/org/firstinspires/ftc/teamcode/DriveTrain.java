@@ -410,6 +410,7 @@ public class DriveTrain {
                 telemetry.update();
 
             }
+            this.stopAll();
 
         }
         telemetry.update();
