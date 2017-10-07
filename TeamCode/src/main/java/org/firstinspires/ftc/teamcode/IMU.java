@@ -38,6 +38,24 @@ public class IMU {
         }*/
         return angle;
     }
+    public double getAnglePositive(){
+        angles = adafruit.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX);
+        double angle = (AngleUnit.DEGREES.normalize(AngleUnit.DEGREES.fromUnit(angles.angleUnit, angles.firstAngle)));
+        angle = -angle;
+        if(angle<-10){
+            angle = 180+(180-angle);
+        }
+        return angle;
+    }
+    public double getAngleNegative(){
+        angles = adafruit.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX);
+        double angle = (AngleUnit.DEGREES.normalize(AngleUnit.DEGREES.fromUnit(angles.angleUnit, angles.firstAngle)));
+        angle = -angle;
+        if(angle>10){
+            angle = -180-angle;
+        }
+        return angle;
+    }
 
     public double[] getOrientation() {
         Quaternion quatAngles = adafruit.getQuaternionOrientation();
@@ -47,18 +65,17 @@ public class IMU {
         double y = quatAngles.y;
         double z = quatAngles.z;
 
-        // for the Adafruit IMU, yaw and roll are switched
-        double roll = Math.atan2( 2*(w*x + y*z) , 1 - 2*(x*x + y*y) ) * 180.0 / Math.PI;
+        double yaw = Math.atan2( 2*(w*x + y*z) , 1 - 2*(x*x + y*y) ) * 180.0 / Math.PI;
         double pitch = Math.asin( 2*(w*y - x*z) ) * 180.0 / Math.PI;
-        double yaw = Math.atan2( 2*(w*z + x*y), 1 - 2*(y*y + z*z) ) * 180.0 / Math.PI;
+        double roll = Math.atan2( 2*(w*z + x*y), 1 - 2*(y*y + z*z) ) * 180.0 / Math.PI;
 
         return new double[]{yaw, pitch, roll};
     }
 
 
-    public double getRadians(){
+    /*public double getRadians(){
         return getAngle()*Math.PI/180;
-    }
+    }*/
 
     public double getRoll() {
 

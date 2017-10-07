@@ -231,12 +231,12 @@ public class DriveTrain {
 
     }
 
-    private int headingError (int start, int turn, int current) {
+    private double  headingError (double start, double turn, double current) {
 
-        int e;
+        double e;
 
         // current angle from start
-        int offset = current - start;
+        double offset = current - start;
 
         e = turn - offset;
 
@@ -366,8 +366,13 @@ public class DriveTrain {
         int startAngle = (int) imu.getAngle();
 
         // Error
-        int e = turn;
+        double e = turn;
+        double error = turn;
+        double target = startAngle+turn;
 
+        if(turn>0){
+
+        }
         if (Math.abs(turn) <= gyroTurnErrorMargin ){ // If angle is too small to turn
             telemetry.addData("Too small to turn ", turn);
             telemetry.update();
@@ -376,14 +381,13 @@ public class DriveTrain {
             while (Math.abs(e) > gyroTurnErrorMargin && System.currentTimeMillis() < endTime && opMode.opModeIsActive()) {
 
                 // Calculate e
-
-                e = headingError(startAngle, turn, (int) imu.getAngle());
-
+                //e = headingError(startAngle, turn, (int) imu.getAngle());
+                error = (target)-imu.getAngle();
                 // Turn based on e
                 if (e > gyroTurnErrorMargin) { // Turn CW
-                    rotateCW(Math.max(minRotationPower, power * powerAdjust(e)));
+                    rotateCW(Math.max(minRotationPower, power * powerAdjust((int)e)));
                 } else if (e < -gyroTurnErrorMargin) { // Turn CCW
-                    rotateCCW(Math.max(minRotationPower, power * powerAdjust(e)));
+                    rotateCCW(Math.max(minRotationPower, power * powerAdjust((int)e)));
                 } else { // If error is within acceptable range
                     this.stopAll();
                 }
