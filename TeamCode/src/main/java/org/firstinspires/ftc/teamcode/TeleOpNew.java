@@ -79,22 +79,24 @@ public class TeleOpNew extends LinearOpMode {
             // needs revision
             //counts how many times the slides have gone up to ensure not to go too high
             int slidesUpCounter = 0;
+            /*
             if (gamepad1.y && slidesUpCounter == 0) {
                 slidesUpCounter++;
                 // makes the slides go up slightly higher
-                driveTrain.encoderSlidesUp(DriveTrain.Direction.FORWARD, 0.2, 6.25, 10);
+                driveTrain.encoderMoveSlides(0.2, 6.25, 10);
             } else if (gamepad1.y && slidesUpCounter < 3) {
                 slidesUpCounter++;
-                driveTrain.encoderSlidesUp(DriveTrain.Direction.FORWARD, 0.2, 6, 10);
+                driveTrain.encoderMoveSlides(0.2, 6, 10);
             }
             if (gamepad1.a && slidesUpCounter == 1) {
                 slidesUpCounter--;
-                driveTrain.encoderSlidesUp(DriveTrain.Direction.BACKWARD, 0.2, 6.25, 10);
+                driveTrain.encoderMoveSlides(0.2, 6.25, 10);
             } else if (gamepad1.a && slidesUpCounter > 0) {
                 slidesUpCounter--;
-                driveTrain.encoderSlidesUp(DriveTrain.Direction.BACKWARD, 0.2, 6, 10);
+                driveTrain.encoderMoveSlides(0.2, 6, 10);
             }
-
+            */
+            //  Darren: will add slides moving by encoder later
             // for intake and placing glyphs
             if (gamepad1.b) {
                 driveTrain.conveyerSetPower(0.2);
