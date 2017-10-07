@@ -80,7 +80,13 @@ public class DriveTrainTesting extends LinearOpMode {
             Functions.waitFor(100000000);
 
             //    TEST 3
-*/
+*/          while(opModeIsActive()){
+                telemetry.addData("AnglePos", imu.getAnglePositive());
+                telemetry.addData("AngleNeg", imu.getAngleNegative());
+
+                telemetry.addData("orentation", imu.getOrientation()[2]);
+                telemetry.update();
+                }
             //test imu turning
             driveTrain.rotateIMURamp(90, 0.2, 10, telemetry);
             //driveTrain.rotateIMURamp(90, 0.2, 10, imu, telemetry);
