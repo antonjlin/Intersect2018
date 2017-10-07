@@ -78,7 +78,6 @@ public class TeleOpNew extends LinearOpMode {
 
             // needs revision
             //counts how many times the slides have gone up to ensure not to go too high
-            int slidesUpCounter = 0;
             /*
             if (gamepad1.y && slidesUpCounter == 0) {
                 slidesUpCounter++;
@@ -96,7 +95,6 @@ public class TeleOpNew extends LinearOpMode {
                 driveTrain.encoderMoveSlides(0.2, 6, 10);
             }
             */
-            //  Darren: will add slides moving by encoder later
             // for intake and placing glyphs
             if (gamepad1.b) {
                 driveTrain.conveyerSetPower(0.2);
@@ -113,6 +111,26 @@ public class TeleOpNew extends LinearOpMode {
             }
             if (gamepad1.left_bumper) {
                 driveTrain.slidesPower(-0.2);
+            }
+
+            double currentPos = rightSlide.getCurrentPosition();
+            if (gamepad1.y) {
+                if (currentPos < 5.75) {
+                    driveTrain.encoderMoveSlides(0.2, 6.25, 10000);
+                } else if (currentPos < 11.75) {
+                    driveTrain.encoderMoveSlides(0.2, 12.25, 10000);
+                } else if (currentPos < 17.75) {
+                    driveTrain.encoderMoveSlides(0.2, 18.25, 10000);
+                }
+            }
+            if (gamepad1.a) {
+                if (currentPos > 12.75) {
+                    driveTrain.encoderMoveSlides(0.2, 12.25, 10000);
+                } else if (currentPos > 6.75) {
+                    driveTrain.encoderMoveSlides(0.2, 6.25, 10000);
+                } else if (currentPos > 0.25) {
+                    driveTrain.encoderMoveSlides(0.2, 0, 10000);
+                }
             }
 
             driveTrain.slidesPower(0);

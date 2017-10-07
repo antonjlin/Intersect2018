@@ -1276,7 +1276,7 @@ public class DriveTrain {
 
     // needs revision
     public void encoderMoveSlides (double speed, double heightInch, double timeoutS) {
-        resetEncoders();
+        //resetEncoders();
         rightSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         int targetPos;
