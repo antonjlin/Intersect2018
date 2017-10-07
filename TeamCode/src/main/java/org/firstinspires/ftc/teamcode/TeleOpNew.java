@@ -48,28 +48,46 @@ public class TeleOpNew extends LinearOpMode {
     DriveTrain driveTrain;
     static GyroSensor gyro;
     static ColorSensor floorColor;
+    static DcMotor rightConv, leftConv, leftSlide, rightSlide;
 
     // RampFlywheel rampFlywheel = new RampFlywheel();
     // RampDownFlywheel rampDownFlywheel = new RampDownFlywheel();
     public void runOpMode() throws InterruptedException {
         double fwdPower, strafePower, rotationPower;
         driveTrain = new DriveTrain(lBmotor, rBmotor, lFmotor, rFmotor, this, gyro, floorColor);
+        rightConv = hardwareMap.dcMotor.get("rightConv");
+        leftConv = hardwareMap.dcMotor.get("leftConv");
         rFmotor = hardwareMap.dcMotor.get("rF");
+        rightConv = hardwareMap.dcMotor.get("rightSlide");
+        leftConv = hardwareMap.dcMotor.get("leftSlide");
         rBmotor = hardwareMap.dcMotor.get("rB");
         lFmotor = hardwareMap.dcMotor.get("lF");
         lBmotor = hardwareMap.dcMotor.get("lB");
+
         lBmotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rBmotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         lFmotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rFmotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightConv.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftConv.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         lBmotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         lFmotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rBmotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rFmotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightConv.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftConv.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rFmotor.setDirection(DcMotorSimple.Direction.REVERSE);
         rBmotor.setDirection(DcMotorSimple.Direction.REVERSE);
         lBmotor.setDirection(DcMotorSimple.Direction.FORWARD);
         lFmotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        rightConv.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftConv.setDirection(DcMotorSimple.Direction.FORWARD);
+        leftSlide.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightSlide.setDirection(DcMotorSimple.Direction.FORWARD);
         double variableSpeed;
         waitForStart();
 
@@ -87,6 +105,45 @@ public class TeleOpNew extends LinearOpMode {
             final double backLeft = r * Math.sin(robotAngle) + rightX;
             final double backRight = r * Math.cos(robotAngle) - rightX;
 
+            // needs revision
+            //counts how many times the slides have gone up to ensure not to go too high
+            int slidesUpCounter = 0;
+            if (gamepad1.y && slidesUpCounter == 0) {
+                slidesUpCounter++;
+                // makes the slides go up slightly higher
+                driveTrain.encoderSlidesUp(DriveTrain.Direction.FORWARD, 0.2, 6.25, 10);
+            } else if (gamepad1.y && slidesUpCounter < 3) {
+                slidesUpCounter++;
+                driveTrain.encoderSlidesUp(DriveTrain.Direction.FORWARD, 0.2, 6, 10);
+            }
+            if (gamepad1.a && slidesUpCounter == 1) {
+                slidesUpCounter--;
+                driveTrain.encoderSlidesUp(DriveTrain.Direction.BACKWARD, 0.2, 6.25, 10);
+            } else if (gamepad1.a && slidesUpCounter > 0) {
+                slidesUpCounter--;
+                driveTrain.encoderSlidesUp(DriveTrain.Direction.BACKWARD, 0.2, 6, 10);
+            }
+
+            // for intake and placing glyphs
+            if (gamepad1.b) {
+                driveTrain.conveyerSetPower(0.2);
+            }
+
+            // for opposite direction just incase
+            if (gamepad1.x) {
+                driveTrain.conveyerSetPower(-0.2);
+            }
+
+            // adjust position of slides if necessary
+            if (gamepad1.right_bumper) {
+                driveTrain.slidesPower(0.2);
+            }
+            if (gamepad1.left_bumper) {
+                driveTrain.slidesPower(-0.2);
+            }
+
+            driveTrain.slidesPower(0);
+            driveTrain.conveyerSetPower(0);
             lFmotor.setPower(frontLeft);
             rFmotor.setPower(frontRight);
             lBmotor.setPower(backLeft);

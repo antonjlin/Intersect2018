@@ -19,7 +19,7 @@ public class DriveTrain {
     ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
     static final double TICKS_PER_INCH_FORWARD = 62;
     static final double TICKS_PER_INCH_STRAFE = 61.3;
-    static DcMotor rF, rB, lF, lB, flywheel1, flywheel2, sweeperLow, sweeperHigh;
+    static DcMotor rF, rB, lF, lB, flywheel1, flywheel2, sweeperLow, sweeperHigh, rightConv, leftConv, rightSlide, leftSlide;
     static GyroSensor gyro;
     static ModernRoboticsI2cGyro mrGyro;
     static ColorSensor beaconColor, floorColor;
@@ -66,6 +66,11 @@ public class DriveTrain {
         lB.setDirection(DcMotor.Direction.REVERSE);
         lf.setDirection(DcMotor.Direction.REVERSE);
 
+    }
+
+    public void conveyerSetPower(double power) {
+        rightConv.setPower(power);
+        leftConv.setPower(power);
     }
 
     public enum Direction {
@@ -1246,6 +1251,41 @@ public class DriveTrain {
         return ((degree-balanceThreshold)*balanceMultiplier)+minMotorPower;
         //proportional speed, minimum movement speed at threshold
 
+    }
+
+    public void slidesPower(double power) {
+        rightSlide.setPower(power);
+        leftSlide.setPower(power);
+    }
+
+    // needs revision
+    public void encoderSlidesUp (Direction direction, double speed, double inches, double timeoutS) {
+        resetEncoders();
+        rightSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        int targetPos = 0;
+        if (direction == Direction.FORWARD) {
+            targetPos = rightSlide.getCurrentPosition() + (int) (inches * TICKS_PER_INCH_FORWARD);
+        } else if (direction == Direction.BACKWARD) {
+            targetPos = rightSlide.getCurrentPosition() - (int) (inches * TICKS_PER_INCH_FORWARD);
+        }
+
+
+        rightSlide.setTargetPosition(targetPos);
+        leftSlide.setTargetPosition(targetPos);
+
+        rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        timer.reset();
+        while (opMode.opModeIsActive() && (timer.time() < timeoutS * 1000)) {
+            slidesPower(speed);
+        }
+
+        this.stopAll();
+
+        rightSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public void encoderDriveRamped(Direction direction, double speed, double inches, double rampTime, double timeoutS) {
