@@ -82,7 +82,7 @@ import static org.opencv.imgproc.Imgproc.*;
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Vision1")
 
 //@com.qualcomm.robotcore.eventloop.opmode.OpModeRegistrar("vision", Vision)
-//@com.qualcomm.robotcore.eventloop.opmode.TeleOp\
+//@com.qualcomm.robotcore.eventloop.opmode.TeleOpNew\
 
 
 public class Vision extends OpMode {

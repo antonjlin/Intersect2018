@@ -49,54 +49,24 @@ public class TeleOpNew extends LinearOpMode {
     static GyroSensor gyro;
     static ColorSensor floorColor;
     static DcMotor rightConv, leftConv, leftSlide, rightSlide;
+    int leftSlidePos;
+    int rightSlidePos;
+    int slideTicksPerInch;
+    int pos0 = 0;
+    int pos1 = 6;
+    int pos2 = 12;
+    int pos3 = 18;
+    int pos4 = 24;
+
 
     // RampFlywheel rampFlywheel = new RampFlywheel();
     // RampDownFlywheel rampDownFlywheel = new RampDownFlywheel();
     public void runOpMode() throws InterruptedException {
-        double fwdPower, strafePower, rotationPower;
-        driveTrain = new DriveTrain(lBmotor, rBmotor, lFmotor, rFmotor, this, gyro, floorColor);
-        rightConv = hardwareMap.dcMotor.get("rightConv");
-        leftConv = hardwareMap.dcMotor.get("leftConv");
-        rFmotor = hardwareMap.dcMotor.get("rF");
-        rightConv = hardwareMap.dcMotor.get("rightSlide");
-        leftConv = hardwareMap.dcMotor.get("leftSlide");
-        rBmotor = hardwareMap.dcMotor.get("rB");
-        lFmotor = hardwareMap.dcMotor.get("lF");
-        lBmotor = hardwareMap.dcMotor.get("lB");
-
-        lBmotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rBmotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        lFmotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rFmotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightConv.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftConv.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        lBmotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        lFmotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rBmotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rFmotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightConv.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftConv.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rFmotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        rBmotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        lBmotor.setDirection(DcMotorSimple.Direction.FORWARD);
-        lFmotor.setDirection(DcMotorSimple.Direction.FORWARD);
-        rightConv.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftConv.setDirection(DcMotorSimple.Direction.FORWARD);
-        leftSlide.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightSlide.setDirection(DcMotorSimple.Direction.FORWARD);
-        double variableSpeed;
+        initHardware();
         waitForStart();
 
         while (opModeIsActive()) {
-            fwdPower = gamepad1.left_stick_y;
-            strafePower = gamepad1.left_stick_x;
-            rotationPower = gamepad1.right_stick_x;
-            //Negative because robot was turning wrong way
-            //Should be positive
+            //DRIVETRAIN FUNCTIONS
             double r = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y);
             double robotAngle = Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4;
             double rightX = -gamepad1.right_stick_x;
@@ -104,6 +74,7 @@ public class TeleOpNew extends LinearOpMode {
             final double frontRight = r * Math.sin(robotAngle) - rightX;
             final double backLeft = r * Math.sin(robotAngle) + rightX;
             final double backRight = r * Math.cos(robotAngle) - rightX;
+
 
             // needs revision
             //counts how many times the slides have gone up to ensure not to go too high
@@ -159,6 +130,42 @@ public class TeleOpNew extends LinearOpMode {
             telemetry.addData("rb", backRight);
             telemetry.update();
             }
+        }
+        public void initHardware(){
+            driveTrain = new DriveTrain(lBmotor, rBmotor, lFmotor, rFmotor, this, gyro, floorColor);
+            rightConv = hardwareMap.dcMotor.get("rightConv");
+            leftConv = hardwareMap.dcMotor.get("leftConv");
+            rFmotor = hardwareMap.dcMotor.get("rF");
+            rightConv = hardwareMap.dcMotor.get("rightSlide");
+            leftConv = hardwareMap.dcMotor.get("leftSlide");
+            rBmotor = hardwareMap.dcMotor.get("rB");
+            lFmotor = hardwareMap.dcMotor.get("lF");
+            lBmotor = hardwareMap.dcMotor.get("lB");
+
+            lBmotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            rBmotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            lFmotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            rFmotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            rightConv.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            leftConv.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            rightSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            lBmotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            lFmotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rBmotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rFmotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rightConv.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            leftConv.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rightSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            leftSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rFmotor.setDirection(DcMotorSimple.Direction.REVERSE);
+            rBmotor.setDirection(DcMotorSimple.Direction.REVERSE);
+            lBmotor.setDirection(DcMotorSimple.Direction.FORWARD);
+            lFmotor.setDirection(DcMotorSimple.Direction.FORWARD);
+            rightConv.setDirection(DcMotorSimple.Direction.REVERSE);
+            leftConv.setDirection(DcMotorSimple.Direction.FORWARD);
+            leftSlide.setDirection(DcMotorSimple.Direction.REVERSE);
+            rightSlide.setDirection(DcMotorSimple.Direction.FORWARD);
         }
 
 }

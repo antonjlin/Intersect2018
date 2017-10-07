@@ -1,6 +1,7 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -12,6 +13,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
+@Disabled
 
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Auto Testing")
 public class AutoTesting extends LinearOpMode {
@@ -70,7 +72,7 @@ public class AutoTesting extends LinearOpMode {
             telemetry.addData("Min", gyroRampMin);
             telemetry.update();
         }
-        driveTrain.SetGryrTurnParameters(gyroRampMax, gyroRampMin, minSpeed);
+        driveTrain.SetGryoTurnParameters(gyroRampMax, gyroRampMin, minSpeed);
         waitForStart();
         int rotateAngle = 90;
         while (opModeIsActive() ) {

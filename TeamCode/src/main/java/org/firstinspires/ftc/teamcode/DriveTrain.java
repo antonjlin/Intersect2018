@@ -61,10 +61,10 @@ public class DriveTrain {
         rB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        rF.setDirection(DcMotor.Direction.FORWARD);
-        rB.setDirection(DcMotor.Direction.FORWARD);
-        lB.setDirection(DcMotor.Direction.REVERSE);
-        lf.setDirection(DcMotor.Direction.REVERSE);
+        rF.setDirection(DcMotorSimple.Direction.REVERSE);
+        rB.setDirection(DcMotorSimple.Direction.REVERSE);
+        lB.setDirection(DcMotorSimple.Direction.FORWARD);
+        lF.setDirection(DcMotorSimple.Direction.FORWARD);
 
     }
 
@@ -268,13 +268,13 @@ public class DriveTrain {
     }
 ******/
 
-    public void SetGryrTurnParameters(int max, int min, double speed){
+    public void SetGryoTurnParameters(int max, int min, double speed){
         gyroTurnRampMax = max;
         gyroTurnRampMin = min;
         minRotationPower = speed;
     }
 
-    private double powerAdjust ( int e ) {
+    private double powerAdjust ( double e ) {
         e = Math.abs(e);
         if ( e > gyroTurnRampMax) {
             return 1.0;
@@ -357,50 +357,62 @@ public class DriveTrain {
 
     }*/
 
-    public void rotateIMURamp (int turn, double power, int timeOutS, Telemetry telemetry) {
+    public void rotateIMURamp (double turn, double power, int timeOutS, Telemetry telemetry) {
 
         // When the program will time out
         double endTime = System.currentTimeMillis() + (timeOutS * 1000);
+        double startAngle = 0;
+        boolean clockwise = turn>0;
+        double difference;
+        double target;
+        // if turn is CW, use 0 to 350 for degrees.
+        //if turn is CCW, use 0 to -350 for degrees.
+        //10 degrees of leeway in the positive side to account for gyro innacuracy
 
-        // Starting heading
-        int startAngle = (int) imu.getAngle();
+             startAngle =  imu.getAngle();
 
         // Error
-        double e = turn;
-        double error = turn;
-        double target = startAngle+turn;
+        //double e = turn;
 
-        if(turn>0){
+        target = startAngle+turn;
+        difference = (imu.getAngle()-target);
 
-        }
         if (Math.abs(turn) <= gyroTurnErrorMargin ){ // If angle is too small to turn
             telemetry.addData("Too small to turn ", turn);
             telemetry.update();
         } else {
-
-            while (Math.abs(e) > gyroTurnErrorMargin && System.currentTimeMillis() < endTime && opMode.opModeIsActive()) {
-
+            while (Math.abs(difference) > gyroTurnErrorMargin && System.currentTimeMillis() < endTime && opMode.opModeIsActive()) {
                 // Calculate e
                 //e = headingError(startAngle, turn, (int) imu.getAngle());
-                error = (target)-imu.getAngle();
+                if(clockwise) {
+                    difference = (imu.getAnglePositive()-target);
+                }else {
+                    difference =  (imu.getAngleNegative()-target);
+                }
                 // Turn based on e
-                if (e > gyroTurnErrorMargin) { // Turn CW
-                    rotateCW(Math.max(minRotationPower, power * powerAdjust((int)e)));
-                } else if (e < -gyroTurnErrorMargin) { // Turn CCW
-                    rotateCCW(Math.max(minRotationPower, power * powerAdjust((int)e)));
+
+                if (difference > gyroTurnErrorMargin) { // Turn CCW
+                    rotateCCW(Math.max(minRotationPower, power * powerAdjust(difference)));
+                } else if (difference < -gyroTurnErrorMargin) { // Turn CW
+                    rotateCW(Math.max(minRotationPower, power * powerAdjust(difference)));
                 } else { // If error is within acceptable range
                     this.stopAll();
                 }
 
                 telemetry.addData("Start: ", startAngle);
-                telemetry.addData("Current heading: ", (int) imu.getAngle());
+                if(clockwise) {
+                    telemetry.addData("Current heading: ", imu.getAnglePositive());
+                }else{
+                    telemetry.addData("Current Heading: ", imu.getAngleNegative());
+                }
                 telemetry.addData("Target: ", startAngle + turn);
-                telemetry.addData("Error: ", e);
+                telemetry.addData("Error: ", difference);
                 telemetry.update();
 
             }
 
         }
+        telemetry.update();
 
     }
 
@@ -801,13 +813,13 @@ public class DriveTrain {
         stopAll();
 
     }
-    public void rotateCW(double power) {
+    public void rotateCCW(double power) {
         lF.setPower(-power);
         lB.setPower(-power);
         rF.setPower(power);
         rB.setPower(power);
     }
-    public void rotateCCW(double power) {
+    public void rotateCW(double power) {
         lF.setPower(power);
         lB.setPower(power);
         rF.setPower(-power);

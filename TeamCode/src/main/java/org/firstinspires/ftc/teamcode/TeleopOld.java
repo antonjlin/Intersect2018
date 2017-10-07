@@ -32,14 +32,15 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
-
+@Disabled
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Teleop Variable Flywheel Improved Drive")
-public class TeleOpVariableImprovedDrive extends LinearOpMode {
+public class TeleopOld extends LinearOpMode {
     static DcMotor rFmotor, rBmotor, lFmotor, lBmotor, flywheel1, flywheel2, sweeperLow, liftMotor;
     static Servo lLift, rLift;
     public static boolean flywheelUpPressed = false;

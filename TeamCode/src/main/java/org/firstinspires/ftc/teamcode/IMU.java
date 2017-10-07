@@ -43,7 +43,7 @@ public class IMU {
         double angle = (AngleUnit.DEGREES.normalize(AngleUnit.DEGREES.fromUnit(angles.angleUnit, angles.firstAngle)));
         angle = -angle;
         if(angle<-10){
-            angle = 180+(180-angle);
+            angle = 180-(-180-angle);
         }
         return angle;
     }
@@ -52,7 +52,7 @@ public class IMU {
         double angle = (AngleUnit.DEGREES.normalize(AngleUnit.DEGREES.fromUnit(angles.angleUnit, angles.firstAngle)));
         angle = -angle;
         if(angle>10){
-            angle = -180-angle;
+            angle = -180-(180-angle);
         }
         return angle;
     }
