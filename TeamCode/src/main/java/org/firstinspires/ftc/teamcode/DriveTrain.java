@@ -1287,10 +1287,10 @@ public class DriveTrain {
 
         if (rightSlide.getCurrentPosition() > heightInch) {
             motorPowerDir = -1;
-            targetPos = rightSlide.getCurrentPosition() + (int) (heightInch * TICKS_PER_INCH_FORWARD);
+            targetPos = rightSlide.getCurrentPosition() - (int) (heightInch * TICKS_PER_INCH_FORWARD);
         } else {
             motorPowerDir = 1;
-            targetPos = rightSlide.getCurrentPosition() - (int) (heightInch * TICKS_PER_INCH_FORWARD);
+            targetPos = rightSlide.getCurrentPosition() + (int) (heightInch * TICKS_PER_INCH_FORWARD);
         }
 
 
