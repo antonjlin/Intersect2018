@@ -61,10 +61,10 @@ public class DriveTrain {
         rB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        rF.setDirection(DcMotorSimple.Direction.REVERSE);
-        rB.setDirection(DcMotorSimple.Direction.REVERSE);
-        lB.setDirection(DcMotorSimple.Direction.FORWARD);
-        lF.setDirection(DcMotorSimple.Direction.FORWARD);
+        rF.setDirection(DcMotorSimple.Direction.FORWARD);
+        rB.setDirection(DcMotorSimple.Direction.FORWARD);
+        lB.setDirection(DcMotorSimple.Direction.REVERSE);
+        lF.setDirection(DcMotorSimple.Direction.REVERSE);
 
     }
 
@@ -292,7 +292,7 @@ public class DriveTrain {
     // @param gyro pointer to Gyro object
     // @param telemetry - pointer to telemetry object
 
-    /*public double rotateIMURamp(int degrees, double power, int timeoutS, Telemetry telemetry) {
+    public double rotateIMURamp(int degrees, double power, int timeoutS, Telemetry telemetry) {
     //public double rotateIMURamp(int degrees, double power, int timeoutS, IMU imu, Telemetry telemetry) {
         //COUNTERCLOCKWISE IS POSITIVE DEGREES
         double heading;
@@ -355,9 +355,9 @@ public class DriveTrain {
 
 //      setDriveMotorMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-    }*/
+    }
 
-    public void rotateIMURamp (double turn, double power, int timeOutS, Telemetry telemetry) {
+    /*public void rotateIMURamp (double turn, double power, int timeOutS, Telemetry telemetry) {
 
         // When the program will time out
         double endTime = System.currentTimeMillis() + (timeOutS * 1000);
@@ -415,7 +415,7 @@ public class DriveTrain {
         telemetry.update();
 
     }
-
+    */
     public int rotateGyroRamp(int degrees, double power, int timeoutS, GyroSensor gyro, Telemetry telemetry){
         int heading;
         int e;
