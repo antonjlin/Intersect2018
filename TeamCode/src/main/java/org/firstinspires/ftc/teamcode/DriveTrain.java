@@ -410,6 +410,7 @@ public class DriveTrain {
                 telemetry.update();
 
             }
+            this.stopAll();
 
         }
         telemetry.update();
@@ -1275,15 +1276,21 @@ public class DriveTrain {
     }
 
     // needs revision
-    public void encoderSlidesUp (Direction direction, double speed, double inches, double timeoutS) {
-        resetEncoders();
+    public void encoderMoveSlides (double speed, double heightInch, double timeoutS) {
+        //resetEncoders();
         rightSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        int targetPos = 0;
-        if (direction == Direction.FORWARD) {
-            targetPos = rightSlide.getCurrentPosition() + (int) (inches * TICKS_PER_INCH_FORWARD);
-        } else if (direction == Direction.BACKWARD) {
-            targetPos = rightSlide.getCurrentPosition() - (int) (inches * TICKS_PER_INCH_FORWARD);
+        int targetPos;
+
+        //gives the direction the motors must run
+        int motorPowerDir;
+
+        if (rightSlide.getCurrentPosition() > heightInch) {
+            motorPowerDir = -1;
+            targetPos = rightSlide.getCurrentPosition() + (int) (heightInch * TICKS_PER_INCH_FORWARD);
+        } else {
+            motorPowerDir = 1;
+            targetPos = rightSlide.getCurrentPosition() - (int) (heightInch * TICKS_PER_INCH_FORWARD);
         }
 
 
@@ -1294,8 +1301,8 @@ public class DriveTrain {
         leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         timer.reset();
-        while (opMode.opModeIsActive() && (timer.time() < timeoutS * 1000)) {
-            slidesPower(speed);
+        while (opMode.opModeIsActive() && (timer.time() < timeoutS * 1000) && (rightSlide.isBusy() && leftSlide.isBusy())) {
+            slidesPower(motorPowerDir * Math.abs(speed));
         }
 
         this.stopAll();

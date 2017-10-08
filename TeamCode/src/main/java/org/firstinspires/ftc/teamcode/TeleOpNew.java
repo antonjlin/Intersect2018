@@ -75,32 +75,14 @@ public class TeleOpNew extends LinearOpMode {
             final double backLeft = r * Math.sin(robotAngle) + rightX;
             final double backRight = r * Math.cos(robotAngle) - rightX;
 
-
-            // needs revision
-            //counts how many times the slides have gone up to ensure not to go too high
-            int slidesUpCounter = 0;
-            if (gamepad1.y && slidesUpCounter == 0) {
-                slidesUpCounter++;
-                // makes the slides go up slightly higher
-                driveTrain.encoderSlidesUp(DriveTrain.Direction.FORWARD, 0.2, 6.25, 10);
-            } else if (gamepad1.y && slidesUpCounter < 3) {
-                slidesUpCounter++;
-                driveTrain.encoderSlidesUp(DriveTrain.Direction.FORWARD, 0.2, 6, 10);
-            }
-            if (gamepad1.a && slidesUpCounter == 1) {
-                slidesUpCounter--;
-                driveTrain.encoderSlidesUp(DriveTrain.Direction.BACKWARD, 0.2, 6.25, 10);
-            } else if (gamepad1.a && slidesUpCounter > 0) {
-                slidesUpCounter--;
-                driveTrain.encoderSlidesUp(DriveTrain.Direction.BACKWARD, 0.2, 6, 10);
-            }
-
             // for intake and placing glyphs
+            //  NEED TO CHANGE BUTTONS!!!
             if (gamepad1.b) {
                 driveTrain.conveyerSetPower(0.2);
             }
 
             // for opposite direction just incase
+            //  NEED TO CHANGE BUTTONS!!!
             if (gamepad1.x) {
                 driveTrain.conveyerSetPower(-0.2);
             }
@@ -113,6 +95,40 @@ public class TeleOpNew extends LinearOpMode {
                 driveTrain.slidesPower(-0.2);
             }
 
+            /*
+            double currentPos = rightSlide.getCurrentPosition();
+            if (gamepad1.y) {
+                if (currentPos < 5.75) {
+                    driveTrain.encoderMoveSlides(0.2, 6.25, 10000);
+                } else if (currentPos < 11.75) {
+                    driveTrain.encoderMoveSlides(0.2, 12.25, 10000);
+                } else if (currentPos < 17.75) {
+                    driveTrain.encoderMoveSlides(0.2, 18.25, 10000);
+                }
+            }
+            if (gamepad1.a) {
+                if (currentPos > 12.75) {
+                    driveTrain.encoderMoveSlides(0.2, 12.25, 10000);
+                } else if (currentPos > 6.75) {
+                    driveTrain.encoderMoveSlides(0.2, 6.25, 10000);
+                } else if (currentPos > 0.25) {
+                    driveTrain.encoderMoveSlides(0.2, 0, 10000);
+                }
+            }
+            */
+
+            if (gamepad1.a) {
+                driveTrain.encoderMoveSlides(0.2, 0, 10000);
+            }
+            if (gamepad1.b) {
+                driveTrain.encoderMoveSlides(0.2, 6.25, 10000);
+            }
+            if (gamepad1.x) {
+                driveTrain.encoderMoveSlides(0.2, 12.25, 10000);
+            }
+            if (gamepad1.y) {
+                driveTrain.encoderMoveSlides(0.2, 18.25, 10000);
+            }
             driveTrain.slidesPower(0);
             driveTrain.conveyerSetPower(0);
             lFmotor.setPower(frontLeft);
