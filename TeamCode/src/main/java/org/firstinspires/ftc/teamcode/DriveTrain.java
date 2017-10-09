@@ -987,6 +987,82 @@ public class DriveTrain {
         // Stop all motion
         this.stopAll();
     }
+    public void encoderDrive(double speed, double inches, Direction direction, double timeoutS) {
+        resetEncoders();
+        lB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        lF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        int newLBTarget;
+        int newRBTarget;
+        int newRFTarget;
+        int newLFTarget;
+
+        // Ensure that the opmode is still active
+
+        // Determine new target position, and pass to motor controller
+        if (direction == Direction.RIGHT) {
+            newLBTarget = lB.getCurrentPosition() + (int) (inches * TICKS_PER_INCH_FORWARD);
+            newRBTarget = rB.getCurrentPosition() - (int) (inches * TICKS_PER_INCH_FORWARD);
+            newLFTarget = lF.getCurrentPosition() - (int) (inches * TICKS_PER_INCH_FORWARD);
+            newRFTarget = rF.getCurrentPosition() + (int) (inches * TICKS_PER_INCH_FORWARD);
+        } else if (direction == Direction.LEFT) {
+            newLBTarget = lB.getCurrentPosition() - (int) (inches * TICKS_PER_INCH_FORWARD);
+            newRBTarget = rB.getCurrentPosition() + (int) (inches * TICKS_PER_INCH_FORWARD);
+            newLFTarget = lF.getCurrentPosition() + (int) (inches * TICKS_PER_INCH_FORWARD);
+            newRFTarget = rF.getCurrentPosition() - (int) (inches * TICKS_PER_INCH_FORWARD);
+        } else if (direction == Direction.FORWARD) {
+            newLBTarget = lB.getCurrentPosition() + (int) (inches * TICKS_PER_INCH_FORWARD);
+            newRBTarget = rB.getCurrentPosition() + (int) (inches * TICKS_PER_INCH_FORWARD);
+            newLFTarget = lF.getCurrentPosition() + (int) (inches * TICKS_PER_INCH_FORWARD);
+            newRFTarget = rF.getCurrentPosition() + (int) (inches * TICKS_PER_INCH_FORWARD);
+        } else if (direction == Direction.BACKWARD) {
+            newLBTarget = lB.getCurrentPosition() - (int) (inches * TICKS_PER_INCH_FORWARD);
+            newRBTarget = rB.getCurrentPosition() - (int) (inches * TICKS_PER_INCH_FORWARD);
+            newLFTarget = lF.getCurrentPosition() - (int) (inches * TICKS_PER_INCH_FORWARD);
+            newRFTarget = rF.getCurrentPosition() - (int) (inches * TICKS_PER_INCH_FORWARD);
+        } else {
+            newLBTarget = lB.getCurrentPosition();
+            newRBTarget = rB.getCurrentPosition();
+            newLFTarget = lF.getCurrentPosition();
+            newRFTarget = rF.getCurrentPosition();
+        }
+        lF.setTargetPosition(newLFTarget);
+        rF.setTargetPosition(newRFTarget);
+        lB.setTargetPosition(newLBTarget);
+        rB.setTargetPosition(newRBTarget);
+
+        // Turn On RUN_TO_POSITION
+        lF.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rF.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        lB.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rB.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        // reset the timeout time and start motion.
+        timer.reset();
+        lF.setPower(Math.abs(speed));
+        rF.setPower(Math.abs(speed));
+        lB.setPower(Math.abs(speed));
+        rB.setPower(Math.abs(speed));
+
+        // keep looping while we are still active, and there is time left, and both motors are running.
+        while (opMode.opModeIsActive() &&
+                (timer.time()< timeoutS*1000) &&
+                (lF.isBusy() && rF.isBusy() && rB.isBusy() && lB.isBusy())) {
+
+        }
+
+        // Stop all motion
+        this.stopAll();
+
+        // Turn off RUN_TO_POSITION
+        lF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        lB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        // resetEncoders();
+        //  sleep(250);   // optional pause after each move
+    }
 
     public void moveBkwRight(double speed, double rightSpeed, double inches, double timeoutS) {
         resetEncoders();
