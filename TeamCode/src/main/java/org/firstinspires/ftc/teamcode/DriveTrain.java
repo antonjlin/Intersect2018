@@ -37,8 +37,8 @@ public class DriveTrain {
     private final int driveStraightErrorMargin = 2;
     private final int encoderDriveRampMax = 40;
     private final int encoderDriveRampMin = 1;
-    int ambientBlue = 0;
-    int ambientRed = 0;
+    private int ambientBlue = 0;
+    private int ambientRed = 0;
 
     double average;
     LinearOpMode opMode;

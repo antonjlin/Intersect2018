@@ -20,31 +20,15 @@ public class AutoFull extends LinearOpMode {
     static DcMotor rF, rB, lF, lB, flywheel1, flywheel2, sweeperLow;
     static GyroSensor gyro;
     static ColorSensor jewelColor;
-    static int conversionFactor = 50;
-    static Servo sideWall;
-    static CRServo buttonPusher;
     boolean red = false;
-    boolean center = true;
-    boolean timedOut = false;
-    boolean getBeacons = true;
-    double average;
     DriveTrain driveTrain;
     char alliance;
-    String parkCenter;
     int state;
-    int beaconAction = 0;
-    int ambientBlue = 0;
-    int ambientRed = 0;
     private BNO055IMU adaImu;
     private IMU imu;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        double speed = 0.2;
-        int gyroRampMax = 20;
-        int gyroRampMin = 3;
-        int shootingPositionDistance = 15;
-        int wallPositionDriveDistance = 50;
         initHardware();
         waitForStart();
         state = 0;// Todo:
@@ -56,7 +40,6 @@ public class AutoFull extends LinearOpMode {
 
 
     public void initHardware() {
-        buttonPusher = hardwareMap.crservo.get("buttonPusher");
         rF = hardwareMap.dcMotor.get("rF");
         rB = hardwareMap.dcMotor.get("rB");
         lF = hardwareMap.dcMotor.get("lF");
@@ -77,8 +60,7 @@ public class AutoFull extends LinearOpMode {
         imu = new IMU(adaImu);
         jewelColor = hardwareMap.colorSensor.get("jewelColor");
         sweeperLow = hardwareMap.dcMotor.get("sweeperLow");
-        sideWall = hardwareMap.servo.get("sideWall");
-        sideWall.setPosition(Functions.sideWallUpPos);
+
         gyro = hardwareMap.gyroSensor.get("gyro");
         driveTrain = new DriveTrain(this);
         driveTrain.detectAmbientLight(jewelColor);
