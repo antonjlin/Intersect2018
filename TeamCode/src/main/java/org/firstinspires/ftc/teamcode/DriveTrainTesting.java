@@ -28,7 +28,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 public class DriveTrainTesting extends LinearOpMode {
     static DcMotor motor1;
     DriveTrain driveTrain;
-    static ColorSensor floorColor;
+    static ColorSensor jewelColor;
 
     static DcMotor rF, rB, lF, lB;
     static GyroSensor gyro;
@@ -112,7 +112,7 @@ public class DriveTrainTesting extends LinearOpMode {
         imu = new IMU(adaImu);
 
         //gyro = hardwareMap.gyroSensor.get("gyro");
-        floorColor = hardwareMap.colorSensor.get("floorColor");
+        jewelColor = hardwareMap.colorSensor.get("jewelColor");
 
         servoMain = hardwareMap.servo.get("servoMain");
         servoSec = hardwareMap.servo.get("servoSec");
@@ -133,7 +133,7 @@ public class DriveTrainTesting extends LinearOpMode {
         rB.setDirection(DcMotor.Direction.FORWARD);
         lB.setDirection(DcMotor.Direction.REVERSE);
         lF.setDirection(DcMotor.Direction.REVERSE);
-        driveTrain = new DriveTrain(lB, rB, lF, rF, this, gyro, floorColor);
+        driveTrain = new DriveTrain(lB, rB, lF, rF, this, gyro, jewelColor);
 
     }
 
