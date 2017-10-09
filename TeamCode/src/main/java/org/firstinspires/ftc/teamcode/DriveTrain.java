@@ -24,7 +24,7 @@ public class DriveTrain {
     static ModernRoboticsI2cGyro mrGyro;
     static ColorSensor colorSensor;
     public double minMotorPower = 0.085; //minimum power that robot still moves
-    IMU imu;
+    static IMU imu;
 
     // Tunable parameters
     private double balanceThreshold = 1.5;
@@ -43,15 +43,14 @@ public class DriveTrain {
     double average;
     LinearOpMode opMode;
 
-    public DriveTrain(DcMotor lb, DcMotor rb, DcMotor lf, DcMotor rf, LinearOpMode opMode, GyroSensor gyro, ColorSensor colorSensor) {
-        DriveTrain.lB = lb;
-        DriveTrain.rB = rb;
-        DriveTrain.lF = lf;
-        DriveTrain.rF = rf;
+    public DriveTrain( LinearOpMode opMode) {
+        lB = opMode.hardwareMap.dcMotor.get("frontLeft");
+        rF = opMode.hardwareMap.dcMotor.get("frontRight");
+        lB = opMode.hardwareMap.dcMotor.get("backLeft");
+        rB = opMode.hardwareMap.dcMotor.get("backRight");
         this.opMode = opMode;
-        DriveTrain.colorSensor = colorSensor;
+        colorSensor = opMode.hardwareMap.colorSensor.get("colorSensor");
         DriveTrain.gyro = gyro; // map to generic Gyro class
-
         BNO055IMU adaImu = opMode.hardwareMap.get(BNO055IMU.class, "imu");
         imu = new IMU(adaImu);
 
@@ -69,7 +68,6 @@ public class DriveTrain {
         rB.setDirection(DcMotorSimple.Direction.FORWARD);
         lB.setDirection(DcMotorSimple.Direction.REVERSE);
         lF.setDirection(DcMotorSimple.Direction.REVERSE);
-
     }
 
     public void conveyerSetPower(double power) {

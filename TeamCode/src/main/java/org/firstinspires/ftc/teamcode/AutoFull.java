@@ -1,6 +1,7 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -18,7 +19,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class AutoFull extends LinearOpMode {
     static DcMotor rF, rB, lF, lB, flywheel1, flywheel2, sweeperLow;
     static GyroSensor gyro;
-    static ColorSensor beaconColor,floorColor;
+    static ColorSensor jewelColor;
     static int conversionFactor = 50;
     static Servo sideWall;
     static CRServo buttonPusher;
@@ -34,6 +35,8 @@ public class AutoFull extends LinearOpMode {
     int beaconAction = 0;
     int ambientBlue = 0;
     int ambientRed = 0;
+    private BNO055IMU adaImu;
+    private IMU imu;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -70,23 +73,17 @@ public class AutoFull extends LinearOpMode {
         rB.setDirection(DcMotor.Direction.FORWARD);
         lB.setDirection(DcMotor.Direction.REVERSE);
         lF.setDirection(DcMotor.Direction.REVERSE);
-
-
-        flywheel1 = hardwareMap.dcMotor.get("flywheel1");
-        flywheel2 = hardwareMap.dcMotor.get("flywheel2");
-        flywheel1.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        //beaconColor = hardwareMap.colorSensor.get("beaconColor");
-        floorColor = hardwareMap.colorSensor.get("floorColor");
-        beaconColor = hardwareMap.colorSensor.get("beaconColor");
+        adaImu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu = new IMU(adaImu);
+        jewelColor = hardwareMap.colorSensor.get("jewelColor");
         sweeperLow = hardwareMap.dcMotor.get("sweeperLow");
         sideWall = hardwareMap.servo.get("sideWall");
         sideWall.setPosition(Functions.sideWallUpPos);
-        beaconColor.setI2cAddress(I2cAddr.create8bit(0x3c));
         gyro = hardwareMap.gyroSensor.get("gyro");
-        driveTrain = new DriveTrain(lB, rB, lF, rF, this, gyro, floorColor);
-        driveTrain.detectAmbientLight(beaconColor);
+        driveTrain = new DriveTrain(this);
+        driveTrain.detectAmbientLight(jewelColor);
         driveTrain.calibrateGyro(telemetry);
+
     }
 
     public void options(){

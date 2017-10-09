@@ -49,6 +49,8 @@ public class TeleOpNew extends LinearOpMode {
     static GyroSensor gyro;
     static ColorSensor floorColor;
     static DcMotor rightConv, leftConv, leftSlide, rightSlide;
+    private BNO055IMU adaImu;
+    private IMU imu;
     int leftSlidePos;
     int rightSlidePos;
     int slideTicksPerInch;
@@ -57,6 +59,7 @@ public class TeleOpNew extends LinearOpMode {
     int pos2 = 12;
     int pos3 = 18;
     int pos4 = 24;
+
 
 
     // RampFlywheel rampFlywheel = new RampFlywheel();
@@ -87,14 +90,6 @@ public class TeleOpNew extends LinearOpMode {
                 driveTrain.conveyerSetPower(-0.2);
             }
 
-            // adjust position of slides if necessary
-            if (gamepad1.right_bumper) {
-                driveTrain.slidesPower(0.2);
-            }
-            if (gamepad1.left_bumper) {
-                driveTrain.slidesPower(-0.2);
-            }
-
             /*
             double currentPos = rightSlide.getCurrentPosition();
             if (gamepad1.y) {
@@ -117,20 +112,6 @@ public class TeleOpNew extends LinearOpMode {
             }
             */
 
-            if (gamepad1.a) {
-                driveTrain.encoderMoveSlides(0.2, 0, 10000);
-            }
-            if (gamepad1.b) {
-                driveTrain.encoderMoveSlides(0.2, 6.25, 10000);
-            }
-            if (gamepad1.x) {
-                driveTrain.encoderMoveSlides(0.2, 12.25, 10000);
-            }
-            if (gamepad1.y) {
-                driveTrain.encoderMoveSlides(0.2, 18.25, 10000);
-            }
-            driveTrain.slidesPower(0);
-            driveTrain.conveyerSetPower(0);
             lFmotor.setPower(frontLeft);
             rFmotor.setPower(frontRight);
             lBmotor.setPower(backLeft);
@@ -182,6 +163,10 @@ public class TeleOpNew extends LinearOpMode {
             leftConv.setDirection(DcMotorSimple.Direction.FORWARD);
             leftSlide.setDirection(DcMotorSimple.Direction.REVERSE);
             rightSlide.setDirection(DcMotorSimple.Direction.FORWARD);
+            adaImu = hardwareMap.get(BNO055IMU.class, "IMU");
+            imu = new IMU(adaImu);
+
+
         }
 
 }
