@@ -34,6 +34,9 @@ public class DriveTrain {
     private int gyroTurnRampMax = 60;  // starting point of scaling back speed of motor for turning
     private int gyroTurnRampMin = 3;   // stopping point to turn off motor abs(heading-target)<vlaue
     private double minRotationPower = 0.03; // minimum power to move robot
+    private final int driveStraightErrorMargin = 2;
+    private final int encoderDriveRampMax = 40;
+    private final int encoderDriveRampMin = 1;
 
     double average;
     LinearOpMode opMode;
@@ -285,6 +288,16 @@ public class DriveTrain {
         return (e-gyroTurnRampMin)/(gyroTurnRampMax-gyroTurnRampMin) ;
     }
 
+    private double powerAdjustEncoderDrive ( double e ) {
+        e = Math.abs(e);
+        if ( e > encoderDriveRampMax) {
+            return 1.0;
+        }
+        else if (e < encoderDriveRampMin) {
+            return 0;
+        }
+        return (e-encoderDriveRampMin)/(encoderDriveRampMax-encoderDriveRampMin) ;
+    }
 
     // @param degree - turn in degree up to +/- 180.   +/- = clockwise/counterclockwise
     // @param power - turn motor power
@@ -987,6 +1000,7 @@ public class DriveTrain {
         // Stop all motion
         this.stopAll();
     }
+
     public void encoderDrive(double speed, double inches, Direction direction, double timeoutS) {
         resetEncoders();
         lB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -1046,16 +1060,228 @@ public class DriveTrain {
 
         // reset the timeout time and start motion.
         timer.reset();
-        lF.setPower(Math.abs(speed));
-        rF.setPower(Math.abs(speed));
-        lB.setPower(Math.abs(speed));
-        rB.setPower(Math.abs(speed));
+        switch (direction) {
+            case RIGHT:
+                lF.setPower(-Math.abs(speed));
+                rF.setPower(Math.abs(speed));
+                lB.setPower(Math.abs(speed));
+                rB.setPower(-Math.abs(speed));
+                break;
+            case LEFT:
+                lF.setPower(Math.abs(speed));
+                rF.setPower(-Math.abs(speed));
+                lB.setPower(-Math.abs(speed));
+                rB.setPower(Math.abs(speed));
+                break;
+            case FORWARD:
+                lF.setPower(Math.abs(speed));
+                rF.setPower(Math.abs(speed));
+                lB.setPower(Math.abs(speed));
+                rB.setPower(Math.abs(speed));
+                break;
+            case BACKWARD:
+                lF.setPower(-Math.abs(speed));
+                rF.setPower(-Math.abs(speed));
+                lB.setPower(-Math.abs(speed));
+                rB.setPower(-Math.abs(speed));
+                break;
+            default:
+                lF.setPower(0);
+                rF.setPower(0);
+                lB.setPower(0);
+                rB.setPower(0);
+                break;
+        }
 
         // keep looping while we are still active, and there is time left, and both motors are running.
         while (opMode.opModeIsActive() &&
                 (timer.time()< timeoutS*1000) &&
                 (lF.isBusy() && rF.isBusy() && rB.isBusy() && lB.isBusy())) {
 
+        }
+
+        // Stop all motion
+        this.stopAll();
+
+        // Turn off RUN_TO_POSITION
+        lF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        lB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        // resetEncoders();
+        //  sleep(250);   // optional pause after each move
+    }
+
+    public void encoderDriveIMU(double speed, double inches, Direction direction, double timeoutS) {
+        resetEncoders();
+        lB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        lF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        int newLBTarget;
+        int newRBTarget;
+        int newRFTarget;
+        int newLFTarget;
+
+        // Get current heading (should be maintained throughout drive)
+        double targetHeading = imu.getAngle();
+        double e;
+
+        // Ensure that the opmode is still active
+
+        // Determine new target position, and pass to motor controller
+        switch (direction) {
+            case RIGHT:
+                newLBTarget = lB.getCurrentPosition() + (int) (inches * TICKS_PER_INCH_FORWARD);
+                newRBTarget = rB.getCurrentPosition() - (int) (inches * TICKS_PER_INCH_FORWARD);
+                newLFTarget = lF.getCurrentPosition() - (int) (inches * TICKS_PER_INCH_FORWARD);
+                newRFTarget = rF.getCurrentPosition() + (int) (inches * TICKS_PER_INCH_FORWARD);
+                break;
+            case LEFT:
+                newLBTarget = lB.getCurrentPosition() - (int) (inches * TICKS_PER_INCH_FORWARD);
+                newRBTarget = rB.getCurrentPosition() + (int) (inches * TICKS_PER_INCH_FORWARD);
+                newLFTarget = lF.getCurrentPosition() + (int) (inches * TICKS_PER_INCH_FORWARD);
+                newRFTarget = rF.getCurrentPosition() - (int) (inches * TICKS_PER_INCH_FORWARD);
+                break;
+            case FORWARD:
+                newLBTarget = lB.getCurrentPosition() + (int) (inches * TICKS_PER_INCH_FORWARD);
+                newRBTarget = rB.getCurrentPosition() + (int) (inches * TICKS_PER_INCH_FORWARD);
+                newLFTarget = lF.getCurrentPosition() + (int) (inches * TICKS_PER_INCH_FORWARD);
+                newRFTarget = rF.getCurrentPosition() + (int) (inches * TICKS_PER_INCH_FORWARD);
+                break;
+            case BACKWARD:
+                newLBTarget = lB.getCurrentPosition() - (int) (inches * TICKS_PER_INCH_FORWARD);
+                newRBTarget = rB.getCurrentPosition() - (int) (inches * TICKS_PER_INCH_FORWARD);
+                newLFTarget = lF.getCurrentPosition() - (int) (inches * TICKS_PER_INCH_FORWARD);
+                newRFTarget = rF.getCurrentPosition() - (int) (inches * TICKS_PER_INCH_FORWARD);
+                break;
+            default:
+                newLBTarget = lB.getCurrentPosition();
+                newRBTarget = rB.getCurrentPosition();
+                newLFTarget = lF.getCurrentPosition();
+                newRFTarget = rF.getCurrentPosition();
+                break;
+        }
+        lF.setTargetPosition(newLFTarget);
+        rF.setTargetPosition(newRFTarget);
+        lB.setTargetPosition(newLBTarget);
+        rB.setTargetPosition(newRBTarget);
+
+        // Turn On RUN_TO_POSITION
+        lF.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rF.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        lB.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rB.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        // reset the timeout time and start motion.
+        timer.reset();
+        switch (direction) {
+            case RIGHT:
+                lF.setPower(-Math.abs(speed));
+                rF.setPower(Math.abs(speed));
+                lB.setPower(Math.abs(speed));
+                rB.setPower(-Math.abs(speed));
+                break;
+            case LEFT:
+                lF.setPower(Math.abs(speed));
+                rF.setPower(-Math.abs(speed));
+                lB.setPower(-Math.abs(speed));
+                rB.setPower(Math.abs(speed));
+                break;
+            case FORWARD:
+                lF.setPower(Math.abs(speed));
+                rF.setPower(Math.abs(speed));
+                lB.setPower(Math.abs(speed));
+                rB.setPower(Math.abs(speed));
+                break;
+            case BACKWARD:
+                lF.setPower(-Math.abs(speed));
+                rF.setPower(-Math.abs(speed));
+                lB.setPower(-Math.abs(speed));
+                rB.setPower(-Math.abs(speed));
+                break;
+            default:
+                lF.setPower(0);
+                rF.setPower(0);
+                lB.setPower(0);
+                rB.setPower(0);
+                break;
+        }
+
+        // keep looping while we are still active, and there is time left, and both motors are running.
+        while (opMode.opModeIsActive() &&
+                (timer.time()< timeoutS*1000) &&
+                (lF.isBusy() && rF.isBusy() && rB.isBusy() && lB.isBusy())) {
+            e = targetHeading - imu.getAngle();
+
+            if (Math.abs(e) > driveStraightErrorMargin) {
+
+                switch (direction) {
+                    case RIGHT:
+                        if(e > 0) { //CW
+                            lF.setPower((1 - powerAdjust(Math.abs(e))) * (-Math.abs(speed)));
+                            rF.setPower((1 + powerAdjust(Math.abs(e))) * Math.abs(speed));
+                            lB.setPower((1 + powerAdjust(Math.abs(e))) * Math.abs(speed));
+                            rB.setPower((1 - powerAdjust(Math.abs(e))) * (-Math.abs(speed)));
+
+                        } else { // CCW
+                            lF.setPower((1 + powerAdjust(Math.abs(e))) * (-Math.abs(speed)));
+                            rF.setPower((1 - powerAdjust(Math.abs(e))) * Math.abs(speed));
+                            lB.setPower((1 - powerAdjust(Math.abs(e))) * Math.abs(speed));
+                            rB.setPower((1 + powerAdjust(Math.abs(e))) * (-Math.abs(speed)));
+                        }
+                        break;
+                    case LEFT:
+                        if(e > 0) { //CW
+                            lF.setPower((1 - powerAdjust(Math.abs(e))) * (Math.abs(speed)));
+                            rF.setPower((1 + powerAdjust(Math.abs(e))) * (-Math.abs(speed)));
+                            lB.setPower((1 + powerAdjust(Math.abs(e))) * (-Math.abs(speed)));
+                            rB.setPower((1 - powerAdjust(Math.abs(e))) * (Math.abs(speed)));
+
+                        } else { // CCW
+                            lF.setPower((1 + powerAdjust(Math.abs(e))) * (Math.abs(speed)));
+                            rF.setPower((1 - powerAdjust(Math.abs(e))) * (-Math.abs(speed)));
+                            lB.setPower((1 - powerAdjust(Math.abs(e))) * (-Math.abs(speed)));
+                            rB.setPower((1 + powerAdjust(Math.abs(e))) * (Math.abs(speed)));
+                        }
+                        break;
+                    case FORWARD:
+                        if(e > 0) { //CW
+                            lF.setPower((1 - powerAdjust(Math.abs(e))) * Math.abs(speed));
+                            rF.setPower((1 + powerAdjust(Math.abs(e))) * Math.abs(speed));
+                            lB.setPower((1 - powerAdjust(Math.abs(e))) * Math.abs(speed));
+                            rB.setPower((1 + powerAdjust(Math.abs(e))) * Math.abs(speed));
+
+                        } else { // CCW
+                            lF.setPower((1 + powerAdjust(Math.abs(e))) * Math.abs(speed));
+                            rF.setPower((1 - powerAdjust(Math.abs(e))) * Math.abs(speed));
+                            lB.setPower((1 + powerAdjust(Math.abs(e))) * Math.abs(speed));
+                            rB.setPower((1 - powerAdjust(Math.abs(e))) * Math.abs(speed));
+                        }
+                        break;
+                    case BACKWARD:
+                        if(e > 0) { //CW
+                            lF.setPower((1 + powerAdjust(Math.abs(e))) * (-Math.abs(speed)));
+                            rF.setPower((1 - powerAdjust(Math.abs(e))) * (-Math.abs(speed)));
+                            lB.setPower((1 + powerAdjust(Math.abs(e))) * (-Math.abs(speed)));
+                            rB.setPower((1 - powerAdjust(Math.abs(e))) * (-Math.abs(speed)));
+
+                        } else { // CCW
+                            lF.setPower((1 + powerAdjust(Math.abs(e))) * (-Math.abs(speed)));
+                            rF.setPower((1 - powerAdjust(Math.abs(e))) * (-Math.abs(speed)));
+                            lB.setPower((1 + powerAdjust(Math.abs(e))) * (-Math.abs(speed)));
+                            rB.setPower((1 - powerAdjust(Math.abs(e))) * (-Math.abs(speed)));
+                        }
+                        break;
+                    default:
+                        lF.setPower(0);
+                        rF.setPower(0);
+                        lB.setPower(0);
+                        rB.setPower(0);
+                        break;
+                }
+
+            }
         }
 
         // Stop all motion
