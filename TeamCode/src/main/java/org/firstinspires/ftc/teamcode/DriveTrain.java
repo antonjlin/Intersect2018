@@ -1001,31 +1001,37 @@ public class DriveTrain {
         // Ensure that the opmode is still active
 
         // Determine new target position, and pass to motor controller
-        if (direction == Direction.RIGHT) {
-            newLBTarget = lB.getCurrentPosition() + (int) (inches * TICKS_PER_INCH_FORWARD);
-            newRBTarget = rB.getCurrentPosition() - (int) (inches * TICKS_PER_INCH_FORWARD);
-            newLFTarget = lF.getCurrentPosition() - (int) (inches * TICKS_PER_INCH_FORWARD);
-            newRFTarget = rF.getCurrentPosition() + (int) (inches * TICKS_PER_INCH_FORWARD);
-        } else if (direction == Direction.LEFT) {
-            newLBTarget = lB.getCurrentPosition() - (int) (inches * TICKS_PER_INCH_FORWARD);
-            newRBTarget = rB.getCurrentPosition() + (int) (inches * TICKS_PER_INCH_FORWARD);
-            newLFTarget = lF.getCurrentPosition() + (int) (inches * TICKS_PER_INCH_FORWARD);
-            newRFTarget = rF.getCurrentPosition() - (int) (inches * TICKS_PER_INCH_FORWARD);
-        } else if (direction == Direction.FORWARD) {
-            newLBTarget = lB.getCurrentPosition() + (int) (inches * TICKS_PER_INCH_FORWARD);
-            newRBTarget = rB.getCurrentPosition() + (int) (inches * TICKS_PER_INCH_FORWARD);
-            newLFTarget = lF.getCurrentPosition() + (int) (inches * TICKS_PER_INCH_FORWARD);
-            newRFTarget = rF.getCurrentPosition() + (int) (inches * TICKS_PER_INCH_FORWARD);
-        } else if (direction == Direction.BACKWARD) {
-            newLBTarget = lB.getCurrentPosition() - (int) (inches * TICKS_PER_INCH_FORWARD);
-            newRBTarget = rB.getCurrentPosition() - (int) (inches * TICKS_PER_INCH_FORWARD);
-            newLFTarget = lF.getCurrentPosition() - (int) (inches * TICKS_PER_INCH_FORWARD);
-            newRFTarget = rF.getCurrentPosition() - (int) (inches * TICKS_PER_INCH_FORWARD);
-        } else {
-            newLBTarget = lB.getCurrentPosition();
-            newRBTarget = rB.getCurrentPosition();
-            newLFTarget = lF.getCurrentPosition();
-            newRFTarget = rF.getCurrentPosition();
+        switch (direction) {
+            case RIGHT:
+                newLBTarget = lB.getCurrentPosition() + (int) (inches * TICKS_PER_INCH_FORWARD);
+                newRBTarget = rB.getCurrentPosition() - (int) (inches * TICKS_PER_INCH_FORWARD);
+                newLFTarget = lF.getCurrentPosition() - (int) (inches * TICKS_PER_INCH_FORWARD);
+                newRFTarget = rF.getCurrentPosition() + (int) (inches * TICKS_PER_INCH_FORWARD);
+                break;
+            case LEFT:
+                newLBTarget = lB.getCurrentPosition() - (int) (inches * TICKS_PER_INCH_FORWARD);
+                newRBTarget = rB.getCurrentPosition() + (int) (inches * TICKS_PER_INCH_FORWARD);
+                newLFTarget = lF.getCurrentPosition() + (int) (inches * TICKS_PER_INCH_FORWARD);
+                newRFTarget = rF.getCurrentPosition() - (int) (inches * TICKS_PER_INCH_FORWARD);
+                break;
+            case FORWARD:
+                newLBTarget = lB.getCurrentPosition() + (int) (inches * TICKS_PER_INCH_FORWARD);
+                newRBTarget = rB.getCurrentPosition() + (int) (inches * TICKS_PER_INCH_FORWARD);
+                newLFTarget = lF.getCurrentPosition() + (int) (inches * TICKS_PER_INCH_FORWARD);
+                newRFTarget = rF.getCurrentPosition() + (int) (inches * TICKS_PER_INCH_FORWARD);
+                break;
+            case BACKWARD:
+                newLBTarget = lB.getCurrentPosition() - (int) (inches * TICKS_PER_INCH_FORWARD);
+                newRBTarget = rB.getCurrentPosition() - (int) (inches * TICKS_PER_INCH_FORWARD);
+                newLFTarget = lF.getCurrentPosition() - (int) (inches * TICKS_PER_INCH_FORWARD);
+                newRFTarget = rF.getCurrentPosition() - (int) (inches * TICKS_PER_INCH_FORWARD);
+                break;
+            default:
+                newLBTarget = lB.getCurrentPosition();
+                newRBTarget = rB.getCurrentPosition();
+                newLFTarget = lF.getCurrentPosition();
+                newRFTarget = rF.getCurrentPosition();
+                break;
         }
         lF.setTargetPosition(newLFTarget);
         rF.setTargetPosition(newRFTarget);
