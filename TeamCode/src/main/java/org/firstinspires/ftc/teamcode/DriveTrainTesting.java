@@ -30,8 +30,7 @@ public class DriveTrainTesting extends LinearOpMode {
     DriveTrain driveTrain;
     static ColorSensor jewelColor;
 
-    static DcMotor rF, rB, lF, lB;
-    static GyroSensor gyro;
+    private DcMotor rF, rB, lF, lB;
     private BNO055IMU adaImu;
     IMU imu;
 
@@ -49,9 +48,13 @@ public class DriveTrainTesting extends LinearOpMode {
             //    TEST 1
 
             //test encoder functions once drive train is set up
-            driveTrain.moveBkwd(0.3,3,10);
+
+            driveTrain.encoderDriveIMU(0.3,30, DriveTrain.Direction.FORWARD,10);
             Functions.waitFor(10000);
-            driveTrain.moveFwd(0.3,30,10);
+            driveTrain.encoderDriveIMU(0.3,30, DriveTrain.Direction.BACKWARD,10);
+            driveTrain.encoderDriveIMU(0.3,10, DriveTrain.Direction.LEFT,10);
+            Functions.waitFor(10000);
+            driveTrain.encoderDriveIMU(0.3,10, DriveTrain.Direction.RIGHT,10);
             /*Functions.waitFor(13000);
             driveTrain.moveRight(0.2,7, 15);
             Functions.waitFor(10000);
@@ -97,6 +100,7 @@ public class DriveTrainTesting extends LinearOpMode {
             //driveTrain.rotateIMURamp(-90, 0.2, 10, imu, telemetry);
             driveTrain.rotateIMURamp(180,0.4,10,telemetry);
 
+
             Functions.waitFor(100000000);
 
             //     TEST 4
@@ -107,33 +111,16 @@ public class DriveTrainTesting extends LinearOpMode {
     }
 
     public void initHardware() {
-
         adaImu = hardwareMap.get(BNO055IMU.class, "imu");
         imu = new IMU(adaImu);
-
-        //gyro = hardwareMap.gyroSensor.get("gyro");
-        jewelColor = hardwareMap.colorSensor.get("jewelColor");
-
         servoMain = hardwareMap.servo.get("servoMain");
         servoSec = hardwareMap.servo.get("servoSec");
+        driveTrain = new DriveTrain(this);
+        this.lB = hardwareMap.dcMotor.get("lB");
+        this.rF = hardwareMap.dcMotor.get("rF");
+        this.lF = hardwareMap.dcMotor.get("lF");
+        this.rB = hardwareMap.dcMotor.get("rB");
 
-        rF = hardwareMap.dcMotor.get("rF");
-        rB = hardwareMap.dcMotor.get("rB");
-        lF = hardwareMap.dcMotor.get("lF");
-        lB = hardwareMap.dcMotor.get("lB");
-        lB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        lF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        lF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        lB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rF.setDirection(DcMotor.Direction.FORWARD);
-        rB.setDirection(DcMotor.Direction.FORWARD);
-        lB.setDirection(DcMotor.Direction.REVERSE);
-        lF.setDirection(DcMotor.Direction.REVERSE);
-        driveTrain = new DriveTrain(lB, rB, lF, rF, this, gyro, jewelColor);
 
     }
 

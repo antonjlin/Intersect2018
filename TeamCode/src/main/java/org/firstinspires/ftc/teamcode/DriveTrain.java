@@ -19,12 +19,10 @@ public class DriveTrain {
     ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
     static final double TICKS_PER_INCH_FORWARD = 62;
     static final double TICKS_PER_INCH_STRAFE = 61.3;
-    static DcMotor rF, rB, lF, lB, flywheel1, flywheel2, sweeperLow, sweeperHigh, rightConv, leftConv, rightSlide, leftSlide;
-    static GyroSensor gyro;
-    static ModernRoboticsI2cGyro mrGyro;
-    static ColorSensor colorSensor;
+    public DcMotor rF, rB, lF, lB, flywheel1, flywheel2, sweeperLow, sweeperHigh, rightConv, leftConv, rightSlide, leftSlide;
+    public ColorSensor colorSensor;
     public double minMotorPower = 0.085; //minimum power that robot still moves
-    static IMU imu;
+    public IMU imu;
 
     // Tunable parameters
     private double balanceThreshold = 1.5;
@@ -44,30 +42,40 @@ public class DriveTrain {
     LinearOpMode opMode;
 
     public DriveTrain( LinearOpMode opMode) {
-        lB = opMode.hardwareMap.dcMotor.get("frontLeft");
-        rF = opMode.hardwareMap.dcMotor.get("frontRight");
-        lB = opMode.hardwareMap.dcMotor.get("backLeft");
-        rB = opMode.hardwareMap.dcMotor.get("backRight");
         this.opMode = opMode;
+        lB = opMode.hardwareMap.dcMotor.get("lB");
+        rF = opMode.hardwareMap.dcMotor.get("rF");
+        lF = opMode.hardwareMap.dcMotor.get("lF");
+        rB = opMode.hardwareMap.dcMotor.get("rB");
         colorSensor = opMode.hardwareMap.colorSensor.get("colorSensor");
-        DriveTrain.gyro = gyro; // map to generic Gyro class
         BNO055IMU adaImu = opMode.hardwareMap.get(BNO055IMU.class, "imu");
         imu = new IMU(adaImu);
-
-        lB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        lF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
+        opMode.telemetry.addLine("sdfeaes");
+        opMode.telemetry.update();
+        Functions.waitFor(1000);
         lB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         lF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        lF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        lB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rF.setDirection(DcMotor.Direction.FORWARD);
+        rB.setDirection(DcMotor.Direction.FORWARD);
+        lB.setDirection(DcMotor.Direction.REVERSE);
+        lF.setDirection(DcMotor.Direction.REVERSE);
+        opMode.telemetry.addLine("fag");
+        opMode.telemetry.update();
+        Functions.waitFor(1000);
 
-        rF.setDirection(DcMotorSimple.Direction.FORWARD);
-        rB.setDirection(DcMotorSimple.Direction.FORWARD);
-        lB.setDirection(DcMotorSimple.Direction.REVERSE);
-        lF.setDirection(DcMotorSimple.Direction.REVERSE);
+        opMode.telemetry.addLine("queer");
+        opMode.telemetry.update();
+        Functions.waitFor(1000);
+
+        opMode.telemetry.addLine("gay");
+        opMode.telemetry.update();
+        Functions.waitFor(1000);
     }
 
     public void conveyerSetPower(double power) {
@@ -100,43 +108,6 @@ public class DriveTrain {
             rF.setPower(-Math.abs(speed));
             rB.setPower(Math.abs(speed));
         }
-    }
-
-    /**
-     * Mecanum drive function
-     * @param direction Direction of robot movement. 0 - 360
-     * @param vD velocity
-     * @param time how long is the drive in msec
-     */
-    public void mecanumDrive(int direction, double vD, int time) {
-
-//        if (direction < 0 ) direction = 360 + direction;
-//        double thetaD = direction *2.0 * Math.PI / 360.0;
-
-        //conver from degree to radian
-        double thetaD = (double)((direction<0)? 360 + direction: direction ) *2.0 * Math.PI / 360.0;
-        double frontLeft = vD * Math.sin(thetaD + Math.PI / 4);
-        double frontRight = vD * Math.cos(thetaD + Math.PI / 4);
-        double backLeft = vD * Math.cos(thetaD + Math.PI / 4);
-        double backRight = vD * Math.sin(thetaD + Math.PI / 4);
-        double maxF = Math.max(Math.abs(frontLeft), Math.abs(frontRight));
-        double maxB = Math.max(Math.abs(backLeft), Math.abs(backRight));
-        double max = Math.max(maxF, maxB);
-        //
-        if (max > 1.0) {
-            frontLeft = frontLeft / max;
-            frontRight = frontRight / max;
-            backLeft = backLeft / max;
-            backRight = backRight / max;
-        }
-
-        lF.setPower(frontLeft);
-        lB.setPower(backLeft);
-        rF.setPower(frontRight);
-        rB.setPower(backRight);
-        Functions.waitFor(time);
-        stopAll();
-
     }
 
     private int headingCWError(int start, int turn, int current ) {
@@ -309,8 +280,8 @@ public class DriveTrain {
         rB.setPower(-power);
     }
 
-    public static void resetEncoders() {
-        lF.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    public void resetEncoders() {
+        this.lF.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lF.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         lB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lB.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -376,10 +347,10 @@ public class DriveTrain {
 
     public void encoderDrive(double speed, double inches, Direction direction, double timeoutS) {
         resetEncoders();
-        lB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        lF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        this.lB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        this.lF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        this.rB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        this.rF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         int newLBTarget;
         int newRBTarget;
         int newRFTarget;
@@ -916,15 +887,6 @@ public class DriveTrain {
         //  sleep(250);   // optional pause after each move
     }
 
-    public void calibrateGyro(Telemetry telemetry){
-        gyro.calibrate();
-        // make sure the gyro is calibrated before continuing
-        while (gyro.isCalibrating() && !opMode.isStopRequested())  {
-            Functions.waitFor(50);
-        }
-        telemetry.addLine("Robot Ready.");
-        telemetry.update();
-    }
 
     public void debugColor(ColorSensor colorsensor, Telemetry telemetry) {
         while (System.currentTimeMillis()

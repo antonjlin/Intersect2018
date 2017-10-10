@@ -129,7 +129,7 @@ public class TeleOpNew extends LinearOpMode {
             }
         }
         public void initHardware(){
-            driveTrain = new DriveTrain(lBmotor, rBmotor, lFmotor, rFmotor, this, gyro, floorColor);
+            driveTrain = new DriveTrain(this);
             rightConv = hardwareMap.dcMotor.get("rightConv");
             leftConv = hardwareMap.dcMotor.get("leftConv");
             rFmotor = hardwareMap.dcMotor.get("rF");

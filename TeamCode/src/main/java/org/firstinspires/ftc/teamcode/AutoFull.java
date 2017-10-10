@@ -64,7 +64,7 @@ public class AutoFull extends LinearOpMode {
         gyro = hardwareMap.gyroSensor.get("gyro");
         driveTrain = new DriveTrain(this);
         driveTrain.detectAmbientLight(jewelColor);
-        driveTrain.calibrateGyro(telemetry);
+        //driveTrain.calibrateGyro(telemetry);
 
     }
 
