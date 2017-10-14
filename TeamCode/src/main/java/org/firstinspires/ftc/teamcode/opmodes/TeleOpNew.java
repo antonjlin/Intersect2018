@@ -78,25 +78,28 @@ public class TeleOpNew extends LinearOpMode {
             final double backLeft = r * Math.sin(robotAngle) + rightX;
             final double backRight = r * Math.cos(robotAngle) - rightX;
 
-            // for intake and placing glyphs
-            //  NEED TO CHANGE BUTTONS!!!
+            lFmotor.setPower(frontLeft);
+            rFmotor.setPower(frontRight);
+            lBmotor.setPower(backLeft);
+            rBmotor.setPower(backRight);
+
             if (gamepad1.b) {
                 driveTrain.rollersSetPower(0.2);
-            }
-
-            // for opposite direction just incase
-            //  NEED TO CHANGE BUTTONS!!!
-            if (gamepad1.x) {
+            } else if (gamepad1.x) {
                 driveTrain.rollersSetPower(-0.2);
+            } else{
+                driveTrain.rollersSetPower(0);
             }
 
             if (gamepad1.right_bumper) {
                 driveTrain.slidesSetPower(0.2);
+            }else if (gamepad1.left_bumper) {
+                driveTrain.slidesSetPower(-0.2);
+            }else{
+                driveTrain.slidesSetPower(0);
             }
 
-            if (gamepad1.left_bumper) {
-                driveTrain.slidesSetPower(-0.2);
-            }
+
             /*
             double currentPos = rightSlide.getCurrentPosition();
             if (gamepad1.y) {
@@ -118,11 +121,6 @@ public class TeleOpNew extends LinearOpMode {
                 }
             }
             */
-
-            lFmotor.setPower(frontLeft);
-            rFmotor.setPower(frontRight);
-            lBmotor.setPower(backLeft);
-            rBmotor.setPower(backRight);
 
             if(gamepad1.a){
                 driveTrain.selfBalance(telemetry);
