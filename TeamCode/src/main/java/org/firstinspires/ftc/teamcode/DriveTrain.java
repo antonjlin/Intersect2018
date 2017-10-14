@@ -78,7 +78,7 @@ public class DriveTrain {
         Functions.waitFor(1000);
     }
 
-    public void conveyerSetPower(double power) {
+    public void rollersSetPower(double power) {
         rightConv.setPower(power);
         leftConv.setPower(power);
     }
@@ -108,6 +108,11 @@ public class DriveTrain {
             rF.setPower(-Math.abs(speed));
             rB.setPower(Math.abs(speed));
         }
+    }
+
+    public void slidesSetPower(double power) {
+        rightSlide.setPower(power);
+        leftSlide.setPower(power);
     }
 
     private int headingCWError(int start, int turn, int current ) {

@@ -81,15 +81,22 @@ public class TeleOpNew extends LinearOpMode {
             // for intake and placing glyphs
             //  NEED TO CHANGE BUTTONS!!!
             if (gamepad1.b) {
-                driveTrain.conveyerSetPower(0.2);
+                driveTrain.rollersSetPower(0.2);
             }
 
             // for opposite direction just incase
             //  NEED TO CHANGE BUTTONS!!!
             if (gamepad1.x) {
-                driveTrain.conveyerSetPower(-0.2);
+                driveTrain.rollersSetPower(-0.2);
             }
 
+            if (gamepad1.right_bumper) {
+                driveTrain.slidesSetPower(0.2);
+            }
+
+            if (gamepad1.left_bumper) {
+                driveTrain.slidesSetPower(-0.2);
+            }
             /*
             double currentPos = rightSlide.getCurrentPosition();
             if (gamepad1.y) {
