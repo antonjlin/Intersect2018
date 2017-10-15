@@ -20,8 +20,6 @@ import org.opencv.android.Utils;
 import org.opencv.core.Mat;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.videoio.VideoCapture;
-
-
 import static com.sun.tools.javac.util.Assert.error;
 import static org.opencv.imgproc.Imgproc.drawContours;
 import static org.opencv.imgproc.Imgproc.findContours;
@@ -33,12 +31,7 @@ import static org.opencv.imgproc.Imgproc.findContours;
 
 //@SuppressWarnings("ALL")
 
-//@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Vision3")
-
-//@com.qualcomm.robotcore.eventloop.opmode.OpModeRegistrar("vision", Vision)
-//@com.qualcomm.robotcore.eventloop.opmode.TeleOpNew\
-
-
+@Autonomous(name = "Vision")
 public class Vision extends OpMode {
     private static final int initialMaxSize = 1200;
     public static JavaCameraView openCVCamera;
@@ -109,8 +102,6 @@ public class Vision extends OpMode {
 
     }
 
-
-
     public void loop() {
         VideoCapture capture = new VideoCapture(1);
         Mat frame = new Mat();
@@ -127,21 +118,6 @@ public class Vision extends OpMode {
         }
 
         JavaCameraView camera;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
       /*  List<MatOfPoint> countours = new ArrayList<MatOfPoint>(){};
         Mat Hierarchy = new Mat();

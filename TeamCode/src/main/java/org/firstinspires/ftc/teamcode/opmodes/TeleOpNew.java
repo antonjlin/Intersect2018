@@ -34,6 +34,7 @@ package org.firstinspires.ftc.teamcode.opmodes;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -42,7 +43,7 @@ import com.qualcomm.robotcore.hardware.GyroSensor;
 import org.firstinspires.ftc.teamcode.robotutil.DriveTrain;
 import org.firstinspires.ftc.teamcode.robotutil.IMU;
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "teleokuhkjhpnew")
+@TeleOp(name = "Teleop New")
 public class TeleOpNew extends LinearOpMode {
     static DcMotor rFmotor, rBmotor, lFmotor, lBmotor;
     DriveTrain driveTrain;
