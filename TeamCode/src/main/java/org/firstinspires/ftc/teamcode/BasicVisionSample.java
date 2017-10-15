@@ -1,6 +1,8 @@
 package com.qualcomm.ftcrobotcontroller.opmodes;
 
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+
 import org.lasarobotics.vision.android.Cameras;
 import org.lasarobotics.vision.ftc.resq.Beacon;
 import org.lasarobotics.vision.opmode.VisionOpMode;
@@ -18,6 +20,8 @@ import org.opencv.core.Size;
  * The VisionOpMode is the base of all vision processing and other styles of OpMode
  * even extend the VisionOpMode class! Be sure to extend it if writing your own OpMode structure.
  */
+@Disabled
+
 public class BasicVisionSample extends VisionOpMode {
 
     @Override

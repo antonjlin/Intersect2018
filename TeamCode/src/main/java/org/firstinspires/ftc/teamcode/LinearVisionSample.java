@@ -16,7 +16,7 @@ import org.opencv.core.Size;
  * and set its options to your preference!
  * <p/>
  * Please note that the LinearVisionOpMode is specially designed to target a particular
- * version of the FTC Robot Controller app. Changes to the app may break the LinearVisionOpMode.
+ * version of the FTC  Controller app. Changes to the app may break the LinearVisionOpMode.
  * Should this happen, open up an issue on GitHub. :)
  */
 public class LinearVisionSample extends LinearVisionOpMode {

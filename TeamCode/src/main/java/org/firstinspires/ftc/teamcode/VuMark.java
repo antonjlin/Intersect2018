@@ -81,7 +81,6 @@ public class VuMark {
 
     public RelicRecoveryVuMark detectColumn(int timeoutS) {
         long endtime = System.currentTimeMillis() + (timeoutS * 1000);
-        boolean timedOut = false;
         while (opMode.opModeIsActive() && System.currentTimeMillis()<endtime && vuMark == RelicRecoveryVuMark.UNKNOWN) {
             opMode.telemetry.addLine("Detecting VuMark.....");
             opMode.telemetry.update();

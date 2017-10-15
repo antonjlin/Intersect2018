@@ -18,7 +18,7 @@ public class VuMarkOpmodeTest extends LinearOpMode {
 
     VuMark cryptograph;
 
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode()throws InterruptedException {
 
         cryptograph.initVuMark(VuMarkOpmodeTest.this);
         waitForStart();
