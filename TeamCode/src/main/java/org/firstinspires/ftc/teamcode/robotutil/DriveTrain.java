@@ -20,7 +20,7 @@ public class DriveTrain {
 
     // Tunable parameters
     private double balanceThreshold = 1.5;
-    double balanceMultiplier = 0.08;
+    private double balanceMultiplier = 0.08;
     private int conversionFactor = 50;
     private int gyroTurnErrorMargin = 3; // turn stop if within the margin of error
     private int gyroTurnRampMax = 60;  // starting point of scaling back speed of motor for turning
@@ -44,9 +44,6 @@ public class DriveTrain {
         colorSensor = opMode.hardwareMap.colorSensor.get("colorSensor");
         BNO055IMU adaImu = opMode.hardwareMap.get(BNO055IMU.class, "imu");
         imu = new IMU(adaImu);
-        opMode.telemetry.addLine("sdfeaes");
-        opMode.telemetry.update();
-        Functions.waitFor(1000);
         lB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         lF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -59,17 +56,6 @@ public class DriveTrain {
         rB.setDirection(DcMotor.Direction.FORWARD);
         lB.setDirection(DcMotor.Direction.REVERSE);
         lF.setDirection(DcMotor.Direction.REVERSE);
-        opMode.telemetry.addLine("fag");
-        opMode.telemetry.update();
-        Functions.waitFor(1000);
-
-        opMode.telemetry.addLine("queer");
-        opMode.telemetry.update();
-        Functions.waitFor(1000);
-
-        opMode.telemetry.addLine("gay");
-        opMode.telemetry.update();
-        Functions.waitFor(1000);
     }
 
     public void rollersSetPower(double power) {
