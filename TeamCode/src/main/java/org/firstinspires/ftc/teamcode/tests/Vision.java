@@ -1,20 +1,8 @@
-<<<<<<< HEAD:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/robotutil/Vision.java
-package org.firstinspires.ftc.teamcode;
-
-import android.app.Activity;
-import android.graphics.Bitmap;
-import android.hardware.camera2.CameraAccessException;
-import android.hardware.camera2.CameraCharacteristics;
-import android.hardware.camera2.CameraManager;
-import android.media.Image;
-import android.os.Bundle;
-import android.support.annotation.VisibleForTesting;
-=======
 package org.firstinspires.ftc.teamcode.tests;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
->>>>>>> alpha:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/tests/Vision.java
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -60,7 +48,6 @@ import org.opencv.core.Algorithm;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.videoio.VideoCapture;
-<<<<<<< HEAD:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/robotutil/Vision.java
 
 
 import java.io.ByteArrayInputStream;
@@ -73,8 +60,7 @@ import java.util.concurrent.TimeUnit;
 
 import static android.R.id.input;
 import static android.R.id.keyboardView;
-=======
->>>>>>> alpha:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/tests/Vision.java
+
 import static com.sun.tools.javac.util.Assert.error;
 import static org.lasarobotics.vision.opmode.VisionOpMode.rotation;
 import static org.opencv.imgproc.Imgproc.CHAIN_APPROX_SIMPLE;
