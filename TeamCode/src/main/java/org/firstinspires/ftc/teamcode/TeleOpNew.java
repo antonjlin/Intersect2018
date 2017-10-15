@@ -61,12 +61,42 @@ public class TeleOpNew extends LinearOpMode {
     int pos4 = 24;
 
 
+    public void slideControl(){
+        boolean dpad_up = gamepad1.dpad_up;
+        boolean dpad_down = gamepad1.dpad_down;
+        if(dpad_up){
+            leftSlide.setPower(.7);
+            rightSlide.setPower(-.7);
+        }
+        else if(dpad_down){
+            leftSlide.setPower(-.7);
+            rightSlide.setPower(.7);
+
+        }
+
+    }
+    public void tobogganControl(){
+        boolean dpad_right = gamepad1.dpad_right;
+        boolean dpad_left = gamepad1.dpad_left;
+        if(dpad_right){
+            rightConv.setPower(.7);
+            leftConv.setPower(-.7);
+        }
+        else if(dpad_left){
+            rightConv.setPower(-.7);
+            leftConv.setPower(.7);
+        }
+
+    }
+
+
 
     // RampFlywheel rampFlywheel = new RampFlywheel();
     // RampDownFlywheel rampDownFlywheel = new RampDownFlywheel();
     public void runOpMode() throws InterruptedException {
         initHardware();
         waitForStart();
+        tobogganControl();
 
         while (opModeIsActive()) {
             //DRIVETRAIN FUNCTIONS
@@ -140,8 +170,8 @@ public class TeleOpNew extends LinearOpMode {
             rightConv = hardwareMap.dcMotor.get("rightConv");
             leftConv = hardwareMap.dcMotor.get("leftConv");
             rFmotor = hardwareMap.dcMotor.get("rF");
-            rightConv = hardwareMap.dcMotor.get("rightSlide");
-            leftConv = hardwareMap.dcMotor.get("leftSlide");
+            rightSlide = hardwareMap.dcMotor.get("rightSlide");
+            leftSlide = hardwareMap.dcMotor.get("leftSlide");
             rBmotor = hardwareMap.dcMotor.get("rB");
             lFmotor = hardwareMap.dcMotor.get("lF");
             lBmotor = hardwareMap.dcMotor.get("lB");
