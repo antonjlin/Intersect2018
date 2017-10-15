@@ -22,6 +22,7 @@ import org.opencv.core.Size;
  */
 @Disabled
 
+
 public class BasicVisionSample extends VisionOpMode {
 
     @Override

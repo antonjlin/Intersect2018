@@ -1,6 +1,7 @@
 
 package org.firstinspires.ftc.teamcode.opmodes;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -13,7 +14,7 @@ import org.firstinspires.ftc.teamcode.robotutil.Functions;
 import org.firstinspires.ftc.teamcode.robotutil.IMU;
 
 
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "DriveTrainTesting")
+@Autonomous(name = "Drivetrain Test")
 
 
 public class DriveTrainTesting extends LinearOpMode {

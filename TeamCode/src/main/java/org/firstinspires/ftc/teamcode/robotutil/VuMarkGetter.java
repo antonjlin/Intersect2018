@@ -12,7 +12,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefau
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 import org.firstinspires.ftc.teamcode.R;
 
-
 public class VuMarkGetter {
     public VuforiaTrackables getVuforia() {
         return getVuforia(true);
