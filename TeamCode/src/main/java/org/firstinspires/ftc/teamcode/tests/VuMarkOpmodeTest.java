@@ -1,22 +1,21 @@
 
-package org.firstinspires.ftc.teamcode.opmodes;
+package org.firstinspires.ftc.teamcode.tests;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.robotutil.VuMark;
 
 
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "VuMarkOpmodeTest")
+@Autonomous(name = "vumark opmode test")
 public class VuMarkOpmodeTest extends LinearOpMode {
 
-    VuMark cryptograph;
 
     public void runOpMode()throws InterruptedException {
-
-        cryptograph.initVuMark(VuMarkOpmodeTest.this);
+        VuMark cryptograph = new VuMark(this);
         waitForStart();
         if (opModeIsActive()) {
-            cryptograph.detectColumn(10);
+            cryptograph.detectColumn(30);
         }
     }
 }

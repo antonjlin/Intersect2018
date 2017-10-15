@@ -1,10 +1,8 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.tests;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
-import android.media.Image;
-import android.os.Bundle;
-import android.support.annotation.VisibleForTesting;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -62,6 +60,7 @@ import java.util.concurrent.TimeUnit;
 
 import static android.R.id.input;
 import static android.R.id.keyboardView;
+
 import static com.sun.tools.javac.util.Assert.error;
 import static org.lasarobotics.vision.opmode.VisionOpMode.rotation;
 import static org.opencv.imgproc.Imgproc.CHAIN_APPROX_SIMPLE;
@@ -79,12 +78,7 @@ import static org.opencv.imgproc.Imgproc.*;
 
 //@SuppressWarnings("ALL")
 
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Vision1")
-
-//@com.qualcomm.robotcore.eventloop.opmode.OpModeRegistrar("vision", Vision)
-//@com.qualcomm.robotcore.eventloop.opmode.TeleOpNew\
-
-
+@Autonomous(name = "Vision")
 public class Vision extends OpMode {
     private static final int initialMaxSize = 1200;
     public static JavaCameraView openCVCamera;
@@ -155,8 +149,6 @@ public class Vision extends OpMode {
 
     }
 
-
-
     public void loop() {
         VideoCapture capture = new VideoCapture(1);
         Mat frame = new Mat();
@@ -173,21 +165,6 @@ public class Vision extends OpMode {
         }
 
         JavaCameraView camera;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
       /*  List<MatOfPoint> countours = new ArrayList<MatOfPoint>(){};
         Mat Hierarchy = new Mat();

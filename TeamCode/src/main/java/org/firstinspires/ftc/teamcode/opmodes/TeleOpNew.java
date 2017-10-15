@@ -34,6 +34,7 @@ package org.firstinspires.ftc.teamcode.opmodes;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -42,17 +43,17 @@ import com.qualcomm.robotcore.hardware.GyroSensor;
 import org.firstinspires.ftc.teamcode.robotutil.DriveTrain;
 import org.firstinspires.ftc.teamcode.robotutil.IMU;
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "teleopnew")
+@TeleOp(name = "Teleop New")
 public class TeleOpNew extends LinearOpMode {
     static DcMotor rFmotor, rBmotor, lFmotor, lBmotor;
     DriveTrain driveTrain;
     static GyroSensor gyro;
     static ColorSensor floorColor;
-    static DcMotor rightConv, leftConv, leftSlide, rightSlide;
+    static DcMotor rIntake, lIntake, lSlide, rSlide;
     private BNO055IMU adaImu;
     private IMU imu;
-    int leftSlidePos;
-    int rightSlidePos;
+    int lSlidePos;
+    int rSlidePos;
     int slideTicksPerInch;
     int pos0 = 0;
     int pos1 = 6;
@@ -61,42 +62,12 @@ public class TeleOpNew extends LinearOpMode {
     int pos4 = 24;
 
 
-    public void slideControl(){
-        boolean dpad_up = gamepad1.dpad_up;
-        boolean dpad_down = gamepad1.dpad_down;
-        if(dpad_up){
-            leftSlide.setPower(.7);
-            rightSlide.setPower(-.7);
-        }
-        else if(dpad_down){
-            leftSlide.setPower(-.7);
-            rightSlide.setPower(.7);
-
-        }
-
-    }
-    public void tobogganControl(){
-        boolean dpad_right = gamepad1.dpad_right;
-        boolean dpad_left = gamepad1.dpad_left;
-        if(dpad_right){
-            rightConv.setPower(.7);
-            leftConv.setPower(-.7);
-        }
-        else if(dpad_left){
-            rightConv.setPower(-.7);
-            leftConv.setPower(.7);
-        }
-
-    }
-
-
 
     // RampFlywheel rampFlywheel = new RampFlywheel();
     // RampDownFlywheel rampDownFlywheel = new RampDownFlywheel();
     public void runOpMode() throws InterruptedException {
         initHardware();
         waitForStart();
-        tobogganControl();
 
         while (opModeIsActive()) {
             //DRIVETRAIN FUNCTIONS
@@ -108,27 +79,30 @@ public class TeleOpNew extends LinearOpMode {
             final double backLeft = r * Math.sin(robotAngle) + rightX;
             final double backRight = r * Math.cos(robotAngle) - rightX;
 
-            // for intake and placing glyphs
-            //  NEED TO CHANGE BUTTONS!!!
+            lFmotor.setPower(frontLeft);
+            rFmotor.setPower(frontRight);
+            lBmotor.setPower(backLeft);
+            rBmotor.setPower(backRight);
+
             if (gamepad1.b) {
                 driveTrain.rollersSetPower(0.2);
-            }
-
-            // for opposite direction just incase
-            //  NEED TO CHANGE BUTTONS!!!
-            if (gamepad1.x) {
+            } else if (gamepad1.x) {
                 driveTrain.rollersSetPower(-0.2);
+            } else{
+                driveTrain.rollersSetPower(0);
             }
 
             if (gamepad1.right_bumper) {
                 driveTrain.slidesSetPower(0.2);
+            }else if (gamepad1.left_bumper) {
+                driveTrain.slidesSetPower(-0.2);
+            }else{
+                driveTrain.slidesSetPower(0);
             }
 
-            if (gamepad1.left_bumper) {
-                driveTrain.slidesSetPower(-0.2);
-            }
+
             /*
-            double currentPos = rightSlide.getCurrentPosition();
+            double currentPos = rSlide.getCurrentPosition();
             if (gamepad1.y) {
                 if (currentPos < 5.75) {
                     driveTrain.encoderMoveSlides(0.2, 6.25, 10000);
@@ -149,11 +123,6 @@ public class TeleOpNew extends LinearOpMode {
             }
             */
 
-            lFmotor.setPower(frontLeft);
-            rFmotor.setPower(frontRight);
-            lBmotor.setPower(backLeft);
-            rBmotor.setPower(backRight);
-
             if(gamepad1.a){
                 driveTrain.selfBalance(telemetry);
             }
@@ -167,11 +136,11 @@ public class TeleOpNew extends LinearOpMode {
         }
         public void initHardware(){
             driveTrain = new DriveTrain(this);
-            rightConv = hardwareMap.dcMotor.get("rightConv");
-            leftConv = hardwareMap.dcMotor.get("leftConv");
+            rIntake = hardwareMap.dcMotor.get("rIntake");
+            lIntake = hardwareMap.dcMotor.get("lIntake");
+            lSlide = hardwareMap.dcMotor.get("lSlide");
+            rSlide = hardwareMap.dcMotor.get("rSlide");
             rFmotor = hardwareMap.dcMotor.get("rF");
-            rightSlide = hardwareMap.dcMotor.get("rightSlide");
-            leftSlide = hardwareMap.dcMotor.get("leftSlide");
             rBmotor = hardwareMap.dcMotor.get("rB");
             lFmotor = hardwareMap.dcMotor.get("lF");
             lBmotor = hardwareMap.dcMotor.get("lB");
@@ -180,26 +149,26 @@ public class TeleOpNew extends LinearOpMode {
             rBmotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             lFmotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             rFmotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            rightConv.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            leftConv.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            rightSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            rIntake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            lIntake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            rSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            lSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             lBmotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             lFmotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             rBmotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             rFmotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            rightConv.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            leftConv.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            rightSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            leftSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rIntake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            lIntake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            lSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             rFmotor.setDirection(DcMotorSimple.Direction.REVERSE);
             rBmotor.setDirection(DcMotorSimple.Direction.REVERSE);
             lBmotor.setDirection(DcMotorSimple.Direction.FORWARD);
             lFmotor.setDirection(DcMotorSimple.Direction.FORWARD);
-            rightConv.setDirection(DcMotorSimple.Direction.REVERSE);
-            leftConv.setDirection(DcMotorSimple.Direction.FORWARD);
-            leftSlide.setDirection(DcMotorSimple.Direction.REVERSE);
-            rightSlide.setDirection(DcMotorSimple.Direction.FORWARD);
+            rIntake.setDirection(DcMotorSimple.Direction.REVERSE);
+            lIntake.setDirection(DcMotorSimple.Direction.FORWARD);
+            lSlide.setDirection(DcMotorSimple.Direction.REVERSE);
+            rSlide.setDirection(DcMotorSimple.Direction.FORWARD);
             adaImu = hardwareMap.get(BNO055IMU.class, "IMU");
             imu = new IMU(adaImu);
 
