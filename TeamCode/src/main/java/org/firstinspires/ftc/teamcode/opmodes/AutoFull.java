@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.robotutil.DriveTrain;
 import org.firstinspires.ftc.teamcode.robotutil.Functions;
 import org.firstinspires.ftc.teamcode.robotutil.IMU;
 
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Full Mission")
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "AutoFull")
 public class AutoFull extends LinearOpMode {
     static DcMotor rF, rB, lF, lB, flywheel1, flywheel2, sweeperLow;
     static GyroSensor gyro;

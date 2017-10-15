@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 import org.firstinspires.ftc.teamcode.robotutil.VuMarkGetter;
 
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "VuMark Testing")
 
 public class VuMarkUser extends LinearOpMode {
     @Override

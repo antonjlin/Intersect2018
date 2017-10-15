@@ -187,7 +187,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         android:textColor="?attr/textWhite"
         android:textSize="40sp"
         android:textStyle="bold"
-        android:visibility="visible"
+        android:visibility="invisible"
         android:foregroundTint="@color/light_teal"
         android:text="" />
 

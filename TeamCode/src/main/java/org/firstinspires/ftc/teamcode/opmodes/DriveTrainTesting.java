@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.robotutil.Functions;
 import org.firstinspires.ftc.teamcode.robotutil.IMU;
 
 
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "DriveTrainTesting")
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "DriveTrain Testing")
 
 
 public class DriveTrainTesting extends LinearOpMode {

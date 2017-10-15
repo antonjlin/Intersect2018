@@ -51,7 +51,7 @@ import java.text.DecimalFormat;
 import static org.firstinspires.ftc.teamcode.robotutil.Team.BLUE;
 import static org.firstinspires.ftc.teamcode.robotutil.Team.RED;
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "teleopnew")
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "ThreadedTele")
 public class ThreadedTeleOp extends LinearOpMode {
     private DriveTrainTask driveTrainTask;
     private SlideTask slideTask;
@@ -131,5 +131,4 @@ public class ThreadedTeleOp extends LinearOpMode {
             telemetry.update();
         }
     }
-}
 }

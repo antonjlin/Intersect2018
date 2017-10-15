@@ -42,7 +42,7 @@ import com.qualcomm.robotcore.hardware.GyroSensor;
 import org.firstinspires.ftc.teamcode.robotutil.DriveTrain;
 import org.firstinspires.ftc.teamcode.robotutil.IMU;
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "teleopnew")
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "teleokuhkjhpnew")
 public class TeleOpNew extends LinearOpMode {
     static DcMotor rFmotor, rBmotor, lFmotor, lBmotor;
     DriveTrain driveTrain;
