@@ -106,15 +106,6 @@ public class Vision extends OpMode {
         Log.e("FTCVision", message);
         telemetry.addData("Vision Status", message);
     }
-    private String getFrontFacingCameraId (CameraManager cManager) throws CameraAccessException {
-        for(final String cameraId : cManager.getCameraIdList()){
-            CameraCharacteristics characteristics = cManager.getCameraCharacteristics(cameraId);
-            int cOrientation = characteristics.get(CameraCharacteristics.LENS_FACING);
-            if(cOrientation == CameraCharacteristics.LENS_FACING_FRONT) return cameraId;
-        }
-        return null;
-    }
-
 
    // ImageView view  = (ImageView) View.findViewById(R.id.MyImageDisplay);
 
@@ -194,12 +185,6 @@ public class Vision extends OpMode {
         }
 
         JavaCameraView camera;
-        openCVCamera.connectCamera();
-
-
-
-
-
 
 
 
