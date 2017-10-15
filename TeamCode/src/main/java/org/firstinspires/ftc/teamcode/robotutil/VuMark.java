@@ -53,36 +53,40 @@ public class VuMark {
     public VuforiaTrackable relicTemplate;
     public RelicRecoveryVuMark vuMark;
     public LinearOpMode opMode;
+    VuforiaLocalizer.Parameters parameters;
 
-    public void initVuMark(LinearOpMode opMode) {
+
+    public VuMark(LinearOpMode opMode) {
         this.opMode = opMode;
 
         int cameraMonitorViewId = opMode.hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", opMode.hardwareMap.appContext.getPackageName());
 
-        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
+        parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
 
         parameters.vuforiaLicenseKey = "AQgn1d//////AAAAGS+F+GWwAEbtqn64lm+fvolRqft5tIJLGdUCsB51qVZHMP3UU8cTCBMKvjCBUTxHfkooO1dljaRLNzaDMMTbWw978Agd7qMrUQF/I4dsE+oVUhLVTHxHPl4r8T4LJ1+B5KHvXQyTr7S3bTU1xy/id/uACCppztVO6mH6Aj0FwY/v3lDYnL9sQNVi2DNXNrnQmmshyJC74C4Se8a6A/II7vcaQ00Ot3PlSB9LjH6K28EQ3oiLnc6tKTGjbU+uTBdoix2KUDL7xVa8c6biG2lcuu7j6dRrw/uvUrh7RpWcmvQDdoshtLlXLsvacLwr5NzMX+4quVkydj/3KRrixOKnepk0ZSPiSlt+J+ThynHcgevu";
 
         parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
 
-        vuforia = ClassFactory.createVuforiaLocalizer(parameters);
+        this.vuforia = ClassFactory.createVuforiaLocalizer(parameters);
 
-        relicTrackables = vuforia.loadTrackablesFromAsset("RelicVuMark");
+        relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
 
         relicTemplate = relicTrackables.get(0);
 
         relicTemplate.setName("relicVuMarkTemplate");
 
-        relicTrackables.activate();
-
         vuMark = RelicRecoveryVuMark.from(relicTemplate);
+
+        relicTrackables.activate();
 
     }
 
     public RelicRecoveryVuMark detectColumn(int timeoutS) {
         long endtime = System.currentTimeMillis() + (timeoutS * 1000);
         while (opMode.opModeIsActive() && System.currentTimeMillis()<endtime && vuMark == RelicRecoveryVuMark.UNKNOWN) {
+            vuMark = RelicRecoveryVuMark.from(relicTemplate);
             opMode.telemetry.addLine("Detecting VuMark.....");
+            opMode.telemetry.addLine(vuMark.toString());
             opMode.telemetry.update();
         }
         if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
@@ -90,6 +94,7 @@ public class VuMark {
         }else{
             opMode.telemetry.addLine("Detection timed out");
         }
+        opMode.telemetry.addLine(vuMark.toString());
         opMode.telemetry.update();
         return vuMark;
     }
