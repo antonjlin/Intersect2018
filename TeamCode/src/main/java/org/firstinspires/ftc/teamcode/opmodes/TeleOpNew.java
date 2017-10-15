@@ -48,11 +48,11 @@ public class TeleOpNew extends LinearOpMode {
     DriveTrain driveTrain;
     static GyroSensor gyro;
     static ColorSensor floorColor;
-    static DcMotor rightConv, leftConv, leftSlide, rightSlide;
+    static DcMotor rIntake, lIntake, lSlide, rSlide;
     private BNO055IMU adaImu;
     private IMU imu;
-    int leftSlidePos;
-    int rightSlidePos;
+    int lSlidePos;
+    int rSlidePos;
     int slideTicksPerInch;
     int pos0 = 0;
     int pos1 = 6;
@@ -78,27 +78,30 @@ public class TeleOpNew extends LinearOpMode {
             final double backLeft = r * Math.sin(robotAngle) + rightX;
             final double backRight = r * Math.cos(robotAngle) - rightX;
 
-            // for intake and placing glyphs
-            //  NEED TO CHANGE BUTTONS!!!
+            lFmotor.setPower(frontLeft);
+            rFmotor.setPower(frontRight);
+            lBmotor.setPower(backLeft);
+            rBmotor.setPower(backRight);
+
             if (gamepad1.b) {
                 driveTrain.rollersSetPower(0.2);
-            }
-
-            // for opposite direction just incase
-            //  NEED TO CHANGE BUTTONS!!!
-            if (gamepad1.x) {
+            } else if (gamepad1.x) {
                 driveTrain.rollersSetPower(-0.2);
+            } else{
+                driveTrain.rollersSetPower(0);
             }
 
             if (gamepad1.right_bumper) {
                 driveTrain.slidesSetPower(0.2);
+            }else if (gamepad1.left_bumper) {
+                driveTrain.slidesSetPower(-0.2);
+            }else{
+                driveTrain.slidesSetPower(0);
             }
 
-            if (gamepad1.left_bumper) {
-                driveTrain.slidesSetPower(-0.2);
-            }
+
             /*
-            double currentPos = rightSlide.getCurrentPosition();
+            double currentPos = rSlide.getCurrentPosition();
             if (gamepad1.y) {
                 if (currentPos < 5.75) {
                     driveTrain.encoderMoveSlides(0.2, 6.25, 10000);
@@ -119,11 +122,6 @@ public class TeleOpNew extends LinearOpMode {
             }
             */
 
-            lFmotor.setPower(frontLeft);
-            rFmotor.setPower(frontRight);
-            lBmotor.setPower(backLeft);
-            rBmotor.setPower(backRight);
-
             if(gamepad1.a){
                 driveTrain.selfBalance(telemetry);
             }
@@ -137,11 +135,11 @@ public class TeleOpNew extends LinearOpMode {
         }
         public void initHardware(){
             driveTrain = new DriveTrain(this);
-            rightConv = hardwareMap.dcMotor.get("rightConv");
-            leftConv = hardwareMap.dcMotor.get("leftConv");
+            rIntake = hardwareMap.dcMotor.get("rIntake");
+            lIntake = hardwareMap.dcMotor.get("lIntake");
+            lSlide = hardwareMap.dcMotor.get("lSlide");
+            rSlide = hardwareMap.dcMotor.get("rSlide");
             rFmotor = hardwareMap.dcMotor.get("rF");
-            rightConv = hardwareMap.dcMotor.get("rightSlide");
-            leftConv = hardwareMap.dcMotor.get("leftSlide");
             rBmotor = hardwareMap.dcMotor.get("rB");
             lFmotor = hardwareMap.dcMotor.get("lF");
             lBmotor = hardwareMap.dcMotor.get("lB");
@@ -150,26 +148,26 @@ public class TeleOpNew extends LinearOpMode {
             rBmotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             lFmotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             rFmotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            rightConv.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            leftConv.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            rightSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            rIntake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            lIntake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            rSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            lSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             lBmotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             lFmotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             rBmotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             rFmotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            rightConv.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            leftConv.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            rightSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            leftSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rIntake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            lIntake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            lSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             rFmotor.setDirection(DcMotorSimple.Direction.REVERSE);
             rBmotor.setDirection(DcMotorSimple.Direction.REVERSE);
             lBmotor.setDirection(DcMotorSimple.Direction.FORWARD);
             lFmotor.setDirection(DcMotorSimple.Direction.FORWARD);
-            rightConv.setDirection(DcMotorSimple.Direction.REVERSE);
-            leftConv.setDirection(DcMotorSimple.Direction.FORWARD);
-            leftSlide.setDirection(DcMotorSimple.Direction.REVERSE);
-            rightSlide.setDirection(DcMotorSimple.Direction.FORWARD);
+            rIntake.setDirection(DcMotorSimple.Direction.REVERSE);
+            lIntake.setDirection(DcMotorSimple.Direction.FORWARD);
+            lSlide.setDirection(DcMotorSimple.Direction.REVERSE);
+            rSlide.setDirection(DcMotorSimple.Direction.FORWARD);
             adaImu = hardwareMap.get(BNO055IMU.class, "IMU");
             imu = new IMU(adaImu);
 

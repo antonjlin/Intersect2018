@@ -48,11 +48,11 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
 public class VuMark {
 
-    VuforiaTrackables relicTrackables;
-    VuforiaLocalizer vuforia;
-    VuforiaTrackable relicTemplate;
-    RelicRecoveryVuMark vuMark;
-    LinearOpMode opMode;
+    public VuforiaTrackables relicTrackables;
+    public VuforiaLocalizer vuforia;
+    public VuforiaTrackable relicTemplate;
+    public RelicRecoveryVuMark vuMark;
+    public LinearOpMode opMode;
 
     public void initVuMark(LinearOpMode opMode) {
         this.opMode = opMode;
