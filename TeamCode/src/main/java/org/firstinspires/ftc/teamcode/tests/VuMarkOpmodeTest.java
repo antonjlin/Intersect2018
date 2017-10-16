@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.robotutil.VuMark;
 
 
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "VuMarkOpmodeTest")
+//@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "VuMarkOpmodeTest")
 public class VuMarkOpmodeTest extends LinearOpMode {
 
     VuMark cryptograph;

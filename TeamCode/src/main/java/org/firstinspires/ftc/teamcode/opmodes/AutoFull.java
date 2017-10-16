@@ -2,6 +2,7 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -11,7 +12,7 @@ import org.firstinspires.ftc.teamcode.robotutil.DriveTrain;
 import org.firstinspires.ftc.teamcode.robotutil.Functions;
 import org.firstinspires.ftc.teamcode.robotutil.IMU;
 
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Full Mission")
+@Autonomous(name = "AutoFull")
 public class AutoFull extends LinearOpMode {
     static DcMotor rF, rB, lF, lB, flywheel1, flywheel2, sweeperLow;
     static GyroSensor gyro;
