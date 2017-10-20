@@ -4,6 +4,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import org.firstinspires.ftc.teamcode.robotutil.DriveTrain;
+
+import org.firstinspires.ftc.teamcode.robotutil.DriveTrain;
 
 /**
  * Created by Howard on 10/15/16.
@@ -23,10 +26,10 @@ public class SlideTask extends TaskThread {
     public void run() {
         timer.reset();
         while (opMode.opModeIsActive() && running) {
-            if (opMode.gamepad1.right_bumper) {
-                setSlidePower(1);
-            } else if (opMode.gamepad1.left_bumper) {
+            if (opMode.gamepad1.right_bumper || opMode.gamepad2.right_bumper) {
                 setSlidePower(-1);
+            } else if (opMode.gamepad1.left_bumper || opMode.gamepad2.left_bumper) {
+                setSlidePower(1);
             } else{
                 setSlidePower(0);
             }
@@ -41,10 +44,10 @@ public class SlideTask extends TaskThread {
     public void initialize() {
         lSlide = opMode.hardwareMap.dcMotor.get("lSlide");
         rSlide = opMode.hardwareMap.dcMotor.get("rSlide");
-        lSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        lSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         lSlide.setDirection(DcMotorSimple.Direction.REVERSE);
-        rSlide.setDirection(DcMotorSimple.Direction.FORWARD);
+        rSlide.setDirection(DcMotorSimple.Direction.REVERSE);
         lSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 

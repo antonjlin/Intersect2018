@@ -46,6 +46,7 @@ import org.firstinspires.ftc.teamcode.robotutil.Team;
 import org.firstinspires.ftc.teamcode.tasks.DriveTrainTask;
 import org.firstinspires.ftc.teamcode.tasks.IntakeTask;
 import org.firstinspires.ftc.teamcode.tasks.SlideTask;
+import org.firstinspires.ftc.teamcode.tasks.TaskThread;
 
 import java.text.DecimalFormat;
 
@@ -55,8 +56,11 @@ import static org.firstinspires.ftc.teamcode.robotutil.Team.RED;
 @TeleOp(name = "Threaded Teleop")
 public class ThreadedTeleOp extends LinearOpMode {
     private DriveTrainTask driveTrainTask;
+    private DriveTrain driveTrain;
     private SlideTask slideTask;
     private IntakeTask intakeTask;
+    private IMU imu;
+    private BNO055IMU adaImu;
     Team team = Team.BLUE;
     int leftSlidePos;
     int rightSlidePos;
@@ -73,22 +77,17 @@ public class ThreadedTeleOp extends LinearOpMode {
         telemetry.addData("Ready!", "");
         telemetry.update();
         waitForStart();
-        long startTime = System.nanoTime();
-        DecimalFormat df = new DecimalFormat();
-        df.setMaximumFractionDigits(3);
-
+        long startTime = System.currentTimeMillis();
 
         driveTrainTask.start();
         slideTask.start();
         intakeTask.start();
 
-
-
         while(opModeIsActive()) {
             //Timer for 2 minute teleop period
-            long elapsed = System.nanoTime() - startTime;
+            long elapsed = System.currentTimeMillis() - startTime;
 
-            if (elapsed > 120 * 1000000000L) {
+            if (elapsed > 120 * 1000) {
                 //Stop all tasks, the tasks will stop motors etc.
                 driveTrainTask.running = false;
                 slideTask.running = false;
@@ -96,7 +95,7 @@ public class ThreadedTeleOp extends LinearOpMode {
                 //Get out of the loop
                 break;
             } else {
-                int seconds = 120 - (int) (elapsed / 1000000000L);
+                int seconds = 120 - (int) (elapsed / 1000L);
                 String timeString = (seconds / 60) + ":";
                 if (seconds % 60 < 10) {
                     timeString += 0;
@@ -112,8 +111,8 @@ public class ThreadedTeleOp extends LinearOpMode {
             driveTrainTask = new DriveTrainTask(this);
             intakeTask = new IntakeTask(this);
             slideTask = new SlideTask(this);
-
-
+            driveTrain = new DriveTrain(this);
+            imu = new IMU(adaImu);
         }
 
     public void setTeam() {
@@ -131,5 +130,11 @@ public class ThreadedTeleOp extends LinearOpMode {
             }
             telemetry.update();
         }
+    }
+
+    public void moveToGraph() {
+        int currentHeading = (int) imu.getAngle();
+        int dif = AutoFull.crypAngle - currentHeading;
+        if
     }
 }

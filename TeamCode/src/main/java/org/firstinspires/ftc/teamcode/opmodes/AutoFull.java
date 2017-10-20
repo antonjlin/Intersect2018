@@ -23,6 +23,7 @@ public class AutoFull extends LinearOpMode {
     int state;
     private BNO055IMU adaImu;
     private IMU imu;
+    public int crypHeading = 0;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -57,10 +58,12 @@ public class AutoFull extends LinearOpMode {
         imu = new IMU(adaImu);
         jewelColor = hardwareMap.colorSensor.get("jewelColor");
         sweeperLow = hardwareMap.dcMotor.get("sweeperLow");
+        crypHeading = (int) imu.getAngle() - 90;
 
         gyro = hardwareMap.gyroSensor.get("gyro");
         driveTrain = new DriveTrain(this);
         driveTrain.detectAmbientLight(jewelColor);
+
         //driveTrain.calibrateGyro(telemetry);
 
     }

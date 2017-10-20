@@ -1,7 +1,5 @@
-package org.firstinspires.ftc.teamcode.robotutil;
+package org.firstinspires.ftc.teamcode.tasks;
 
-import com.qualcomm.hardware.adafruit.AdafruitBNO055IMU;
-//import com.qualcomm.hardware.adafruit.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -10,10 +8,13 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Quaternion;
 
-public class IMU {
+//import com.qualcomm.hardware.adafruit.JustLoggingAccelerationIntegrator;
+
+
+public class IMUTask {
     public BNO055IMU adafruit;
     private Orientation angles;
-    public IMU(BNO055IMU adafruit){
+    public IMUTask(BNO055IMU adafruit){
         this.adafruit = adafruit;
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
