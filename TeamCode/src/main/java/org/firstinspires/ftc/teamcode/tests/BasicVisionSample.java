@@ -11,10 +11,10 @@ import org.lasarobotics.vision.util.ScreenOrientation;
 import org.opencv.core.Size;
 
 /**
- * Basic Vision Sample
+ * Basic BallDetector Sample
  * <p/>
  * Use this in a typical op mode. A VisionOpMode allows using
- * Vision Extensions, which do a lot of processing for you. Just enable the extension
+ * BallDetector Extensions, which do a lot of processing for you. Just enable the extension
  * and set its options to your preference!
  * <p/>
  * The VisionOpMode is the base of all vision processing and other styles of OpMode

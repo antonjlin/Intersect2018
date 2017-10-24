@@ -10,13 +10,13 @@ import org.opencv.core.Mat;
 import org.opencv.core.Size;
 
 /**
- * Manual Vision Sample
+ * Manual BallDetector Sample
  * <p/>
  * Use when you need absolute control of each frame and want to customize
- * how Vision works for you. In a ManualVisionOpMode, you have far more control
+ * how BallDetector works for you. In a ManualVisionOpMode, you have far more control
  * and can even use the entirety of OpenCV for your own custom processing.
  * <p/>
- * Please note that you cannot use any Vision Extensions in a ManualVisionOpMode, but you
+ * Please note that you cannot use any BallDetector Extensions in a ManualVisionOpMode, but you
  * can still call the extensions' init(), loop(), and frame() methods if you want to use them,
  */
 public class ManualVisionSample extends ManualVisionOpMode {
@@ -56,10 +56,10 @@ public class ManualVisionSample extends ManualVisionOpMode {
     public void loop() {
         super.loop();
 
-        telemetry.addData("Vision FPS", fps.getFPSString());
-        telemetry.addData("Vision Color", colorAnalysis.getColorString());
+        telemetry.addData("BallDetector FPS", fps.getFPSString());
+        telemetry.addData("BallDetector Color", colorAnalysis.getColorString());
         telemetry.addData("Analysis Confidence", colorAnalysis.getConfidenceString());
-        telemetry.addData("Vision Size", "Width: " + width + " Height: " + height);
+        telemetry.addData("BallDetector Size", "Width: " + width + " Height: " + height);
     }
 
     @Override

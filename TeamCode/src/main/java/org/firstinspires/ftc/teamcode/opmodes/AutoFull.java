@@ -1,6 +1,8 @@
 
 package org.firstinspires.ftc.teamcode.opmodes;
 
+import android.app.Activity;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -11,10 +13,11 @@ import com.qualcomm.robotcore.hardware.GyroSensor;
 import org.firstinspires.ftc.teamcode.robotutil.DriveTrain;
 import org.firstinspires.ftc.teamcode.robotutil.Functions;
 import org.firstinspires.ftc.teamcode.robotutil.IMU;
+import org.firstinspires.ftc.teamcode.robotutil.VisionProcessing;
 
 @Autonomous(name = "AutoFull")
 public class AutoFull extends LinearOpMode {
-    static DcMotor rF, rB, lF, lB, flywheel1, flywheel2, sweeperLow;
+    static  DcMotor rF, rB, lF, lB, flywheel1, flywheel2, sweeperLow;
     static GyroSensor gyro;
     static ColorSensor jewelColor;
     boolean red = false;
@@ -27,6 +30,7 @@ public class AutoFull extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        VisionProcessing processing = new VisionProcessing((Activity) hardwareMap.appContext);
         initHardware();
         waitForStart();
         state = 0;// Todo:
