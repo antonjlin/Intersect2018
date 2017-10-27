@@ -17,8 +17,8 @@ import org.firstinspires.ftc.teamcode.robotutil.VisionProcessing;
 
 @Autonomous(name = "AutoFull")
 public class AutoFull extends LinearOpMode {
-    static  DcMotor rF, rB, lF, lB, flywheel1, flywheel2, sweeperLow;
-    static GyroSensor gyro;
+    static  DcMotor rF, rB, lF, lB, rSlide, lSlide;
+    //static GyroSensor gyro;
     static ColorSensor jewelColor;
     boolean red = false;
     DriveTrain driveTrain;
@@ -28,6 +28,11 @@ public class AutoFull extends LinearOpMode {
     private IMU imu;
     public int crypHeading = 0;
 
+    private void knockJewel() {
+
+    }
+
+
     @Override
     public void runOpMode() throws InterruptedException {
         VisionProcessing processing = new VisionProcessing((Activity) hardwareMap.appContext);
@@ -36,10 +41,16 @@ public class AutoFull extends LinearOpMode {
         state = 0;// Todo:
         if (opModeIsActive()) {
 
+            //knockJewel();
+            //driveTrain.encoderDrive(0.3, 20, DriveTrain.Direction.LEFT, 10);
+            Functions.waitFor(200);
+            //driveTrain.rotateIMURamp(180, 0.3, 5, telemetry);
+
+
+            driveTrain.slidesUpEncoder(0.3, 4.5, 5);
+
         }
     }
-
-
 
     public void initHardware() {
         rF = hardwareMap.dcMotor.get("rF");
@@ -61,10 +72,15 @@ public class AutoFull extends LinearOpMode {
         adaImu = hardwareMap.get(BNO055IMU.class, "imu");
         imu = new IMU(adaImu);
         jewelColor = hardwareMap.colorSensor.get("jewelColor");
-        sweeperLow = hardwareMap.dcMotor.get("sweeperLow");
         crypHeading = (int) imu.getAngle() - 90;
+        rSlide = hardwareMap.dcMotor.get("rSlide");
+        lSlide = hardwareMap.dcMotor.get("lSlide");
+        rSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        lSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        lSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        gyro = hardwareMap.gyroSensor.get("gyro");
+        //gyro = hardwareMap.gyroSensor.get("gyro");
         driveTrain = new DriveTrain(this);
         driveTrain.detectAmbientLight(jewelColor);
 
