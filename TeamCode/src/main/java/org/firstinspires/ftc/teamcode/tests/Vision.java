@@ -78,7 +78,7 @@ import static org.opencv.imgproc.Imgproc.*;
 
 //@SuppressWarnings("ALL")
 
-@Autonomous(name = "Vision")
+@Autonomous(name = "BallDetector")
 public class Vision extends OpMode {
     private static final int initialMaxSize = 1200;
     public static JavaCameraView openCVCamera;

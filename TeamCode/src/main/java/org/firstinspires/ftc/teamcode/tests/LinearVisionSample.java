@@ -9,10 +9,10 @@ import org.opencv.core.Mat;
 import org.opencv.core.Size;
 
 /**
- * Linear Vision Sample
+ * Linear BallDetector Sample
  * <p/>
  * Use this in a typical linear op mode. A LinearVisionOpMode allows using
- * Vision Extensions, which do a lot of processing for you. Just enable the extension
+ * BallDetector Extensions, which do a lot of processing for you. Just enable the extension
  * and set its options to your preference!
  * <p/>
  * Please note that the LinearVisionOpMode is specially designed to target a particular
@@ -111,7 +111,7 @@ public class LinearVisionSample extends LinearVisionOpMode {
             telemetry.addData("Frame Counter", frameCount);
 
             //You can access the most recent frame data and modify it here using getFrameRgba() or getFrameGray()
-            //Vision will run asynchronously (parallel) to any user code so your programs won't hang
+            //BallDetector will run asynchronously (parallel) to any user code so your programs won't hang
             //You can use hasNewFrame() to test whether vision processed a new frame
             //Once you copy the frame, discard it immediately with discardFrame()
             if (hasNewFrame()) {
