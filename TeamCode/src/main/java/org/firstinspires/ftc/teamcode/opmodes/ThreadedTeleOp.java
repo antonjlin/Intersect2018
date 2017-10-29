@@ -84,7 +84,7 @@ public class ThreadedTeleOp extends LinearOpMode {
         intakeTask.start();
 
         while(opModeIsActive()) {
-            //Timer for 2 minute teleop period
+           /* //Timer for 2 minute teleop period
             long elapsed = System.currentTimeMillis() - startTime;
 
             if (elapsed > 120 * 1000) {
@@ -103,7 +103,7 @@ public class ThreadedTeleOp extends LinearOpMode {
                 timeString += seconds % 60;
                 telemetry.addData("Time elapsed", timeString);
             }
-            telemetry.update();
+            telemetry.update();*/
         }
         stop();
     }
