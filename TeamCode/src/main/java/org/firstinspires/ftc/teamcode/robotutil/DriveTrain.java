@@ -13,7 +13,7 @@ public class DriveTrain {
     ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
     static final double TICKS_PER_INCH_FORWARD = 62;
     static final double TICKS_PER_INCH_STRAFE = 61.3;
-    public DcMotor rF, rB, lF, lB, flywheel1, flywheel2, sweeperLow, sweeperHigh, rightConv, leftConv, rightSlide, leftSlide;
+    public DcMotor rF, rB, lF, lB, flywheel1, flywheel2, sweeperLow, sweeperHigh, rightConv, leftConv, rSlide, lSlide;
     public ColorSensor colorSensor;
     public double minMotorPower = 0.085; //minimum power that robot still moves
     public IMU imu;
@@ -56,6 +56,10 @@ public class DriveTrain {
         rB.setDirection(DcMotor.Direction.FORWARD);
         lB.setDirection(DcMotor.Direction.REVERSE);
         lF.setDirection(DcMotor.Direction.REVERSE);
+        rSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        lSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        lSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public void rollersSetPower(double power) {
@@ -91,8 +95,8 @@ public class DriveTrain {
     }
 
     public void slidesSetPower(double power) {
-        rightSlide.setPower(power);
-        leftSlide.setPower(power);
+        rSlide.setPower(power);
+        lSlide.setPower(power);
     }
 
     private int headingCWError(int start, int turn, int current ) {
@@ -329,6 +333,37 @@ public class DriveTrain {
             // resetEncoders();
             //  sleep(250);   // optional pause after each move
         }
+    public void slidesUpEncoder(double speed, double inches, double timeoutS) {
+        resetEncoders();
+
+        this.rSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        this.lSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        int newRSTarget;
+        int newLSTarget;
+
+        newRSTarget = (int) (inches * TICKS_PER_INCH_FORWARD);
+        newLSTarget = (int) (inches * TICKS_PER_INCH_FORWARD);
+
+        rSlide.setTargetPosition(newRSTarget);
+        lSlide.setTargetPosition(newLSTarget);
+
+        rSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        lSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        timer.reset();
+        while (opMode.opModeIsActive() &&
+                (timer.time()< timeoutS*1000) &&
+                (rSlide.isBusy() && lSlide.isBusy())) {
+
+        }
+
+        rSlide.setPower(0);
+        lSlide.setPower(0);
+
+        this.rSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        this.lSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
 
     public void encoderDrive(double speed, double inches, Direction direction, double timeoutS) {
         resetEncoders();
