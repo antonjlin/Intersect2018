@@ -28,6 +28,8 @@ public abstract class TaskThread extends Thread{
         voltage = (mc7 + mc6 + mc3 + mc2) / 4;
     }
 
+
+
     public abstract void initialize();
 
 }

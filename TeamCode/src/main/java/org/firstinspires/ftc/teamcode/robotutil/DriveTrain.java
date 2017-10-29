@@ -18,10 +18,12 @@ public class DriveTrain {
     public double minMotorPower = 0.085; //minimum power that robot still moves
     public IMU imu;
 
+
     // Tunable parameters
-    private double balanceThreshold = 1.5;
-    private double balanceMultiplier = 0.08;
+
     private int conversionFactor = 50;
+    public double balanceThreshold = 1.5;
+    public double balanceMultiplier = 0.08;
     private int gyroTurnErrorMargin = 3; // turn stop if within the margin of error
     private int gyroTurnRampMax = 60;  // starting point of scaling back speed of motor for turning
     private int gyroTurnRampMin = 3;   // stopping point to turn off motor abs(heading-target)<vlaue

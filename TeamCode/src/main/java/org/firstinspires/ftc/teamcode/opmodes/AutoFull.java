@@ -44,21 +44,22 @@ public class AutoFull extends LinearOpMode {
             Functions.waitFor(5000);
             telemetry.addData("Red", colorSensor.getRed());
             telemetry.addData("Blue", colorSensor.getBlue());
-            if(colorSensor.correctColor()){
-                driveTrain.encoderDriveIMU(0.2,2, DriveTrain.Direction.BACKWARD,3);
-                driveTrain.encoderDriveIMU(0.2,2, DriveTrain.Direction.FORWARD,3);
-            }else{
-                driveTrain.encoderDriveIMU(0.2,2, DriveTrain.Direction.FORWARD,3);
-            }
+            hitJewel(0.2,2);
             Functions.waitFor(5000);
             driveTrain.encoderDriveIMU(0.4,30, DriveTrain.Direction.FORWARD,10);
             driveTrain.rotateIMURamp(90,0.3,5,telemetry);
-            
-
         }
     }
 
-
+    public void hitJewel(double speed, int dist){
+        if(colorSensor.correctColor()){
+            driveTrain.encoderDriveIMU(speed,dist, DriveTrain.Direction.BACKWARD,3);
+            driveTrain.encoderDriveIMU(speed,dist, DriveTrain.Direction.FORWARD,3);
+        }else{
+            driveTrain.encoderDriveIMU(speed,dist, DriveTrain.Direction.FORWARD,3);
+            driveTrain.encoderDriveIMU(speed,dist, DriveTrain.Direction.BACKWARD,3);
+        }
+    }
 
     public void initHardware() {
         rF = hardwareMap.dcMotor.get("rF");
