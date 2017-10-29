@@ -7,18 +7,25 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.GyroSensor;
+import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.teamcode.robotutil.DriveTrain;
 import org.firstinspires.ftc.teamcode.robotutil.Functions;
 import org.firstinspires.ftc.teamcode.robotutil.IMU;
+import org.firstinspires.ftc.teamcode.robotutil.MRColorSensor;
+import org.lasarobotics.vision.util.color.Color;
 
 @Autonomous(name = "AutoFull")
 public class AutoFull extends LinearOpMode {
+    private double jewelArmInitPosition = 0, jewelArmDownPos = 1, getJewelArmUpPos = 0.4;
     static DcMotor rF, rB, lF, lB, flywheel1, flywheel2, sweeperLow;
     static GyroSensor gyro;
-    static ColorSensor jewelColor;
+    static Servo jewelArm;
     boolean red = false;
     DriveTrain driveTrain;
+    ColorSensor jewelColor;
+    MRColorSensor colorSensor;
     char alliance;
     int state;
     private BNO055IMU adaImu;
@@ -28,9 +35,25 @@ public class AutoFull extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         initHardware();
+        options();
         waitForStart();
         state = 0;// Todo:
         if (opModeIsActive()) {
+            colorSensor.enableLED(false);
+            jewelArm.setPosition(jewelArmDownPos);
+            Functions.waitFor(5000);
+            telemetry.addData("Red", colorSensor.getRed());
+            telemetry.addData("Blue", colorSensor.getBlue());
+            if(colorSensor.correctColor()){
+                driveTrain.encoderDriveIMU(0.2,2, DriveTrain.Direction.BACKWARD,3);
+                driveTrain.encoderDriveIMU(0.2,2, DriveTrain.Direction.FORWARD,3);
+            }else{
+                driveTrain.encoderDriveIMU(0.2,2, DriveTrain.Direction.FORWARD,3);
+            }
+            Functions.waitFor(5000);
+            driveTrain.encoderDriveIMU(0.4,30, DriveTrain.Direction.FORWARD,10);
+            driveTrain.rotateIMURamp(90,0.3,5,telemetry);
+            
 
         }
     }
@@ -54,13 +77,14 @@ public class AutoFull extends LinearOpMode {
         rB.setDirection(DcMotor.Direction.FORWARD);
         lB.setDirection(DcMotor.Direction.REVERSE);
         lF.setDirection(DcMotor.Direction.REVERSE);
+
+        jewelArm = hardwareMap.servo.get("jewelArm");
+        jewelArm.setPosition(jewelArmInitPosition);
         adaImu = hardwareMap.get(BNO055IMU.class, "imu");
         imu = new IMU(adaImu);
+        colorSensor = new MRColorSensor(jewelColor, this);
         jewelColor = hardwareMap.colorSensor.get("jewelColor");
-        sweeperLow = hardwareMap.dcMotor.get("sweeperLow");
-        crypHeading = (int) imu.getAngle() - 90;
-
-        gyro = hardwareMap.gyroSensor.get("gyro");
+        //crypHeading = (int) imu.getAngle() - 90;
         driveTrain = new DriveTrain(this);
         driveTrain.detectAmbientLight(jewelColor);
 
