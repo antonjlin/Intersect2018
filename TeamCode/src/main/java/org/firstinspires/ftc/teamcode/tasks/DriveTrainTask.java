@@ -1,22 +1,32 @@
 package org.firstinspires.ftc.teamcode.tasks;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.robotutil.DriveTrain;
+import org.firstinspires.ftc.teamcode.robotutil.Functions;
+import org.firstinspires.ftc.teamcode.robotutil.IMU;
 /**
  * Created by Howard on 10/15/16.
  */
 public class DriveTrainTask extends TaskThread {
 
     private DcMotor lF, rF, lB, rB;
+    private BNO055IMU adaImu;
+    private IMU imu;
+    DriveTrain driveTrain;
+
 
     ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
     public double zeroAngle, joyStickAngle, gyroAngle;
 
     public DriveTrainTask(LinearOpMode opMode) {
         this.opMode = opMode;
+
         initialize();
     }
 
@@ -60,5 +70,67 @@ public class DriveTrainTask extends TaskThread {
         rB.setDirection(DcMotorSimple.Direction.REVERSE);
         lB.setDirection(DcMotorSimple.Direction.FORWARD);
         lF.setDirection(DcMotorSimple.Direction.FORWARD);
+        adaImu = opMode.hardwareMap.get(BNO055IMU.class, "imu");
+        imu = new IMU(adaImu);
+        driveTrain = new DriveTrain(opMode);
+
+
+    }
+    public void selfBalance(Telemetry telemetry) {
+        // call when the robot is fully on the platform
+        /* also assumes that after 0 degrees to the right starts incrementing positively
+         * and before 0 degrees to the left is incrementing negatively
+        */
+        //using trig you know that the robot will be stable if the angle is less than 10 degrees. Thus, we will have a threshold of 5
+        boolean pitchDone = false;
+        boolean rollDone = false;
+        int checkTimeMS = 1000;
+
+        while (opMode.opModeIsActive()) {
+            double pitch = IMU.getOrientation()[1];
+            double roll = IMU.getOrientation()[2];
+            telemetry.addData("Initial Pitch", pitch);
+            telemetry.addData("Initial Roll", roll);
+
+            //initialized as false to check again
+            while ((!pitchDone || !rollDone)&& opMode.opModeIsActive()) {
+                pitch = IMU.getOrientation()[1];
+                roll = IMU.getOrientation()[2];
+                telemetry.addData("Pitch", pitch);
+                telemetry.addData("Roll", roll);
+                if (pitch > driveTrain.balanceThreshold && !pitchDone) {
+                    driveTrain.moveAtSpeed(DriveTrain.Direction.BACKWARD, driveTrain.powerPerDegree(pitch));
+                } else if (pitch < -driveTrain.balanceThreshold) {
+                    driveTrain.moveAtSpeed(DriveTrain.Direction.FORWARD, driveTrain.powerPerDegree(pitch));
+                } else {
+                    pitchDone = true;
+                    driveTrain.stopAll();
+                    telemetry.addLine("Pitch Done");
+                }
+
+                if (roll > driveTrain.balanceThreshold && !rollDone) {
+                    driveTrain.moveAtSpeed(DriveTrain.Direction.LEFT, driveTrain.powerPerDegree(roll));
+                } else if (roll < -driveTrain.balanceThreshold) {
+                    driveTrain.moveAtSpeed(DriveTrain.Direction.RIGHT, driveTrain.powerPerDegree(roll));
+                } else {
+                    rollDone = true;
+                    telemetry.addLine("Roll Done");
+                    driveTrain.stopAll();
+                }
+                telemetry.update();
+                //Functions.waitFor(50);
+            }
+            Functions.waitFor(checkTimeMS);
+            //CHECK TO SEE IF OVERSHOT AND IS STILL WITHIN THRESHOLD
+            if(Math.abs(pitch)<driveTrain.balanceThreshold && Math.abs(roll)<driveTrain.balanceThreshold){
+                telemetry.addLine("Overall Done");
+                telemetry.update();
+                driveTrain.stopAll();
+                break;
+            }
+            pitchDone=false;
+            rollDone=false;
+        }
+
     }
 }
