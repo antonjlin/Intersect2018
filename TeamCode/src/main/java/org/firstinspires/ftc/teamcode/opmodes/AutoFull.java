@@ -14,11 +14,12 @@ import org.firstinspires.ftc.teamcode.robotutil.DriveTrain;
 import org.firstinspires.ftc.teamcode.robotutil.Functions;
 import org.firstinspires.ftc.teamcode.robotutil.IMU;
 import org.firstinspires.ftc.teamcode.robotutil.MRColorSensor;
+import org.firstinspires.ftc.teamcode.robotutil.Team;
 import org.lasarobotics.vision.util.color.Color;
 
 @Autonomous(name = "AutoFull")
 public class AutoFull extends LinearOpMode {
-    private double jewelArmInitPosition = 0, jewelArmDownPos = 1, getJewelArmUpPos = 0.4;
+    private double jewelArmInitPosition = 1, jewelArmDownPos = 0, getJewelArmUpPos = 0.4;
     static DcMotor rF, rB, lF, lB, flywheel1, flywheel2, sweeperLow;
     static GyroSensor gyro;
     static Servo jewelArm;
@@ -39,26 +40,43 @@ public class AutoFull extends LinearOpMode {
         waitForStart();
         state = 0;// Todo:
         if (opModeIsActive()) {
-            colorSensor.enableLED(false);
+            jewelColor.enableLed(false);
             jewelArm.setPosition(jewelArmDownPos);
             Functions.waitFor(5000);
             telemetry.addData("Red", colorSensor.getRed());
             telemetry.addData("Blue", colorSensor.getBlue());
-            if(colorSensor.correctColor()){
-                driveTrain.encoderDriveIMU(0.2,2, DriveTrain.Direction.BACKWARD,3);
-                driveTrain.encoderDriveIMU(0.2,2, DriveTrain.Direction.FORWARD,3);
-            }else{
-                driveTrain.encoderDriveIMU(0.2,2, DriveTrain.Direction.FORWARD,3);
-            }
+            telemetry.update();
+            Functions.waitFor(5000);
+            hitJewel(0.2,2);
+            //hitJewelRotate(20,0.2,);
             Functions.waitFor(5000);
             driveTrain.encoderDriveIMU(0.4,30, DriveTrain.Direction.FORWARD,10);
             driveTrain.rotateIMURamp(90,0.3,5,telemetry);
-            
-
         }
     }
 
+    public void hitJewel(double speed, int dist){
+        if(colorSensor.wrongColor()){
+            driveTrain.encoderDriveIMU(speed,dist, DriveTrain.Direction.BACKWARD,3);
+            driveTrain.encoderDriveIMU(speed,dist, DriveTrain.Direction.FORWARD,3);
+        }else{
+            driveTrain.encoderDriveIMU(speed,dist, DriveTrain.Direction.FORWARD,3);
+            driveTrain.encoderDriveIMU(speed,dist, DriveTrain.Direction.BACKWARD,3);
+        }
+    }
 
+    public void hitJewelRotate(int angle,double speed, int timeOutS){
+        angle = Math.abs(angle);
+        if(colorSensor.wrongColor()){
+            driveTrain.rotateIMURamp(angle,speed,timeOutS,telemetry);
+            Functions.waitFor(500);
+            driveTrain.rotateIMURamp(-angle,speed,timeOutS,telemetry);
+        }else{
+            driveTrain.rotateIMURamp(-angle,speed,timeOutS,telemetry);
+            Functions.waitFor(500);
+            driveTrain.rotateIMURamp(angle,speed,timeOutS,telemetry);
+        }
+    }
 
     public void initHardware() {
         rF = hardwareMap.dcMotor.get("rF");
@@ -82,8 +100,8 @@ public class AutoFull extends LinearOpMode {
         jewelArm.setPosition(jewelArmInitPosition);
         adaImu = hardwareMap.get(BNO055IMU.class, "imu");
         imu = new IMU(adaImu);
-        colorSensor = new MRColorSensor(jewelColor, this);
         jewelColor = hardwareMap.colorSensor.get("jewelColor");
+        colorSensor = new MRColorSensor(jewelColor, this);
         //crypHeading = (int) imu.getAngle() - 90;
         driveTrain = new DriveTrain(this);
         driveTrain.detectAmbientLight(jewelColor);
@@ -100,10 +118,14 @@ public class AutoFull extends LinearOpMode {
         while(!confirmed){
             if (gamepad1.a){
                 red = true;
+                colorSensor.team = Team.RED;
+
                 telemetry.addData("Team", red ? "Red": "Blue");
             }
             if (gamepad1.b){
                 red = false;
+                colorSensor.team = Team.BLUE;
+
                 telemetry.addData("Team", red ? "Red": "Blue");
             }
             telemetry.update();
