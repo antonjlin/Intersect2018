@@ -1,15 +1,6 @@
 package org.firstinspires.ftc.teamcode.robotutil;
 
-import android.app.Activity;
-import android.graphics.Bitmap;
-import android.view.View;
-import android.widget.ImageView;
-
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-
-import org.lasarobotics.vision.opmode.ManualVisionOpMode;
-import org.opencv.android.JavaCameraView;
-import org.opencv.android.Utils;
+import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
@@ -18,37 +9,24 @@ import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
 import static org.opencv.imgproc.Imgproc.CV_HOUGH_GRADIENT;
+import static org.opencv.imgproc.Imgproc.bilateralFilter;
 
 /**
- * Created by pranav on 10/22/17.
+ * Created by pranav on 10/29/17.
  */
 
-public class BallDetector {
+public class Scratchpad {
 
-    private  int redPositionX;
-    private int redPositionY;
-    Mat rgba;
-    Mat grey;
-    Mat OutputCircles;
-    Size ksize = new Size(9,9);
-
-
-
-
-
-    public BallDetector(Mat rgba, Mat grey){
-        this.rgba = rgba;
-        this.grey = grey;
+    static {
+        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
     }
 
-    public void detectPosition(Mat rgba) {
-        Mat circles = new Mat();
-        Imgproc.GaussianBlur(grey, grey, ksize  , 2,2);
-        Imgproc.HoughCircles( grey, circles, Imgproc.CV_HOUGH_GRADIENT, 1, grey.rows()/8, 200, 100, 0, 0 );
+    public static void main(String[] args) {
+        Mat src = Imgcodecs.imread(("/home/pranav/Desktop/jewelImage.jpg"));
+        findCircles(src);
 
-        this.redPositionX = 0;//
-        this.redPositionY = 0;//
     }
+
     public static void findCircles(Mat src) {
 //        image    8-bit, single-channel, grayscale input image.
 //        circles  Output Mat of found circles. Each row is encoded as a 3-element floating-point vector \((x, y, radius)\) .
@@ -61,14 +39,16 @@ public class BallDetector {
 //        maxRadius    Maximum circle radius.
 
         Mat src_gray = new Mat();
+        Mat bilateral = new Mat();
         Imgproc.cvtColor( src, src_gray, Imgproc.COLOR_BGR2GRAY);
         Imgproc.GaussianBlur(src_gray, src_gray, new Size(9, 9), 2, 2);
-        //Imgcodecs.imwrite("/tmp/blurred.png", src_gray);
+        Imgcodecs.imwrite("/tmp/blurred.png", src_gray);
         Mat circles = new Mat();
+        bilateralFilter(src_gray, bilateral, 20000, 20000, 20000);
 
         /// Apply the Hough Transform to find the circles
-        System.out.println("src_gray of rows and cols "  + src_gray.cols() + " " + src_gray.rows());
-        Imgproc.HoughCircles( src_gray, circles, CV_HOUGH_GRADIENT, 1, src_gray.rows()/10);
+        System.out.println("src_gray of rows a  nd cols "  + src_gray.cols() + " " + src_gray.rows());
+        Imgproc.HoughCircles( bilateral, circles, CV_HOUGH_GRADIENT, 1, bilateral.rows()/10);
 
 
         System.out.println("number of rows and cols "  + circles.cols() + " " + circles.rows());
@@ -90,7 +70,7 @@ public class BallDetector {
 
             // Imgproc.circle( src, center, 3, new Scalar(0,255,0), 4);
             // circle outline
-            Imgproc.circle( src, center, r, new Scalar(0,0,255), 2);
+            Imgproc.circle( src, center, r, new Scalar(0,0,255), 5      );
         }
 
         /// Draw the circles detected
@@ -104,12 +84,7 @@ public class BallDetector {
 //            circle( src, center, radius, Scalar(0,0,255), 3, 8, 0 );
 //        }
 
-        Imgcodecs.imwrite("/tmp/withmarkers.png", src);
+        Imgcodecs.imwrite("/tmp/withmarkers.jpg", src);
 
-    }
-
-    public int[] getRebBallPosition() {
-
-        return new int[]{redPositionX, redPositionY};
     }
 }

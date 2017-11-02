@@ -1,17 +1,12 @@
 package org.firstinspires.ftc.teamcode.robotutil;
 
 import android.app.Activity;
-import android.content.Context;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-
-
 import org.lasarobotics.vision.android.Sensors;
-
 import org.lasarobotics.vision.util.FPS;
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
@@ -21,13 +16,12 @@ import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Mat;
 
 import static com.sun.tools.javac.util.Assert.error;
-import static org.firstinspires.ftc.teamcode.tests.Vision.openCVCamera;
 
 /**
  * Created by pranav on 10/22/17.
  */
 
-public class VisionProcessing implements CameraBridgeViewBase.CvCameraViewListener2 {
+public class VisionProcessor implements CameraBridgeViewBase.CvCameraViewListener2 {
 
     private static final int initialMaxSize = 1200;
     public static JavaCameraView openCVCamera;
@@ -36,10 +30,10 @@ public class VisionProcessing implements CameraBridgeViewBase.CvCameraViewListen
     public int width, height;
     public FPS fps;
     public Sensors sensors;
-    VisionProcessing processing;
+    VisionProcessor processing;
 
 
-    public VisionProcessing(final Activity activity){
+    public VisionProcessor(final Activity activity){
         processing = this;
         BaseLoaderCallback openCVLoaderCallback = null;
         try {
