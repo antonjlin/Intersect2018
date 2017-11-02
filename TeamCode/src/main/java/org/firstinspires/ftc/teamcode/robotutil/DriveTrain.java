@@ -43,8 +43,11 @@ public class DriveTrain {
         rF = opMode.hardwareMap.dcMotor.get("rF");
         lF = opMode.hardwareMap.dcMotor.get("lF");
         rB = opMode.hardwareMap.dcMotor.get("rB");
+        rSlide = opMode.hardwareMap.dcMotor.get("rSlide");
+        lSlide = opMode.hardwareMap.dcMotor.get("lSlide");
         colorSensor = opMode.hardwareMap.colorSensor.get("colorSensor");
         BNO055IMU adaImu = opMode.hardwareMap.get(BNO055IMU.class, "imu");
+
         imu = new IMU(adaImu);
         lB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         lF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

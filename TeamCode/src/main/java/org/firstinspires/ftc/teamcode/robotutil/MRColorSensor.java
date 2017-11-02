@@ -2,7 +2,9 @@ package org.firstinspires.ftc.teamcode.robotutil;
 
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.I2cAddr;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
@@ -29,7 +31,9 @@ public class MRColorSensor {
         logMessageTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
         logMessageTimer.reset();
     }
-
+    public void setI2cAddress(I2cAddr address){
+        sensor.setI2cAddress(address);
+    }
     public void enableLED(boolean b)
     {
         sensor.enableLed(b);
@@ -59,6 +63,15 @@ public class MRColorSensor {
             logMessageTimer.reset();
             System.out.println(output);
         }
+    }
+    public void telemetryDebug(OpMode opmode){
+            opmode.telemetry.addData("I2C Address", sensor.getI2cAddress());
+            opmode.telemetry.addData("Red:       ", getRed());
+            opmode.telemetry.addData("Blue:      ", getBlue());
+            opmode.telemetry.addData("Alpha:     ", getAlpha());
+            opmode.telemetry.addData("Color:    ",  getColor());
+            opmode.telemetry.addData("Is White?: ", isWhite());
+            opmode.telemetry.update();
     }
 
     public boolean isWhite() {
