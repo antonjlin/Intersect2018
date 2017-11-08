@@ -28,6 +28,7 @@ public class AutoFull extends LinearOpMode {
     private IMU imu;
     public int crypHeading = 0;
 
+
     @Override
     public void runOpMode() throws InterruptedException {
         VisionProcessing processing = new VisionProcessing((Activity) hardwareMap.appContext);

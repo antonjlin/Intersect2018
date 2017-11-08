@@ -56,11 +56,12 @@ import static org.firstinspires.ftc.teamcode.robotutil.Team.RED;
 @TeleOp(name = "Threaded Teleop")
 public class ThreadedTeleOp extends LinearOpMode {
     private DriveTrainTask driveTrainTask;
-    //private DriveTrain driveTrain;
+    private DriveTrain driveTrain;
     private SlideTask slideTask;
     private IntakeTask intakeTask;
-   // private IMU imu;
-    //private BNO055IMU adaImu;
+
+    private IMU imu;
+    private BNO055IMU adaImu;
     Team team = Team.BLUE;
     int leftSlidePos;
     int rightSlidePos;
@@ -111,8 +112,9 @@ public class ThreadedTeleOp extends LinearOpMode {
             driveTrainTask = new DriveTrainTask(this);
             intakeTask = new IntakeTask(this);
             slideTask = new SlideTask(this);
-            //driveTrain = new DriveTrain(this);
-            //imu = new IMU(adaImu);
+            driveTrain = new DriveTrain(this);
+
+            imu = new IMU(adaImu);
         }
 
     public void setTeam() {
@@ -129,6 +131,15 @@ public class ThreadedTeleOp extends LinearOpMode {
                 confirmed = true;
             }
             telemetry.update();
+        }
+    }
+
+    
+    public void moveToGraph(int crypAngle) {
+        int currentHeading = (int) imu.getAngle();
+        int dif = crypAngle - currentHeading;
+        if (gamepad1.y || gamepad2.y) {
+
         }
     }
 }

@@ -70,6 +70,7 @@ public class TeleOpNew extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
+            double x = driveTrain.minMotorPower;
             //DRIVETRAIN FUNCTIONS
             double r = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y);
             double robotAngle = Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4;
