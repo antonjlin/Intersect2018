@@ -2,6 +2,9 @@ package org.firstinspires.ftc.teamcode.robotutil;
 
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.I2cAddr;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
@@ -14,7 +17,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 
 
-public class ColorSensor {
+public class MRColorSensor {
 
     ColorSensor sensor;
     private ElapsedTime logMessageTimer;
@@ -22,35 +25,37 @@ public class ColorSensor {
     public Team team = Team.BLUE;
     public boolean lightOn = false;
 
-    public ColorSensor(ColorSensor sensor, LinearOpMode opMode) {
+    public MRColorSensor(ColorSensor sensor, LinearOpMode opMode) {
         this.opMode = opMode;
         this.sensor = sensor;
         logMessageTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
         logMessageTimer.reset();
     }
-
+    public void setI2cAddress(I2cAddr address){
+        sensor.setI2cAddress(address);
+    }
     public void enableLED(boolean b)
     {
-        sensor.enableLED(b);
+        sensor.enableLed(b);
     }
 
     public int getRed()
     {
-        return sensor.getRed();
+        return sensor.red();
     }
 
     public int getBlue()
     {
-        return sensor.getBlue();
+        return sensor.blue();
     }
 
     public int getGreen() {
-        return sensor.getGreen();
+        return sensor.green();
     }
 
     public int getAlpha()
     {
-        return sensor.getAlpha();
+        return sensor.alpha();
     }
 
     public void debugOutput(String output) {
@@ -58,6 +63,15 @@ public class ColorSensor {
             logMessageTimer.reset();
             System.out.println(output);
         }
+    }
+    public void telemetryDebug(OpMode opmode){
+            opmode.telemetry.addData("I2C Address", sensor.getI2cAddress());
+            opmode.telemetry.addData("Red:       ", getRed());
+            opmode.telemetry.addData("Blue:      ", getBlue());
+            opmode.telemetry.addData("Alpha:     ", getAlpha());
+            opmode.telemetry.addData("Color:    ",  getColor());
+            opmode.telemetry.addData("Is White?: ", isWhite());
+            opmode.telemetry.update();
     }
 
     public boolean isWhite() {
@@ -70,9 +84,9 @@ public class ColorSensor {
         while (i < 10 && opMode.opModeIsActive()){
             if (logMessageTimer.time() > 3){
                 i++;
-                System.out.println("R: " + sensor.getRed() + " G: " + sensor.getGreen()+ " B: "  + sensor.getBlue() );
+                System.out.println("R: " + sensor.red() + " G: " + sensor.green()+ " B: "  + sensor.blue() );
                 logMessageTimer.reset();
-                if (sensor.getRed() >= 3 && sensor.getBlue() >= 3 && sensor.getGreen() >= 3)
+                if (sensor.red() >= 3 && sensor.blue() >= 3 && sensor.green() >= 3)
                     score ++;
             }
         }
@@ -91,7 +105,7 @@ public class ColorSensor {
             if (logMessageTimer.time() > 3){
                 i++;
                 logMessageTimer.reset();
-                if (sensor.getBlue() - sensor.getRed() >= margin) {
+                if (sensor.blue() - sensor.red() >= margin) {
                     score++;
                 }
             }
@@ -111,7 +125,7 @@ public class ColorSensor {
             if (logMessageTimer.time() > 3){
                 i++;
                 logMessageTimer.reset();
-                if (sensor.getRed() - sensor.getBlue() > margin) {
+                if (sensor.red() - sensor.blue() > margin) {
                     score++;
                 }
             }

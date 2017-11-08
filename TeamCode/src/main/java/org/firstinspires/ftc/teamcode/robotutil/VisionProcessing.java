@@ -5,6 +5,7 @@ import android.content.Context;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 
@@ -154,7 +155,9 @@ public class VisionProcessing implements CameraBridgeViewBase.CvCameraViewListen
         Mat grey = inputFrame.gray();
         BallDetector detector = new BallDetector(rgba,grey);
         Log.d("Hello","On Camera Frame Started");
+
         return null;
+
     }
 
     @Override

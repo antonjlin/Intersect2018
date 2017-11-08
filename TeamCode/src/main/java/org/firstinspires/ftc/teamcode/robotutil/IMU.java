@@ -11,7 +11,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Quaternion;
 
 public class IMU {
-    public BNO055IMU adafruit;
+    public static BNO055IMU adafruit;
     private Orientation angles;
     public IMU(BNO055IMU adafruit){
         this.adafruit = adafruit;
@@ -53,7 +53,7 @@ public class IMU {
     }
     //
 
-    public double[] getOrientation() {
+    public static double[] getOrientation() {
         Quaternion quatAngles = adafruit.getQuaternionOrientation();
 
         double w = quatAngles.w;
