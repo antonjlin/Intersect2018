@@ -35,11 +35,23 @@ public class AutoFull extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+
+
         initHardware();
+
         options();
         waitForStart();
         state = 0;// Todo:
+        while(opModeIsActive()){
+            telemetry.addData("red",jewelColor.red());
+            telemetry.addData("red",jewelColor.blue());
+            telemetry.addData("red",jewelColor.green());
+
+        }
         if (opModeIsActive()) {
+
+
+
             jewelColor.enableLed(false);
             jewelArm.setPosition(jewelArmDownPos);
             Functions.waitFor(5000);
@@ -97,7 +109,7 @@ public class AutoFull extends LinearOpMode {
         lF.setDirection(DcMotor.Direction.REVERSE);
 
         jewelArm = hardwareMap.servo.get("jewelArm");
-        jewelArm.setPosition(jewelArmInitPosition);
+        //jewelArm.setPosition(jewelArmInitPosition); commented for testing
         adaImu = hardwareMap.get(BNO055IMU.class, "imu");
         imu = new IMU(adaImu);
         jewelColor = hardwareMap.colorSensor.get("jewelColor");
