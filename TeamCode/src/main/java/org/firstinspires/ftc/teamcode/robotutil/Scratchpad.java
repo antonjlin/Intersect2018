@@ -9,6 +9,7 @@ import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
 import static org.opencv.imgproc.Imgproc.CV_HOUGH_GRADIENT;
+import static org.opencv.imgproc.Imgproc.HOUGH_GRADIENT;
 import static org.opencv.imgproc.Imgproc.bilateralFilter;
 
 /**
@@ -37,10 +38,11 @@ public class Scratchpad {
 //        param2   Second method-specific parameter. In case of CV_HOUGH_GRADIENT , it is the accumulator threshold for the circle centers at the detection stage. The smaller it is, the more false circles may be detected. Circles, corresponding to the larger accumulator values, will be returned first.
 //        minRadius    Minimum circle radius.
 //        maxRadius    Maximum circle radius.
-
+        int min = 20;
+        int max = 200;
         Mat src_gray = new Mat();
         Mat bilateral = new Mat();
-        Imgproc.cvtColor( src, src_gray, Imgproc.COLOR_BGR2GRAY);
+        Imgproc.cvtColor( src, src_gray, Imgproc.COLOR_RGB2GRAY);
         Imgproc.GaussianBlur(src_gray, src_gray, new Size(9, 9), 2, 2);
         Imgcodecs.imwrite("/tmp/blurred.png", src_gray);
         Mat circles = new Mat();
@@ -48,7 +50,8 @@ public class Scratchpad {
 
         /// Apply the Hough Transform to find the circles
         System.out.println("src_gray of rows a  nd cols "  + src_gray.cols() + " " + src_gray.rows());
-        Imgproc.HoughCircles( bilateral, circles, CV_HOUGH_GRADIENT, 1, bilateral.rows()/10);
+        Imgproc.HoughCircles( bilateral, circles, CV_HOUGH_GRADIENT, 1, bilateral.rows()/20 );
+        Imgproc.HoughCircles(bilateral,circles, HOUGH_GRADIENT, 1, bilateral.rows()/20, 200, 1, max, min);
 
 
         System.out.println("number of rows and cols "  + circles.cols() + " " + circles.rows());
