@@ -10,11 +10,13 @@ import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Func;
+import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.teamcode.robotutil.DriveTrain;
 import org.firstinspires.ftc.teamcode.robotutil.Functions;
 import org.firstinspires.ftc.teamcode.robotutil.IMU;
 import org.firstinspires.ftc.teamcode.robotutil.MRColorSensor;
 import org.firstinspires.ftc.teamcode.robotutil.Team;
+import org.firstinspires.ftc.teamcode.robotutil.VuMark;
 import org.lasarobotics.vision.util.color.Color;
 
 @Autonomous(name = "AutoFull")
@@ -26,12 +28,14 @@ public class AutoFull extends LinearOpMode {
     boolean red = false;
     DriveTrain driveTrain;
     ColorSensor jewelColor;
+    ColorSensor cryptoColor;
     MRColorSensor colorSensor;
     char alliance;
     int state;
     private BNO055IMU adaImu;
     private IMU imu;
     public int crypHeading = 0;
+    VuMark vm;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -61,9 +65,22 @@ public class AutoFull extends LinearOpMode {
             Functions.waitFor(5000);
             hitJewel(0.2,2);
             //hitJewelRotate(20,0.2,);
-            Functions.waitFor(5000);
-            driveTrain.encoderDriveIMU(0.4,30, DriveTrain.Direction.FORWARD,10);
-            driveTrain.rotateIMURamp(90,0.3,5,telemetry);
+            if (red){
+                    Functions.waitFor(5000);
+                    driveTrain.encoderDriveIMU(0.4, 30, DriveTrain.Direction.FORWARD, 10);
+                    RelicRecoveryVuMark vumark  = vm.detectColumn(5);
+                    driveTrain.encoderDrive(.4, 5, DriveTrain.Direction.BACKWARD, 10);
+                    //driveTrain.rotateIMURamp(90,.4, 10, telemetry);
+                    driveTrain.alignWithCrypto(vumark, cryptoColor);
+
+
+
+            }
+            else{
+                driveTrain.rotateIMURamp(90, 0.3, 5, telemetry);
+
+            }
+
         }
     }
 
@@ -113,10 +130,12 @@ public class AutoFull extends LinearOpMode {
         adaImu = hardwareMap.get(BNO055IMU.class, "imu");
         imu = new IMU(adaImu);
         jewelColor = hardwareMap.colorSensor.get("jewelColor");
+        cryptoColor = hardwareMap.colorSensor.get("cryptoColor");
         colorSensor = new MRColorSensor(jewelColor, this);
         //crypHeading = (int) imu.getAngle() - 90;
         driveTrain = new DriveTrain(this);
         driveTrain.detectAmbientLight(jewelColor);
+        vm = new VuMark(this);
 
 
         //driveTrain.calibrateGyro(telemetry);

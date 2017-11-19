@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 
 public class DriveTrain {
     ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
@@ -242,6 +243,48 @@ public class DriveTrain {
         return heading;
 
 //      setDriveMotorMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+    }
+    public void alignWithCrypto(RelicRecoveryVuMark vuMark, ColorSensor colors){
+        switch (vuMark){
+            case LEFT:
+                encoderDriveIMU(.7, 30, Direction.LEFT, 10);
+                driveRighttoCrypto(vuMark,colors);
+            case RIGHT:
+               // driveLefttoCrypto();
+
+        }
+    }
+
+
+    public void driveLefttoCrypto(RelicRecoveryVuMark vuMark, ColorSensor colors){
+        if(vuMark == RelicRecoveryVuMark.RIGHT){
+            moveAtSpeed(Direction.LEFT, .4);
+
+
+        }
+        moveAtSpeed(Direction.FORWARD, .4);
+
+    }
+    public void driveRighttoCrypto(RelicRecoveryVuMark vuMark, ColorSensor colors){
+        if(vuMark == RelicRecoveryVuMark.RIGHT){
+            moveAtSpeed(Direction.BACKWARD, .4);
+            //stopOnRed(colors, );
+
+
+        }
+        moveAtSpeed(Direction.FORWARD, .4);
+
+    }
+    public void stopOnRed(ColorSensor colors, RelicRecoveryVuMark vuMark){
+        int counterRed = 0;
+        while (opMode.opModeIsActive()){
+            if (detectRed(colors)){
+                 setAllMotorSpeed(0);
+            }
+
+        }
+
 
     }
 
