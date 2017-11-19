@@ -33,15 +33,25 @@ public class AutoFull extends LinearOpMode {
     private IMU imu;
     public int crypHeading = 0;
 
-
     @Override
     public void runOpMode() throws InterruptedException {
+
+
         initHardware();
+
         options();
         waitForStart();
         state = 0;// Todo:
+        while(opModeIsActive()){
+            telemetry.addData("red",jewelColor.red());
+            telemetry.addData("red",jewelColor.blue());
+            telemetry.addData("red",jewelColor.green());
+
+        }
         if (opModeIsActive()) {
-            //Read cryptograph
+
+
+
             jewelColor.enableLed(false);
             jewelArm.setPosition(jewelArmDownPos);
             Functions.waitFor(5000);
@@ -52,19 +62,8 @@ public class AutoFull extends LinearOpMode {
             hitJewel(0.2,2);
             //hitJewelRotate(20,0.2,);
             Functions.waitFor(5000);
-            jewelArm.setPosition(0.1);
-            Functions.waitFor(3000);
             driveTrain.encoderDriveIMU(0.4,30, DriveTrain.Direction.FORWARD,10);
-            Functions.waitFor(200);
-            driveTrain.encoderDriveIMU(0.4, 40, DriveTrain.Direction.LEFT, 10);
-            jewelArm.setPosition(getJewelArmUpPos);
-            Functions.waitFor(200);
             driveTrain.rotateIMURamp(90,0.3,5,telemetry);
-            //move by the cryptogrph reading
-            driveTrain.encoderDriveIMU(0.3, 15, DriveTrain.Direction.FORWARD, 7);
-            driveTrain.rollersSetPower(0.6);
-            Functions.waitFor(5000);
-            driveTrain.rollersSetPower(0);
         }
     }
 
@@ -110,7 +109,7 @@ public class AutoFull extends LinearOpMode {
         lF.setDirection(DcMotor.Direction.REVERSE);
 
         jewelArm = hardwareMap.servo.get("jewelArm");
-        jewelArm.setPosition(jewelArmInitPosition);
+        //jewelArm.setPosition(jewelArmInitPosition); commented for testing
         adaImu = hardwareMap.get(BNO055IMU.class, "imu");
         imu = new IMU(adaImu);
         jewelColor = hardwareMap.colorSensor.get("jewelColor");
@@ -118,6 +117,7 @@ public class AutoFull extends LinearOpMode {
         //crypHeading = (int) imu.getAngle() - 90;
         driveTrain = new DriveTrain(this);
         driveTrain.detectAmbientLight(jewelColor);
+
 
         //driveTrain.calibrateGyro(telemetry);
 

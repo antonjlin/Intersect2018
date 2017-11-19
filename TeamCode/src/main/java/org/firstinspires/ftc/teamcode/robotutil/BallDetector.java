@@ -17,6 +17,8 @@ import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
+import static org.opencv.imgproc.Imgproc.CV_HOUGH_GRADIENT;
+
 /**
  * Created by pranav on 10/22/17.
  */
@@ -47,7 +49,7 @@ public class BallDetector {
         this.redPositionX = 0;//
         this.redPositionY = 0;//
     }
-    public void findCircles() {
+    public static void findCircles(Mat src) {
 //        image    8-bit, single-channel, grayscale input image.
 //        circles  Output Mat of found circles. Each row is encoded as a 3-element floating-point vector \((x, y, radius)\) .
 //        method   Detection method, see cv::HoughModes. Currently, the only implemented method is HOUGH_GRADIENT
@@ -59,13 +61,14 @@ public class BallDetector {
 //        maxRadius    Maximum circle radius.
 
         Mat src_gray = new Mat();
-        //Imgproc.cvtColor( src, src_gray, Imgproc.COLOR_BGR2GRAY);
-        Imgproc.GaussianBlur(grey, src_gray, new Size(9, 9), 2, 2);
+        Imgproc.cvtColor( src, src_gray, Imgproc.COLOR_BGR2GRAY);
+        Imgproc.GaussianBlur(src_gray, src_gray, new Size(9, 9), 2, 2);
+        //Imgcodecs.imwrite("/tmp/blurred.png", src_gray);
         Mat circles = new Mat();
 
         /// Apply the Hough Transform to find the circles
-        //System.out.println("src_gray of rows and cols "  + src_gray.cols() + " " + src_gray.rows());
-        Imgproc.HoughCircles( src_gray, circles, Imgproc.CV_HOUGH_GRADIENT, 1, src_gray.rows()/10);
+        System.out.println("src_gray of rows and cols "  + src_gray.cols() + " " + src_gray.rows());
+        Imgproc.HoughCircles( src_gray, circles, CV_HOUGH_GRADIENT, 1, src_gray.rows()/10);
 
 
         System.out.println("number of rows and cols "  + circles.cols() + " " + circles.rows());
@@ -87,7 +90,7 @@ public class BallDetector {
 
             // Imgproc.circle( src, center, 3, new Scalar(0,255,0), 4);
             // circle outline
-            Imgproc.circle( src_gray, center, r, new Scalar(0,0,255), 10);
+            Imgproc.circle( src, center, r, new Scalar(0,0,255), 2);
         }
 
         /// Draw the circles detected
@@ -101,10 +104,9 @@ public class BallDetector {
 //            circle( src, center, radius, Scalar(0,0,255), 3, 8, 0 );
 //        }
 
-
+        Imgcodecs.imwrite("/tmp/withmarkers.png", src);
 
     }
-
 
     public int[] getRebBallPosition() {
 
