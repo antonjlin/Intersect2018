@@ -19,7 +19,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class MRColorSensor {
 
-    ColorSensor sensor;
+    private ColorSensor sensor;
     private ElapsedTime logMessageTimer;
     LinearOpMode opMode;
     public Team team = Team.BLUE;

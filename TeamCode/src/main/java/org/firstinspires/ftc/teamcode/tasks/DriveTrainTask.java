@@ -66,10 +66,10 @@ public class DriveTrainTask extends TaskThread {
         rB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         lB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        rF.setDirection(DcMotorSimple.Direction.REVERSE);
-        rB.setDirection(DcMotorSimple.Direction.REVERSE);
-        lB.setDirection(DcMotorSimple.Direction.FORWARD);
-        lF.setDirection(DcMotorSimple.Direction.FORWARD);
+        rF.setDirection(DcMotorSimple.Direction.FORWARD);
+        rB.setDirection(DcMotorSimple.Direction.FORWARD);
+        lB.setDirection(DcMotorSimple.Direction.REVERSE);
+        lF.setDirection(DcMotorSimple.Direction.REVERSE);
         adaImu = opMode.hardwareMap.get(BNO055IMU.class, "imu");
         imu = new IMU(adaImu);
         driveTrain = new DriveTrain(opMode);

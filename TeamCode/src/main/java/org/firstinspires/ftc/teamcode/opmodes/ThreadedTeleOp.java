@@ -35,10 +35,10 @@ package org.firstinspires.ftc.teamcode.opmodes;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.GyroSensor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.robotutil.DriveTrain;
 import org.firstinspires.ftc.teamcode.robotutil.IMU;
@@ -59,6 +59,7 @@ public class ThreadedTeleOp extends LinearOpMode {
 
     private SlideTask slideTask;
     private IntakeTask intakeTask;
+    Servo jewelArm;
     Team team = Team.BLUE;
     int leftSlidePos;
     int rightSlidePos;
@@ -109,6 +110,8 @@ public class ThreadedTeleOp extends LinearOpMode {
             driveTrainTask = new DriveTrainTask(this);
             intakeTask = new IntakeTask(this);
             slideTask = new SlideTask(this);
+            jewelArm = hardwareMap.servo.get("jewelArm");
+            jewelArm.setPosition(AutoFull.jewelArmUpPos);
         }
 
     public void setTeam() {

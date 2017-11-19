@@ -3,10 +3,12 @@ package org.firstinspires.ftc.teamcode.robotutil;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 //import com.qualcomm.hardware.adafruit.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 
+import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 
@@ -14,8 +16,7 @@ public class DriveTrain {
     ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
     static final double TICKS_PER_INCH_FORWARD = 62;
     static final double TICKS_PER_INCH_STRAFE = 61.3;
-    public DcMotor rF, rB, lF, lB, flywheel1, flywheel2, sweeperLow, sweeperHigh, rightConv, leftConv, rSlide, lSlide;
-    public ColorSensor colorSensor;
+    public DcMotor rF, rB, lF, lB, rIntake, lIntake, rSlide, lSlide;
     public double minMotorPower = 0.085; //minimum power that robot still moves
     public IMU imu;
 
@@ -41,12 +42,13 @@ public class DriveTrain {
     public DriveTrain( LinearOpMode opMode) {
         this.opMode = opMode;
         lB = opMode.hardwareMap.dcMotor.get("lB");
+        lB = opMode.hardwareMap.dcMotor.get("lB");
         rF = opMode.hardwareMap.dcMotor.get("rF");
         lF = opMode.hardwareMap.dcMotor.get("lF");
         rB = opMode.hardwareMap.dcMotor.get("rB");
+
         rSlide = opMode.hardwareMap.dcMotor.get("rSlide");
         lSlide = opMode.hardwareMap.dcMotor.get("lSlide");
-        colorSensor = opMode.hardwareMap.colorSensor.get("colorSensor");
         BNO055IMU adaImu = opMode.hardwareMap.get(BNO055IMU.class, "imu");
 
         imu = new IMU(adaImu);
@@ -66,11 +68,28 @@ public class DriveTrain {
         lSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         lSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
+        lIntake = opMode.hardwareMap.dcMotor.get("lIntake");
+        rIntake = opMode.hardwareMap.dcMotor.get("rIntake");
+        lIntake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rIntake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        lIntake.setDirection(DcMotorSimple.Direction.REVERSE);
+        rIntake.setDirection(DcMotorSimple.Direction.FORWARD);
+        lIntake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rIntake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     public void rollersSetPower(double power) {
-        rightConv.setPower(power);
-        leftConv.setPower(power);
+        rIntake.setPower(power);
+        lIntake.setPower(power);
+    }
+
+    public void moveRollersTime(double power, int timeMS) {
+        rollersSetPower(power);
+        Functions.waitFor(timeMS);
+        rollersSetPower(0);
+
     }
 
     public enum Direction {
@@ -256,6 +275,18 @@ public class DriveTrain {
         }
     }
 
+    public void cryptoDrive(RelicRecoveryVuMark vuMark, Direction direction, int timeoutS){
+        switch (vuMark){
+            case LEFT:
+                encoderDriveIMU(.7, 30, direction, 10);
+            case RIGHT:
+                encoderDriveIMU(.7, 30, direction, 10);
+            case CENTER:
+                encoderDriveIMU(.7, 30, direction, 10);
+
+        }
+    }
+
 
     public void driveLefttoCrypto(RelicRecoveryVuMark vuMark, ColorSensor colors){
         if(vuMark == RelicRecoveryVuMark.RIGHT){
@@ -411,6 +442,12 @@ public class DriveTrain {
 
         this.rSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         this.lSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    public void moveSlidesTime(double speed, int timeMS){
+        slidesSetPower(speed);
+        Functions.waitFor(timeMS);
+        slidesSetPower(0);
     }
 
     public void encoderDrive(double speed, double inches, Direction direction, double timeoutS) {
