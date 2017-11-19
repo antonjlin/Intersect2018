@@ -21,7 +21,7 @@ import org.lasarobotics.vision.util.color.Color;
 
 @Autonomous(name = "AutoFull")
 public class AutoFull extends LinearOpMode {
-    private double jewelArmInitPosition = 1, jewelArmDownPos = 0, getJewelArmUpPos = 0.4;
+    private double jewelArmInitPosition = 1, jewelArmDownPos = 0, jewelArmUpPos = 0.4;
     static DcMotor rF, rB, lF, lB, flywheel1, flywheel2, sweeperLow;
     static GyroSensor gyro;
     static Servo jewelArm;
@@ -30,7 +30,7 @@ public class AutoFull extends LinearOpMode {
     ColorSensor jewelColor;
     ColorSensor cryptoColor;
     MRColorSensor colorSensor;
-    char alliance;
+    int startingPos = 0; //0 IS CORNER POSITION, 1 IS SANDWITCH POSITION
     int state;
     private BNO055IMU adaImu;
     private IMU imu;
@@ -39,46 +39,43 @@ public class AutoFull extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-
-
         initHardware();
-
         options();
         waitForStart();
         state = 0;// Todo:
-        while(opModeIsActive()){
-            telemetry.addData("red",jewelColor.red());
-            telemetry.addData("red",jewelColor.blue());
-            telemetry.addData("red",jewelColor.green());
-
-        }
         if (opModeIsActive()) {
 
-
-
-            jewelColor.enableLed(false);
+            jewelColor.enableLed(true);
             jewelArm.setPosition(jewelArmDownPos);
             Functions.waitFor(5000);
             telemetry.addData("Red", colorSensor.getRed());
             telemetry.addData("Blue", colorSensor.getBlue());
             telemetry.update();
             Functions.waitFor(5000);
-            hitJewel(0.2,2);
-            //hitJewelRotate(20,0.2,);
+            //hitJewel(0.2,2);
+            hitJewelRotate(20,0.2,10);
+            Functions.waitFor(5000);
+            jewelArm.setPosition(jewelArmUpPos);
+            Functions.waitFor(5000);
+            RelicRecoveryVuMark vumark = vm.detectColumn(5);
             if (red){
-                    Functions.waitFor(5000);
+                if(startingPos == 0) {
+                    //red 0
+                    //Functions.waitFor(5000);
                     driveTrain.encoderDriveIMU(0.4, 30, DriveTrain.Direction.FORWARD, 10);
-                    RelicRecoveryVuMark vumark  = vm.detectColumn(5);
                     driveTrain.encoderDrive(.4, 5, DriveTrain.Direction.BACKWARD, 10);
                     //driveTrain.rotateIMURamp(90,.4, 10, telemetry);
                     driveTrain.alignWithCrypto(vumark, cryptoColor);
-
-
-
+                } else{
+                    //red 1
+                }
             }
             else{
-                driveTrain.rotateIMURamp(90, 0.3, 5, telemetry);
-
+                if(startingPos == 0) {
+                    //blue 0
+                } else{
+                    //blue 1
+                }
             }
 
         }
@@ -126,19 +123,15 @@ public class AutoFull extends LinearOpMode {
         lF.setDirection(DcMotor.Direction.REVERSE);
 
         jewelArm = hardwareMap.servo.get("jewelArm");
-        //jewelArm.setPosition(jewelArmInitPosition); commented for testing
+        jewelArm.setPosition(jewelArmInitPosition);
         adaImu = hardwareMap.get(BNO055IMU.class, "imu");
         imu = new IMU(adaImu);
         jewelColor = hardwareMap.colorSensor.get("jewelColor");
         cryptoColor = hardwareMap.colorSensor.get("cryptoColor");
         colorSensor = new MRColorSensor(jewelColor, this);
-        //crypHeading = (int) imu.getAngle() - 90;
         driveTrain = new DriveTrain(this);
         driveTrain.detectAmbientLight(jewelColor);
         vm = new VuMark(this);
-
-
-        //driveTrain.calibrateGyro(telemetry);
 
     }
 
