@@ -96,9 +96,10 @@ public class MRColorSensor {
     public boolean isBlue() {
         int i = 0;
         int score = 0;
-        int margin = 4; // 20
+        int margin = 0; // 20
         if (lightOn) {
-            margin = 10;
+            margin = 3
+            ;
         }
         logMessageTimer.reset();
         while (i < 10 && opMode.opModeIsActive()) {
@@ -117,7 +118,7 @@ public class MRColorSensor {
         int i = 0;
         int score = 0;
         logMessageTimer.reset();
-        int margin = 9; // 19
+        int margin = 0; // 19
         if (lightOn) {
             margin = 10;
         }

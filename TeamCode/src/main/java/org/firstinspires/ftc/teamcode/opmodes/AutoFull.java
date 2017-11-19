@@ -21,7 +21,7 @@ import org.lasarobotics.vision.util.color.Color;
 
 @Autonomous(name = "AutoFull")
 public class AutoFull extends LinearOpMode {
-    static double jewelArmInitPosition = 0, jewelArmDownPos = 0.8, jewelArmUpPos = 0.3;
+    static double jewelArmInitPosition = 0, jewelArmDownPos = 1, jewelArmUpPos = 0.3;
     static DcMotor rF, rB, lF, lB, flywheel1, flywheel2, sweeperLow;
     static GyroSensor gyro;
     static Servo jewelArm;
@@ -52,7 +52,7 @@ public class AutoFull extends LinearOpMode {
             telemetry.addData("Blue", colorSensor.getBlue());
             telemetry.addData("Correct color: " , colorSensor.correctColor());
             telemetry.update();
-            hitJewel(0.2,2);
+            hitJewel(0.3,3);
             //hitJewelRotate(20,0.2,10);
             Functions.waitFor(1000);
             jewelArm.setPosition(jewelArmUpPos);
@@ -79,7 +79,7 @@ public class AutoFull extends LinearOpMode {
                 driveTrain.encoderDriveIMU(0.4, 36, DriveTrain.Direction.FORWARD, 10);
                 Functions.waitFor(1000);
 
-                if(red) {
+                if(!red) {
                     driveTrain.rotateIMURamp(180,.4, 10, telemetry);
                     Functions.waitFor(1000);
 
@@ -178,6 +178,7 @@ public class AutoFull extends LinearOpMode {
 
                 telemetry.addData("Starting Position", startingPos ==0 ? "corner": "sandwich");
             }
+
             telemetry.update();
 
             if (gamepad1.left_stick_button && gamepad1.right_stick_button){

@@ -22,11 +22,11 @@ public class Scratchpad {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
     }
 
-    public static void main(String[] args) {
-        Mat src = Imgcodecs.imread(("/home/pranav/Desktop/jewelImage.jpg"));
-        findCircles(src);
+        public static void main(String[] args) {
+            Mat src = Imgcodecs.imread(("/home/pranav/Desktop/jewelImage.jpg"));
+            findCircles(src);
 
-    }
+        }
 
     public static void findCircles(Mat src) {
 //        image    8-bit, single-channel, grayscale input image.
