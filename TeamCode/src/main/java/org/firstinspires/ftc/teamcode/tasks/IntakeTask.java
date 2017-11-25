@@ -25,9 +25,9 @@ public class IntakeTask extends TaskThread {
     public void run() {
         timer.reset();
         while (opMode.opModeIsActive() && running) {
-            if (opMode.gamepad1.b || opMode.gamepad2.b) {
+            if (opMode.gamepad1.dpad_up || opMode.gamepad2.b) {
                 setRollerPower(1);
-            } else if (opMode.gamepad1.x || opMode.gamepad2.x) {
+            } else if (opMode.gamepad1.dpad_down || opMode.gamepad2.x) {
                 setRollerPower(-1);
             } else{
                 setRollerPower(0);
@@ -36,6 +36,7 @@ public class IntakeTask extends TaskThread {
 
         }
     }
+//
 
     public void setRollerPower(double power) {
         rIntake.setPower(power);
@@ -47,7 +48,7 @@ public class IntakeTask extends TaskThread {
         rIntake = opMode.hardwareMap.dcMotor.get("rIntake");
         lIntake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rIntake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        lIntake.setDirection(DcMotorSimple.Direction.REVERSE);
+        lIntake.setDirection(DcMotorSimple.Direction.FORWARD);
         rIntake.setDirection(DcMotorSimple.Direction.FORWARD);
         lIntake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rIntake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
