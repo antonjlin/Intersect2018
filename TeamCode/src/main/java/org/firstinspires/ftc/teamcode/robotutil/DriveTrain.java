@@ -349,7 +349,6 @@ public class DriveTrain {
     }
 
     public void resetEncoders() {
-        this.lF.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lF.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         lB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lB.setMode(DcMotor.RunMode.RUN_TO_POSITION);

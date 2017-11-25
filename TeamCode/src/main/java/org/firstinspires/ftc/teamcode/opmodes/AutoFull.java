@@ -21,7 +21,7 @@ import org.lasarobotics.vision.util.color.Color;
 
 @Autonomous(name = "AutoFull")
 public class AutoFull extends LinearOpMode {
-    static double jewelArmInitPosition = 0, jewelArmDownPos = 1, jewelArmUpPos = 0.3;
+    static double jewelArmInitPosition = 0, jewelArmDownPos = 0.96, jewelArmUpPos = 0.3;
     static DcMotor rF, rB, lF, lB, flywheel1, flywheel2, sweeperLow;
     static GyroSensor gyro;
     static Servo jewelArm;
@@ -52,31 +52,36 @@ public class AutoFull extends LinearOpMode {
             telemetry.addData("Blue", colorSensor.getBlue());
             telemetry.addData("Correct color: " , colorSensor.correctColor());
             telemetry.update();
-            hitJewel(0.3,3);
+            /////hitJewel(0.3,3);
             //hitJewelRotate(20,0.2,10);
-            Functions.waitFor(1000);
-            jewelArm.setPosition(jewelArmUpPos);
-            Functions.waitFor(1000);
+            Functions.waitFor(2000);
+            //jewelArm.setPosition(jewelArmUpPos);
             //RelicRecoveryVuMark vumark = vm.detectColumn(5);
+            hitJewelMomentum(.2,3, 18 );
             if (startingPos == 0){
-                if(red) {
-                    driveTrain.encoderDriveIMU(0.4, 36, DriveTrain.Direction.FORWARD, 10);
+                if(red){
+
+                    driveTrain.encoderDrive(0.4, 36, DriveTrain.Direction.FORWARD, 10);
                 } else{
-                    driveTrain.encoderDriveIMU(0.4, 36, DriveTrain.Direction.BACKWARD, 10);
+                    driveTrain.encoderDrive(0.4, 36, DriveTrain.Direction.BACKWARD, 10);
                 }
                 Functions.waitFor(1000);
-                driveTrain.rotateIMURamp(-90,.4, 10, telemetry);
+                driveTrain.rotateIMURamp(-90,.4, 4, telemetry);
                 Functions.waitFor(1000);
-                dumpBlock(1,1,500,3000);
+                dumpBlock(1,1,800,3000);
                 Functions.waitFor(1000);
-                driveTrain.encoderDriveIMU(0.5,1000, DriveTrain.Direction.BACKWARD,4);
+                driveTrain.encoderDrive(0.5,1000, DriveTrain.Direction.BACKWARD,4);
+                driveTrain.encoderDriveIMU(.5, 5, DriveTrain.Direction.FORWARD, 3 );
+                driveTrain.encoderDrive(0.5,1000, DriveTrain.Direction.BACKWARD,4);
+
 
             }
             else{
-                driveTrain.rotateIMURamp(30,.4, 10, telemetry);
+
+                driveTrain.rotateIMURamp(30,.4, 4, telemetry);
                 Functions.waitFor(1000);
 
-                driveTrain.encoderDriveIMU(0.4, 36, DriveTrain.Direction.FORWARD, 10);
+                driveTrain.encoderDrive(0.4, 15, DriveTrain.Direction.FORWARD, 10);
                 Functions.waitFor(1000);
 
                 if(!red) {
@@ -84,18 +89,22 @@ public class AutoFull extends LinearOpMode {
                     Functions.waitFor(1000);
 
                 }
-                dumpBlock(1,1,500,3000);
+                dumpBlock(1,1,800,3000);
                 Functions.waitFor(1000);
-                driveTrain.encoderDriveIMU(0.5,1000, DriveTrain.Direction.BACKWARD,4);
+                driveTrain.encoderDrive(0.5,1000, DriveTrain.Direction.BACKWARD,2);
+                driveTrain.encoderDrive(.5, 5, DriveTrain.Direction.LEFT, 2);
+                driveTrain.encoderDriveIMU(.5, 5, DriveTrain.Direction.FORWARD, 3 );
+                driveTrain.encoderDrive(0.5,1000, DriveTrain.Direction.BACKWARD,4);
 
             }
 
         }
     }
+
     public void dumpBlock(double slidePower, double rollerPower, int slideTime, int rollerTime){
         driveTrain.moveSlidesTime(slidePower,slideTime);
         driveTrain.moveRollersTime(rollerPower,slideTime);
-        driveTrain.moveSlidesTime(-slidePower,slideTime);
+        driveTrain.moveSlidesTime(-slidePower,slideTime/2);
     }
     public void hitJewel(double speed, int dist){
         if(colorSensor.wrongColor()){
@@ -106,6 +115,46 @@ public class AutoFull extends LinearOpMode {
             driveTrain.encoderDriveIMU(speed,dist, DriveTrain.Direction.BACKWARD,3);
         }
     }
+
+    public void hitJewelMomentum(double speed, int dist, int runway) {
+        if (red) {
+            if (colorSensor.wrongColor()) {
+                driveTrain.encoderDrive(speed, dist, DriveTrain.Direction.BACKWARD, 3);
+                Functions.waitFor(1000);
+                jewelArm.setPosition(jewelArmUpPos);
+                Functions.waitFor(2000);
+                driveTrain.encoderDrive(speed, runway, DriveTrain.Direction.BACKWARD, 3);
+                driveTrain.encoderDrive(1, 10, DriveTrain.Direction.FORWARD, 3);
+            } else {
+                driveTrain.encoderDrive(speed, dist, DriveTrain.Direction.FORWARD, 4);
+                jewelArm.setPosition(jewelArmUpPos);
+                Functions.waitFor(2000);
+
+
+            }
+        }
+        if (!red) {
+            if (colorSensor.wrongColor()) {
+                driveTrain.encoderDrive(speed, dist, DriveTrain.Direction.BACKWARD, 3);
+
+                jewelArm.setPosition(jewelArmUpPos);
+                Functions.waitFor(2000);
+
+            } else {
+                driveTrain.encoderDrive(speed, dist, DriveTrain.Direction.FORWARD, 3);
+                jewelArm.setPosition(jewelArmUpPos);
+                Functions.waitFor(2000);
+                driveTrain.encoderDrive(speed, runway, DriveTrain.Direction.FORWARD, 3);
+                driveTrain.encoderDrive(1, 10, DriveTrain.Direction.BACKWARD, 4);
+
+
+            }
+
+
+        }
+
+    }
+
 
     public void hitJewelRotate(int angle,double speed, int timeOutS){
         angle = Math.abs(angle);

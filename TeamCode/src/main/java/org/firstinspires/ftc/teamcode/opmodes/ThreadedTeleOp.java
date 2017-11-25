@@ -72,7 +72,6 @@ public class ThreadedTeleOp extends LinearOpMode {
 
     public void runOpMode() throws InterruptedException{
         initialize();
-        setTeam();
         telemetry.addData("Ready!", "");
         telemetry.update();
         waitForStart();
@@ -81,7 +80,6 @@ public class ThreadedTeleOp extends LinearOpMode {
         driveTrainTask.start();
         slideTask.start();
         intakeTask.start();
-
         while(opModeIsActive()) {
            /* //Timer for 2 minute teleop period
             long elapsed = System.currentTimeMillis() - startTime;

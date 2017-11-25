@@ -20,7 +20,7 @@ public class Scratchpad {
 
     static {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-    }
+}
 
         public static void main(String[] args) {
             Mat src = Imgcodecs.imread(("/home/pranav/Desktop/jewelImage.jpg"));
@@ -49,7 +49,7 @@ public class Scratchpad {
         bilateralFilter(src_gray, bilateral, 20000, 20000, 20000);
 
         /// Apply the Hough Transform to find the circles
-        System.out.println("src_gray of rows a  nd cols "  + src_gray.cols() + " " + src_gray.rows());
+        System.out.println("src_gray of rows and cols "  + src_gray.cols() + " " + src_gray.rows());
         Imgproc.HoughCircles( bilateral, circles, CV_HOUGH_GRADIENT, 1, bilateral.rows()/20 );
         Imgproc.HoughCircles(bilateral,circles, HOUGH_GRADIENT, 1, bilateral.rows()/20, 200, 1, max, min);
 
