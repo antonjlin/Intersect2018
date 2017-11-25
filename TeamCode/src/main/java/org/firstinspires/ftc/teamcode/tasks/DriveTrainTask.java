@@ -18,7 +18,7 @@ public class DriveTrainTask extends TaskThread {
     private BNO055IMU adaImu;
     private IMU imu;
     DriveTrain driveTrain;
-    boolean balance = opMode.gamepad1.start;
+    boolean balance;
 
 
     ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
@@ -34,7 +34,7 @@ public class DriveTrainTask extends TaskThread {
     public void run() {
         timer.reset();
         while (opMode.opModeIsActive() && running) {
-
+            balance = opMode.gamepad1.start;
 
             double r = Math.hypot(opMode.gamepad1.left_stick_x, opMode.gamepad1.left_stick_y);
             double robotAngle = Math.atan2(opMode.gamepad1.left_stick_y, opMode.gamepad1.left_stick_x) - Math.PI / 4;

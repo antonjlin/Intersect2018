@@ -49,7 +49,7 @@ public class IntakeTask extends TaskThread {
         lIntake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rIntake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         lIntake.setDirection(DcMotorSimple.Direction.FORWARD);
-        rIntake.setDirection(DcMotorSimple.Direction.FORWARD);
+        rIntake.setDirection(DcMotorSimple.Direction.REVERSE);
         lIntake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rIntake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
