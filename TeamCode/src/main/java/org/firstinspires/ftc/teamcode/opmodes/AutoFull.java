@@ -150,7 +150,6 @@ public class AutoFull extends LinearOpMode {
 
             }
 
-
         }
 
     }
