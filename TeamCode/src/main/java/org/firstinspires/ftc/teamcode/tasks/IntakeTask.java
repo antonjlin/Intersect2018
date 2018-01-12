@@ -7,9 +7,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.robotutil.DriveTrain;
 
-/**
- * Created by Howard on 10/15/16.
- */
 public class IntakeTask extends TaskThread {
 
     private DcMotor lIntake, rIntake;
@@ -32,11 +29,8 @@ public class IntakeTask extends TaskThread {
             } else{
                 setRollerPower(0);
             }
-
-
         }
     }
-//
 
     public void setRollerPower(double power) {
         rIntake.setPower(power);

@@ -17,7 +17,6 @@ import org.firstinspires.ftc.teamcode.robotutil.IMU;
 import org.firstinspires.ftc.teamcode.robotutil.MRColorSensor;
 import org.firstinspires.ftc.teamcode.robotutil.Team;
 import org.firstinspires.ftc.teamcode.robotutil.VuMark;
-import org.lasarobotics.vision.util.color.Color;
 
 @Autonomous(name = "AutoFull")
 public class AutoFull extends LinearOpMode {
@@ -36,7 +35,6 @@ public class AutoFull extends LinearOpMode {
     private IMU imu;
     public int crypHeading = 0;
     VuMark vm;
-
     @Override
     public void runOpMode() throws InterruptedException {
         initHardware();

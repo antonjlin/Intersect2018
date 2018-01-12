@@ -7,7 +7,8 @@ import android.widget.ImageView;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-import org.lasarobotics.vision.opmode.ManualVisionOpMode;
+//import org.lasarobotics.vision.opmode.ManualVisionOpMode;
+
 import org.opencv.android.JavaCameraView;
 import org.opencv.android.Utils;
 import org.opencv.core.Mat;

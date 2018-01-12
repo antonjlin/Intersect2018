@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.robotutil;
+/*package org.firstinspires.ftc.teamcode.robotutil;
 
 import android.app.Activity;
 import android.util.Log;
@@ -17,9 +17,6 @@ import org.opencv.core.Mat;
 
 import static com.sun.tools.javac.util.Assert.error;
 
-/**
- * Created by pranav on 10/22/17.
- */
 
 public class VisionProcessor implements CameraBridgeViewBase.CvCameraViewListener2 {
 
@@ -159,3 +156,4 @@ public class VisionProcessor implements CameraBridgeViewBase.CvCameraViewListene
 
     }
 }
+*/
