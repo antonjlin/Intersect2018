@@ -1,28 +1,24 @@
-
 package org.firstinspires.ftc.teamcode.opmodes;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.external.Func;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.teamcode.robotutil.DriveTrain;
 import org.firstinspires.ftc.teamcode.robotutil.Functions;
 import org.firstinspires.ftc.teamcode.robotutil.IMU;
 import org.firstinspires.ftc.teamcode.robotutil.MRColorSensor;
 import org.firstinspires.ftc.teamcode.robotutil.Team;
 import org.firstinspires.ftc.teamcode.robotutil.VuMark;
-import org.lasarobotics.vision.util.color.Color;
 
-@Autonomous(name = "AutoFull")
-public class AutoFull extends LinearOpMode {
+/**
+ * Created by pranav on 1/10/18.
+ */
+
+public class AutoNew extends LinearOpMode{
     static double jewelArmInitPosition = 0, jewelArmDownPos = 0.96, jewelArmUpPos = 0.3;
     static DcMotor rF, rB, lF, lB, flywheel1, flywheel2, sweeperLow;
     static GyroSensor gyro;
@@ -44,24 +40,10 @@ public class AutoFull extends LinearOpMode {
         initHardware();
         options();
         waitForStart();
-        driveTrain.rotateIMURamp(-90, .4, 10, this.telemetry);
-        sleep(201345);
-        state = 0;// Todo:
+
         if (opModeIsActive()) {
 
-            /*jewelColor.enableLed(true);
-            jewelArm.setPosition(jewelArmDownPos);
-            Functions.waitFor(2000);
-            telemetry.addData("Red", colorSensor.getRed());
-            telemetry.addData("Blue", colorSensor.getBlue());
-            telemetry.addData("Correct color: " , colorSensor.correctColor());
-            telemetry.update();*/
 
-
-            Functions.waitFor(2000);
-            //jewelArm.setPosition(jewelArmUpPos);
-            //RelicRecoveryVuMark vumark = vm.detectColumn(5);
-            hitJewelMomentum(.2,3, 18 );
             if (startingPos == 0){
                 if(red){
 
@@ -110,67 +92,11 @@ public class AutoFull extends LinearOpMode {
         driveTrain.moveRollersTime(rollerPower,slideTime);
         driveTrain.moveSlidesTime(-slidePower,slideTime/2);
     }
-    public void hitJewel(double speed, int dist){
-        if(colorSensor.wrongColor()){
-            driveTrain.encoderDriveIMU(speed,dist, DriveTrain.Direction.BACKWARD,3);
-            driveTrain.encoderDriveIMU(speed,dist, DriveTrain.Direction.FORWARD,3);
-        }else{
-            driveTrain.encoderDriveIMU(speed,dist, DriveTrain.Direction.FORWARD,3);
-            driveTrain.encoderDriveIMU(speed,dist, DriveTrain.Direction.BACKWARD,3);
-        }
-    }
-
-    public void hitJewelMomentum(double speed, int dist, int runway) {
-        if (red) {
-            if (colorSensor.wrongColor()) {
-                driveTrain.encoderDrive(speed, dist, DriveTrain.Direction.BACKWARD, 3);
-                Functions.waitFor(1000);
-                jewelArm.setPosition(jewelArmUpPos);
-                Functions.waitFor(2000);
-                driveTrain.encoderDrive(speed, runway, DriveTrain.Direction.BACKWARD, 3);
-                driveTrain.encoderDrive(1, 10, DriveTrain.Direction.FORWARD, 3);
-            } else {
-                driveTrain.encoderDrive(speed, dist, DriveTrain.Direction.FORWARD, 4);
-                jewelArm.setPosition(jewelArmUpPos);
-                Functions.waitFor(2000);
 
 
-            }
-        }
-        if (!red) {
-            if (colorSensor.wrongColor()) {
-                driveTrain.encoderDrive(speed, dist, DriveTrain.Direction.BACKWARD, 3);
-
-                jewelArm.setPosition(jewelArmUpPos);
-                Functions.waitFor(2000);
-
-            } else {
-                driveTrain.encoderDrive(speed, dist, DriveTrain.Direction.FORWARD, 3);
-                jewelArm.setPosition(jewelArmUpPos);
-                Functions.waitFor(2000);
-                driveTrain.encoderDrive(speed, runway, DriveTrain.Direction.FORWARD, 3);
-                driveTrain.encoderDrive(1, 10, DriveTrain.Direction.BACKWARD, 4);
 
 
-            }
 
-        }
-
-    }
-
-
-    public void hitJewelRotate(int angle,double speed, int timeOutS){
-        angle = Math.abs(angle);
-        if(colorSensor.wrongColor()){
-            driveTrain.rotateIMURamp(angle,speed,timeOutS,telemetry);
-            Functions.waitFor(500);
-            driveTrain.rotateIMURamp(-angle,speed,timeOutS,telemetry);
-        }else{
-            driveTrain.rotateIMURamp(-angle,speed,timeOutS,telemetry);
-            Functions.waitFor(500);
-            driveTrain.rotateIMURamp(angle,speed,timeOutS,telemetry);
-        }
-    }
 
     public void initHardware() {
         rF = hardwareMap.dcMotor.get("rF");
@@ -249,4 +175,5 @@ public class AutoFull extends LinearOpMode {
             Functions.waitFor(300);
         }
     }
+
 }

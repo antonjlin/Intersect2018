@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.robotutil;
 
+import android.app.Activity;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -11,6 +13,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
+import org.opencv.core.Mat;
 
 public class DriveTrain {
     ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
@@ -29,7 +32,7 @@ public class DriveTrain {
     private int gyroTurnErrorMargin = 3; // turn stop if within the margin of error
     private int gyroTurnRampMax = 60;  // starting point of scaling back speed of motor for turning
     private int gyroTurnRampMin = 3;   // stopping point to turn off motor abs(heading-target)<vlaue
-    private double minRotationPower = 0.03; // minimum power to move robot
+    private double minRotationPower = 0.08; // minimum power to move robot
     private final int driveStraightErrorMargin = 2;
     private final int encoderDriveRampMax = 40;
     private final int encoderDriveRampMin = 1;
@@ -262,6 +265,76 @@ public class DriveTrain {
         return heading;
 
 //      setDriveMotorMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+    }
+
+    public void StrafeImuCrypto(Direction direction, double power, int timeoutS, Telemetry telemetry){
+        double l = 0;
+        double r = 0;
+        double initialTime = System.currentTimeMillis()/1000;
+        boolean alignedWithCrypto = false;
+        double heading;
+        int e;
+        long endtime =  System.currentTimeMillis() + (timeoutS * 1000);
+        double start = imu.getAngle();
+        if(direction == Direction.LEFT){
+            while (alignedWithCrypto == false && System.currentTimeMillis() >= endtime) {
+                lF.setPower(Math.abs(power)+l);
+                lB.setPower(-Math.abs(power));
+                rF.setPower(-Math.abs(power)+r);
+                rB.setPower(Math.abs(power));
+                if(start - imu.getAngle()<-2){
+                    r = r + .05;
+                    l = l - .05;
+
+
+
+                }
+                else if(start - imu.getAngle()>2){
+                    r = r - .05;
+                    l = l + .05;
+
+                }
+                else{
+                    r = 0;
+                    l = 0;
+                }
+            }
+
+        }
+
+        else if(direction == Direction.RIGHT){
+            while (alignedWithCrypto == false && System.currentTimeMillis() >= endtime) {
+                lF.setPower(-Math.abs(power) + l);
+                lB.setPower(Math.abs(power));
+                rF.setPower(Math.abs(power) + r);
+                rB.setPower(-Math.abs(power));
+
+                if (start - imu.getAngle() < -2) {
+                    r = r + .05;
+                    l = l - .05;
+
+
+                } else if (start - imu.getAngle() > 2) {
+                    r = r - .05;
+                    l = l + .05;
+
+                } else {
+                    r = 0;
+                    l = 0;
+                }
+            }
+
+        }
+
+    }
+
+    public void isCryptoCorrectPosition(int position){
+        //position 1 --> 3  == left --> right
+        Activity activity = (Activity) opMode.hardwareMap.appContext;
+        VisionProcessor processor = new VisionProcessor(activity);
+        Mat RGB = processor.getMatRGB();
+
 
     }
     public void alignWithCrypto(RelicRecoveryVuMark vuMark, ColorSensor colors){

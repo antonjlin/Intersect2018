@@ -31,6 +31,9 @@ public class VisionProcessor implements CameraBridgeViewBase.CvCameraViewListene
     public FPS fps;
     public Sensors sensors;
     VisionProcessor processing;
+    Mat RGBA;
+
+    public VisionProcessor(){}
 
 
     public VisionProcessor(final Activity activity){
@@ -147,6 +150,7 @@ public class VisionProcessor implements CameraBridgeViewBase.CvCameraViewListene
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
         Mat rgba = inputFrame.rgba();
         Mat grey = inputFrame.gray();
+        RGBA = rgba;
         BallDetector detector = new BallDetector(rgba,grey);
         Log.d("Hello","On Camera Frame Started");
 
@@ -154,8 +158,15 @@ public class VisionProcessor implements CameraBridgeViewBase.CvCameraViewListene
 
     }
 
+
+
     @Override
     public void onCameraViewStopped() {
 
+    }
+
+    public Mat getMatRGB(){
+
+        return RGBA;
     }
 }
