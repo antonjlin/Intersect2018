@@ -166,8 +166,6 @@ public class SlideTask extends TaskThread {
         rSlide.setDirection(DcMotorSimple.Direction.REVERSE);
         lSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        lFlip.setPosition(flipDownPos);
-        rFlip.setPosition(flipDownPos);
         //lTouch = opMode.hardwareMap.touchSensor.get("lTouch");
         //rTouch = opMode.hardwareMap.touchSensor.get("rTouch");
         zeroSlides();

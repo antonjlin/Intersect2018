@@ -57,7 +57,7 @@ public class FlipTask extends TaskThread {
     @Override
     public void initialize() {
         lFlip = opMode.hardwareMap.servo.get("lFlip");
-        lFlip = opMode.hardwareMap.servo.get("lFlip");
+        rFlip = opMode.hardwareMap.servo.get("rFlip");
         lFlip.setDirection(Servo.Direction.FORWARD);
         rFlip.setDirection(Servo.Direction.REVERSE);
     }
