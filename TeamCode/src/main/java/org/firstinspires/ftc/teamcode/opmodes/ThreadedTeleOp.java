@@ -32,23 +32,15 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package org.firstinspires.ftc.teamcode.opmodes;
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.robotutil.DriveTrain;
-import org.firstinspires.ftc.teamcode.robotutil.IMU;
 import org.firstinspires.ftc.teamcode.robotutil.Team;
 import org.firstinspires.ftc.teamcode.tasks.DriveTrainTask;
+import org.firstinspires.ftc.teamcode.tasks.FlipTask;
 import org.firstinspires.ftc.teamcode.tasks.IntakeTask;
 import org.firstinspires.ftc.teamcode.tasks.SlideTask;
-import org.firstinspires.ftc.teamcode.tasks.TaskThread;
-
-import java.text.DecimalFormat;
 
 import static org.firstinspires.ftc.teamcode.robotutil.Team.BLUE;
 import static org.firstinspires.ftc.teamcode.robotutil.Team.RED;
@@ -59,6 +51,7 @@ public class ThreadedTeleOp extends LinearOpMode {
 
     private SlideTask slideTask;
     private IntakeTask intakeTask;
+    private FlipTask flipTask;
     Servo jewelArm;
     Team team = Team.BLUE;
     int leftSlidePos;
@@ -80,6 +73,7 @@ public class ThreadedTeleOp extends LinearOpMode {
         driveTrainTask.start();
         slideTask.start();
         intakeTask.start();
+        flipTask.start();;
         while(opModeIsActive()) {
            /* //Timer for 2 minute teleop period
             long elapsed = System.currentTimeMillis() - startTime;
@@ -108,7 +102,9 @@ public class ThreadedTeleOp extends LinearOpMode {
             driveTrainTask = new DriveTrainTask(this);
             intakeTask = new IntakeTask(this);
             slideTask = new SlideTask(this);
+            flipTask = new FlipTask(this);
             jewelArm = hardwareMap.servo.get("jewelArm");
+            jewelArm.setDirection(Servo.Direction.REVERSE);
             jewelArm.setPosition(AutoFull.jewelArmUpPos);
         }
 

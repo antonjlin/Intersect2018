@@ -20,7 +20,7 @@ import org.firstinspires.ftc.teamcode.robotutil.VuMark;
 
 @Autonomous(name = "AutoFull")
 public class AutoFull extends LinearOpMode {
-    static double jewelArmInitPosition = 0, jewelArmDownPos = 0.96, jewelArmUpPos = 0.3;
+    static double jewelArmInitPosition = 0, jewelArmDownPos = 0.8, jewelArmUpPos = 0.3;
     static DcMotor rF, rB, lF, lB, flywheel1, flywheel2, sweeperLow;
     static GyroSensor gyro;
     static Servo jewelArm;
@@ -50,7 +50,7 @@ public class AutoFull extends LinearOpMode {
             telemetry.addData("Blue", colorSensor.getBlue());
             telemetry.addData("Correct color: " , colorSensor.correctColor());
             telemetry.update();
-            /////hitJewel(0.3,3);
+            hitJewel(0.3,3);
             //hitJewelRotate(20,0.2,10);
             Functions.waitFor(2000);
             //jewelArm.setPosition(jewelArmUpPos);
