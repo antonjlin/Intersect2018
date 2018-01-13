@@ -44,6 +44,7 @@ import org.firstinspires.ftc.teamcode.robotutil.DriveTrain;
 import org.firstinspires.ftc.teamcode.robotutil.IMU;
 import org.firstinspires.ftc.teamcode.robotutil.Team;
 import org.firstinspires.ftc.teamcode.tasks.DriveTrainTask;
+import org.firstinspires.ftc.teamcode.tasks.FlipTask;
 import org.firstinspires.ftc.teamcode.tasks.IntakeTask;
 import org.firstinspires.ftc.teamcode.tasks.SlideTask;
 import org.firstinspires.ftc.teamcode.tasks.TaskThread;
@@ -56,7 +57,7 @@ import static org.firstinspires.ftc.teamcode.robotutil.Team.RED;
 @TeleOp(name = "Threaded Teleop")
 public class ThreadedTeleOp extends LinearOpMode {
     private DriveTrainTask driveTrainTask;
-
+    private FlipTask flipTask;
     private SlideTask slideTask;
     private IntakeTask intakeTask;
     Servo jewelArm;
@@ -80,6 +81,7 @@ public class ThreadedTeleOp extends LinearOpMode {
         driveTrainTask.start();
         slideTask.start();
         intakeTask.start();
+        flipTask.start();
         while(opModeIsActive()) {
            /* //Timer for 2 minute teleop period
             long elapsed = System.currentTimeMillis() - startTime;
@@ -108,6 +110,7 @@ public class ThreadedTeleOp extends LinearOpMode {
             driveTrainTask = new DriveTrainTask(this);
             intakeTask = new IntakeTask(this);
             slideTask = new SlideTask(this);
+            flipTask = new FlipTask((this));
             jewelArm = hardwareMap.servo.get("jewelArm");
             jewelArm.setPosition(AutoFull.jewelArmUpPos);
         }

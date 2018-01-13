@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.tasks;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.robotutil.DriveTrain;
@@ -18,9 +19,9 @@ public class SlideTask extends TaskThread {
     int lZeroPosition, rZeroPosition;
     int inchPos;
     int encodertoInchConversion = 190;
-    int pos0 = 0;
-    int pos3 = 13   ;
-    int pos4 = 19;
+
+
+
 
     TouchSensor lTouch, rTouch;
     ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
@@ -42,16 +43,7 @@ public class SlideTask extends TaskThread {
                 setSlidePower(0);
             }*/
 
-            if(opMode.gamepad1.a){
-                setSlidePosition(pos0,3);
-                zeroSlides();
-            }
-            if(opMode.gamepad1.x){
-                setSlidePosition(pos3,3);
-            }
-            if(opMode.gamepad1.y){
-                setSlidePosition(pos4,3);
-            }
+
 
         }
     }
@@ -73,10 +65,8 @@ public class SlideTask extends TaskThread {
         lZeroPosition = lSlide.getCurrentPosition();
         rZeroPosition = rSlide.getCurrentPosition();
         opMode.telemetry.addData("lSlideZero", lZeroPosition);
-         opMode.telemetry.addData("rSlideZero", rZeroPosition);
-         opMode.telemetry.update();
-
-
+        opMode.telemetry.addData("rSlideZero", rZeroPosition);
+        opMode.telemetry.update();
      }
 
 
@@ -176,6 +166,8 @@ public class SlideTask extends TaskThread {
         rSlide.setDirection(DcMotorSimple.Direction.REVERSE);
         lSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        lFlip.setPosition(flipDownPos);
+        rFlip.setPosition(flipDownPos);
         //lTouch = opMode.hardwareMap.touchSensor.get("lTouch");
         //rTouch = opMode.hardwareMap.touchSensor.get("rTouch");
         zeroSlides();
