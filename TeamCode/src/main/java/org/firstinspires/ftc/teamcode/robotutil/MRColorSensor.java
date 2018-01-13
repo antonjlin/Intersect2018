@@ -25,8 +25,7 @@ public class MRColorSensor {
     public Team team = Team.BLUE;
     public boolean lightOn = false;
 
-    public MRColorSensor(ColorSensor sensor, LinearOpMode opMode) {
-        this.opMode = opMode;
+    public MRColorSensor(ColorSensor sensor) {
         this.sensor = sensor;
         logMessageTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
         logMessageTimer.reset();
@@ -64,7 +63,7 @@ public class MRColorSensor {
             System.out.println(output);
         }
     }
-    public void telemetryDebug(OpMode opmode){
+    /*public void telemetryDebug(OpMode opmode){
             opmode.telemetry.addData("I2C Address", sensor.getI2cAddress());
             opmode.telemetry.addData("Red:       ", getRed());
             opmode.telemetry.addData("Blue:      ", getBlue());
@@ -72,7 +71,7 @@ public class MRColorSensor {
             opmode.telemetry.addData("Color:    ",  getColor());
             opmode.telemetry.addData("Is White?: ", isWhite());
             opmode.telemetry.update();
-    }
+    }*/
 
     public boolean isWhite() {
         int red =  getRed();

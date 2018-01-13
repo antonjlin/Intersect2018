@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 //import com.qualcomm.hardware.adafruit.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.bosch.BNO055IMU;
@@ -13,6 +14,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
+import org.firstinspires.ftc.teamcode.opmodes.VisionTesting1;
 import org.opencv.core.Mat;
 
 public class DriveTrain {
@@ -20,12 +22,20 @@ public class DriveTrain {
     static final double TICKS_PER_INCH_FORWARD = 62;
     static final double TICKS_PER_INCH_STRAFE = 61.3;
     public DcMotor rF, rB, lF, lB, rIntake, lIntake, rSlide, lSlide;
+    private BNO055IMU adaImu;
+    MRColorSensor colorSensor;
+    MRColorSensor cryptoColor;
+    ColorSensor jewelColor;
+
+    Servo jewelArm;
+    Servo hitJewel;
+    Servo dump;
     public double minMotorPower = 0.085; //minimum power that robot still moves
     public IMU imu;
 
 
     // Tunable parameters
-
+    static double jewelArmInitPosition = 0, jewelArmDownPos = 0.96, jewelArmUpPos = 0.3;
     private int conversionFactor = 50;
     public double balanceThreshold = 1.5;
     public double balanceMultiplier = 0.08;
@@ -42,6 +52,36 @@ public class DriveTrain {
     double average;
     LinearOpMode opMode;
 
+    public boolean opmodeIsActive =false;
+
+    public void opmodeActivated(){
+        opmodeIsActive = true;
+    }
+    public void opmodeDeActivated(){
+        opmodeIsActive = false;
+    }
+
+    public DriveTrain(){
+
+    }
+    public DriveTrain( DcMotor rF, DcMotor rB, DcMotor lF, DcMotor lB, DcMotor rIntake, DcMotor lIntake, DcMotor rSlide, DcMotor lSlide,BNO055IMU adaImu, ColorSensor jewelColor, MRColorSensor colorSensor, MRColorSensor cryptoColor, Servo hitJewel, Servo dump) {
+        this.rF = rF;
+        this.rB = rB;
+        this.lF = lF;
+        this.lB = lB;
+        this.rIntake = rIntake;
+        this.lIntake = lIntake;
+        this.rSlide = rSlide;
+        this.lSlide = lSlide;
+        this.adaImu = adaImu;
+        this.jewelColor = jewelColor;
+        this.colorSensor = colorSensor;
+        this.cryptoColor = cryptoColor;
+        this.jewelArm = jewelArm;
+        this.hitJewel = hitJewel;
+        this.dump = dump;
+
+    }
     public DriveTrain( LinearOpMode opMode) {
         this.opMode = opMode;
         lB = opMode.hardwareMap.dcMotor.get("lB");
@@ -52,7 +92,7 @@ public class DriveTrain {
 
         rSlide = opMode.hardwareMap.dcMotor.get("rSlide");
         lSlide = opMode.hardwareMap.dcMotor.get("lSlide");
-        BNO055IMU adaImu = opMode.hardwareMap.get(BNO055IMU.class, "imu");
+        adaImu = opMode.hardwareMap.get(BNO055IMU.class, "imu");
 
         imu = new IMU(adaImu);
         lB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -267,8 +307,50 @@ public class DriveTrain {
 //      setDriveMotorMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
     }
+    public void imuDriveCryptoGraph( double power, int timeout, Telemetry telemetry){
+        boolean isRed = cryptoColor.isRed();
+        int wait = 250;
+        long prevTime = System.currentTimeMillis();
+        double l = 0;
+        double r = 0;
+        double initialTime = System.currentTimeMillis()/1000;
+        boolean alignedWithCrypto = false;
+        double heading;
+        int e;
+        long endtime =  System.currentTimeMillis() + timeout;
+        double start = imu.getAngle();
 
-    public void StrafeImuCrypto(Direction direction, double power, int timeoutS, Telemetry telemetry){
+            while(!isRed && System.currentTimeMillis() <= endtime) {
+                double angle = imu.getAngle();
+                lF.setPower(Math.abs(power) + l);
+                lB.setPower(Math.abs(power) + l);
+                rF.setPower(Math.abs(power) + r);
+                rB.setPower(Math.abs(power) + r);
+
+                if (start - angle < -2 && System.currentTimeMillis() - prevTime ==  wait) {
+                    l = l + .05;
+                    prevTime = System.currentTimeMillis();
+
+                } else if (start - angle > 2) {
+
+                    r = r + .05;
+                    prevTime = System.currentTimeMillis();
+
+                }
+                if (imu.getAngle() > start - 2 && angle < start + 2) {
+                    r = 0;
+                    l = 0;
+                }
+
+
+        }
+
+
+
+    }
+
+
+    public void StrafeImuCrypto(Direction direction, double power, int timeoutS, Telemetry telemetry,  double [] vals){
         double l = 0;
         double r = 0;
         double initialTime = System.currentTimeMillis()/1000;
@@ -278,7 +360,7 @@ public class DriveTrain {
         long endtime =  System.currentTimeMillis() + (timeoutS * 1000);
         double start = imu.getAngle();
         if(direction == Direction.LEFT){
-            while (alignedWithCrypto == false && System.currentTimeMillis() >= endtime) {
+            while (isCryptoInView(vals) && System.currentTimeMillis() <= endtime) {
                 lF.setPower(Math.abs(power)+l);
                 lB.setPower(-Math.abs(power));
                 rF.setPower(-Math.abs(power)+r);
@@ -304,7 +386,7 @@ public class DriveTrain {
         }
 
         else if(direction == Direction.RIGHT){
-            while (alignedWithCrypto == false && System.currentTimeMillis() >= endtime) {
+            while (isCryptoInView(vals) && System.currentTimeMillis() <= endtime) {
                 lF.setPower(-Math.abs(power) + l);
                 lB.setPower(Math.abs(power));
                 rF.setPower(Math.abs(power) + r);
@@ -329,68 +411,45 @@ public class DriveTrain {
 
     }
 
-    public void isCryptoCorrectPosition(int position){
-        //position 1 --> 3  == left --> right
-        Activity activity = (Activity) opMode.hardwareMap.appContext;
-        VisionProcessor processor = new VisionProcessor(activity);
-        Mat RGB = processor.getMatRGB();
-
-
-    }
-    public void alignWithCrypto(RelicRecoveryVuMark vuMark, ColorSensor colors){
-        switch (vuMark){
-            case LEFT:
-                encoderDriveIMU(.7, 30, Direction.LEFT, 10);
-                driveRighttoCrypto(vuMark,colors);
-            case RIGHT:
-               // driveLefttoCrypto();
-
+    public boolean isCryptoInView(double [] vals){
+        if(vals.length == 4){
+            return true;
         }
+        return false;
     }
 
-    public void cryptoDrive(RelicRecoveryVuMark vuMark, Direction direction, int timeoutS){
-        switch (vuMark){
-            case LEFT:
-                encoderDriveIMU(.7, 30, direction, 10);
-            case RIGHT:
-                encoderDriveIMU(.7, 30, direction, 10);
-            case CENTER:
-                encoderDriveIMU(.7, 30, direction, 10);
-
-        }
-    }
-
-
-    public void driveLefttoCrypto(RelicRecoveryVuMark vuMark, ColorSensor colors){
-        if(vuMark == RelicRecoveryVuMark.RIGHT){
-            moveAtSpeed(Direction.LEFT, .4);
-
-
-        }
-        moveAtSpeed(Direction.FORWARD, .4);
+    public void driveForwardCryptoGraph(){
 
     }
-    public void driveRighttoCrypto(RelicRecoveryVuMark vuMark, ColorSensor colors){
-        if(vuMark == RelicRecoveryVuMark.RIGHT){
-            moveAtSpeed(Direction.BACKWARD, .4);
-            //stopOnRed(colors, );
-
-
-        }
-        moveAtSpeed(Direction.FORWARD, .4);
+    public void dumpBlock(){
+        dump.setPosition(.5);
+        Functions.waitFor(2000);
+        dump.setPosition(0);
 
     }
-    public void stopOnRed(ColorSensor colors, RelicRecoveryVuMark vuMark){
-        int counterRed = 0;
-        while (opMode.opModeIsActive()){
-            if (detectRed(colors)){
-                 setAllMotorSpeed(0);
+
+    public void hitJewel(boolean red){
+        if (red) {
+            if (colorSensor.wrongColor()) {
+                hitJewel.setPosition(0);
+                Functions.waitFor(1000);
+                hitJewel.setPosition(.5);
+                jewelArm.setPosition(jewelArmUpPos);
+                Functions.waitFor(2000);
+
+            } else {
+                hitJewel.setPosition(1);
+                Functions.waitFor(1000);
+                hitJewel.setPosition(.5);
+                jewelArm.setPosition(jewelArmUpPos);
+                Functions.waitFor(2000);
+
+
             }
 
         }
-
-
     }
+
 
     public void rotateCCW(double power) {
         lF.setPower(-power);
@@ -939,6 +998,25 @@ public class DriveTrain {
         //  sleep(250);   // optional pause after each move
     }
 
+    public void hitJewelMomentum(double speed, int dist, int runway, boolean red) {
+        if (red) {
+            if (colorSensor.wrongColor()) {
+                encoderDrive(speed, dist, DriveTrain.Direction.BACKWARD, 3);
+                Functions.waitFor(1000);
+                jewelArm.setPosition(jewelArmUpPos);
+                Functions.waitFor(2000);
+                encoderDrive(speed, runway, DriveTrain.Direction.BACKWARD, 3);
+                encoderDrive(1, 10, DriveTrain.Direction.FORWARD, 3);
+            } else {
+                encoderDrive(speed, dist, DriveTrain.Direction.FORWARD, 4);
+                jewelArm.setPosition(jewelArmUpPos);
+                Functions.waitFor(2000);
+
+
+            }
+
+        }
+    }
     public void selfBalance(Telemetry telemetry) {
         // call when the robot is fully on the platform
         /* also assumes that after 0 degrees to the right starts incrementing positively

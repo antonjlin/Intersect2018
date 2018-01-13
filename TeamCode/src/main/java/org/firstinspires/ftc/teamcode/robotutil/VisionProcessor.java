@@ -32,11 +32,14 @@ public class VisionProcessor implements CameraBridgeViewBase.CvCameraViewListene
     public Sensors sensors;
     VisionProcessor processing;
     Mat RGBA;
+    VisionAlign visionAlign;
+
 
     public VisionProcessor(){}
 
 
-    public VisionProcessor(final Activity activity){
+    public VisionProcessor(final Activity activity, VisionAlign visionAlign){
+        this.visionAlign = visionAlign;
         processing = this;
         BaseLoaderCallback openCVLoaderCallback = null;
         try {
@@ -150,8 +153,9 @@ public class VisionProcessor implements CameraBridgeViewBase.CvCameraViewListene
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
         Mat rgba = inputFrame.rgba();
         Mat grey = inputFrame.gray();
-        RGBA = rgba;
-        BallDetector detector = new BallDetector(rgba,grey);
+        visionAlign.lineDetect(rgba);
+
+        //BallDetector detector = new BallDetector(rgba,grey);
         Log.d("Hello","On Camera Frame Started");
 
         return null;

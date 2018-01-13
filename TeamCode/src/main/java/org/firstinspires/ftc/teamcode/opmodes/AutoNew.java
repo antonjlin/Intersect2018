@@ -121,7 +121,8 @@ public class AutoNew extends LinearOpMode{
         imu = new IMU(adaImu);
         jewelColor = hardwareMap.colorSensor.get("jewelColor");
         //cryptoColor = hardwareMap.colorSensor.get("cryptoColor");
-        colorSensor = new MRColorSensor(jewelColor, this);
+        //colorSensor = new MRColorSensor(jewelColor, this);
+        colorSensor = new MRColorSensor(jewelColor);
         driveTrain = new DriveTrain(this);
         driveTrain.detectAmbientLight(jewelColor);
         vm = new VuMark(this);
