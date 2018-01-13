@@ -203,7 +203,7 @@ public class VisionTesting1 extends ManualVisionOpMode {
         return vals;
         //return vals;
         /*
-           Imgproc.threshold(source, source, 127, 255, THRESH_BINARY);
+           Imgproc.threshold(source, source, 127, 255, TRESH_BINARY);
            Mat skel = new Mat(source.size(), CV_8UC1, new Scalar(0));
            Mat temp = new Mat(source.size(), CV_8UC1);
            Mat element = getStructuringElement(MORPH_CROSS, new Size(3, 3));
