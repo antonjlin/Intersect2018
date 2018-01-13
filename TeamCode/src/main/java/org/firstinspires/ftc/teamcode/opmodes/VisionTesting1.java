@@ -292,13 +292,12 @@ public class VisionTesting1 extends ManualVisionOpMode {
         Functions.waitFor(1000000);
         if(startingPos == 0){
             if(red){
-                //driveTrain.hitJewelMomentum(.2,3, 18, red );
-                //driveTrain.encoderDrive(.4, 10, FORWARD, );
+                /*
                 driveTrain.hitJewel(red);
                 driveTrain.imuDriveCryptoGraph(.3, 2, this.telemetry);
                 RelicRecoveryVuMark vuMark = vm.detectColumn(3);
                 this.vuMark = vuMark;
-                driveTrain.encoderDrive(.3, 5, FORWARD, 4);
+                driveTrain.encoderDrive(.3, 5, FORWARD, 4);*/
                 strafeLeftToCrypto(5000);
                 switch (vuMark) {
                     case CENTER:

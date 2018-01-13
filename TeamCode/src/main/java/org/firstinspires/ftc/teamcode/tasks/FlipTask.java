@@ -8,6 +8,8 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.robotutil.Functions;
+
 public class FlipTask extends TaskThread {
 
     private Servo lFlip,rFlip;
@@ -27,27 +29,31 @@ public class FlipTask extends TaskThread {
     public void run() {
         timer.reset();
         while (opMode.opModeIsActive() && running) {
-            if (opMode.gamepad1.dpad_left) {
-                if (pos == 0) {
-
-                } else if (pos == 1) {
-                    setFlipPos(flipDownPos);
-                    pos = 0;
-                } else if (pos == 2) {
-                    setFlipPos(flipInterPos);
-                    pos = 1;
-                }
-            } else if(opMode.gamepad1.dpad_right){
-                if (pos == 0) {
-                    setFlipPos(flipInterPos);
-                    pos = 1;
-                } else if (pos == 1) {
-                    setFlipPos(flipUpPos);
-                    pos = 2;
-                } else if (pos == 2) {
-                }
+            if(opMode.gamepad1.dpad_right){
+                pos--;
             }
+            if (opMode.gamepad1.dpad_left) {
+                  pos++;
+            }
+            if(pos == -1){
+                pos = 0;
+            } else if (pos == 0){
+                setFlipPos(flipDownPos);
+            } else if(pos == 1){
+                setFlipPos(flipInterPos);
+            } else if(pos == 2){
+                setFlipPos(flipUpPos);
+            } else if(pos == 3){
+                pos = 2;
+            }
+
+            Functions.waitFor(200);
+            opMode.telemetry.addData("position: ",pos);
+            opMode.telemetry.update();
+
         }
+
+
     }
 
     public void setFlipPos(double position) {
@@ -57,8 +63,9 @@ public class FlipTask extends TaskThread {
     @Override
     public void initialize() {
         lFlip = opMode.hardwareMap.servo.get("lFlip");
-        lFlip = opMode.hardwareMap.servo.get("lFlip");
+        rFlip = opMode.hardwareMap.servo.get("rFlip");
         lFlip.setDirection(Servo.Direction.FORWARD);
         rFlip.setDirection(Servo.Direction.REVERSE);
+        setFlipPos(flipDownPos);
     }
 }

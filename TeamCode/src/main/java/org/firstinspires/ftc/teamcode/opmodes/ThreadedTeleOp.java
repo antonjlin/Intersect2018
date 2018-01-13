@@ -83,7 +83,7 @@ public class ThreadedTeleOp extends LinearOpMode {
         intakeTask.start();
         flipTask.start();
         while(opModeIsActive()) {
-           /* //Timer for 2 minute teleop period
+            /*//Timer for 2 minute teleop period
             long elapsed = System.currentTimeMillis() - startTime;
 
             if (elapsed > 120 * 1000) {
