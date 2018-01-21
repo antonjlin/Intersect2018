@@ -17,6 +17,14 @@ import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.teamcode.opmodes.VisionTesting1;
 import org.opencv.core.Mat;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark.CENTER;
+import static org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark.LEFT;
+import static org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark.RIGHT;
+
+
 public class DriveTrain {
     ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
     static final double TICKS_PER_INCH_FORWARD = 62;
@@ -48,6 +56,7 @@ public class DriveTrain {
     private final int encoderDriveRampMin = 1;
     private int ambientBlue = 0;
     private int ambientRed = 0;
+    double [] linePos;
 
     double average;
     LinearOpMode opMode;
@@ -64,6 +73,12 @@ public class DriveTrain {
     public DriveTrain(){
 
     }
+
+    public void updateLinePos(double [] linPos){
+        this.linePos = linePos;
+
+    }
+
     public DriveTrain( DcMotor rF, DcMotor rB, DcMotor lF, DcMotor lB, DcMotor rIntake, DcMotor lIntake, DcMotor rSlide, DcMotor lSlide,BNO055IMU adaImu, ColorSensor jewelColor, MRColorSensor colorSensor, MRColorSensor cryptoColor, Servo hitJewel, Servo dump) {
         this.rF = rF;
         this.rB = rB;
@@ -138,6 +153,7 @@ public class DriveTrain {
     public enum Direction {
         FORWARD, RIGHT, LEFT, BACKWARD;
     }
+
     public void moveAtSpeed(Direction direction, double speed) {
         if(direction == Direction.FORWARD) {
             lF.setPower(Math.abs(speed));
@@ -350,7 +366,7 @@ public class DriveTrain {
     }
 
 
-    public void StrafeImuCrypto(Direction direction, double power, int timeoutS, Telemetry telemetry,  double [] vals){
+    public void strafeImuCrypto(Direction direction, double power, int timeoutS, Telemetry telemetry){
         double l = 0;
         double r = 0;
         double initialTime = System.currentTimeMillis()/1000;
@@ -360,7 +376,7 @@ public class DriveTrain {
         long endtime =  System.currentTimeMillis() + (timeoutS * 1000);
         double start = imu.getAngle();
         if(direction == Direction.LEFT){
-            while (isCryptoInView(vals) && System.currentTimeMillis() <= endtime) {
+            while (isCryptoInView(linePos) && System.currentTimeMillis() <= endtime) {
                 lF.setPower(Math.abs(power)+l);
                 lB.setPower(-Math.abs(power));
                 rF.setPower(-Math.abs(power)+r);
@@ -385,8 +401,70 @@ public class DriveTrain {
 
         }
 
+
         else if(direction == Direction.RIGHT){
-            while (isCryptoInView(vals) && System.currentTimeMillis() <= endtime) {
+            while (isCryptoInView(linePos) && System.currentTimeMillis() <= endtime) {
+                lF.setPower(-Math.abs(power) + l);
+                lB.setPower(Math.abs(power));
+                rF.setPower(Math.abs(power) + r);
+                rB.setPower(-Math.abs(power));
+
+                if (start - imu.getAngle() < -2) {
+                    r = r + .05;
+                    l = l - .05;
+
+
+                } else if (start - imu.getAngle() > 2) {
+                    r = r - .05;
+                    l = l + .05;
+
+                } else {
+                    r = 0;
+                    l = 0;
+                }
+            }
+
+        }
+
+    }
+    public void strafeImu(Direction direction, double power, int timeoutS){
+        double l = 0;
+        double r = 0;
+        double initialTime = System.currentTimeMillis()/1000;
+        boolean alignedWithCrypto = false;
+        double heading;
+        int e;
+        long endtime =  System.currentTimeMillis() + (timeoutS * 1000);
+        double start = imu.getAngle();
+        if(direction == Direction.LEFT){
+            while (System.currentTimeMillis() <= endtime) {
+                lF.setPower(Math.abs(power)+l);
+                lB.setPower(-Math.abs(power));
+                rF.setPower(-Math.abs(power)+r);
+                rB.setPower(Math.abs(power));
+                if(start - imu.getAngle()<-2){
+                    r = r + .05;
+                    l = l - .05;
+
+
+
+                }
+                else if(start - imu.getAngle()>2){
+                    r = r - .05;
+                    l = l + .05;
+
+                }
+                else{
+                    r = 0;
+                    l = 0;
+                }
+            }
+
+        }
+
+
+        else if(direction == Direction.RIGHT){
+            while (System.currentTimeMillis() <= endtime) {
                 lF.setPower(-Math.abs(power) + l);
                 lB.setPower(Math.abs(power));
                 rF.setPower(Math.abs(power) + r);
@@ -411,10 +489,81 @@ public class DriveTrain {
 
     }
 
-    public boolean isCryptoInView(double [] vals){
-        if(vals.length == 4){
-            return true;
+    public void alignCrypto(RelicRecoveryVuMark vuMark) {
+        double[] linePos = this.linePos;
+        double leftMost = 1000;
+        double rightMost = -1;
+        double cLeft, cRight;
+        List<Double> centers = new ArrayList<Double>();
+        for (int i = 0; i < linePos.length; i++) {
+            if (linePos[i] > rightMost) {
+                rightMost = linePos[i];
+            }
         }
+        for (int i = 0; i < linePos.length; i++) {
+            if (linePos[i] < leftMost) {
+                leftMost = linePos[i];
+            }
+        }
+
+
+        for (int i = 0; i < linePos.length; i++) {
+            if (linePos[i] != leftMost && linePos[i] != rightMost) {
+                centers.add(linePos[i]);
+            }
+        }
+        if (centers.get(0) < centers.get(1)) {
+            cRight = centers.get(1);
+            cLeft = centers.get(0);
+        } else {
+            cRight = centers.get(0);
+            cLeft = centers.get(1);
+        }
+
+
+        switch (vuMark) {
+            case LEFT:
+                while (95 < cLeft && cLeft < 105) {
+                    if (leftMost > 105) {
+                      strafeImu(Direction.RIGHT, .2, 10);
+                    } else if (leftMost < 95) {
+                    strafeImu(Direction.LEFT, .2, 10);
+                    } else {
+                    stopAll();
+                    }
+                }
+            case RIGHT:
+                while (95 < rightMost && rightMost < 105) {
+                    if (rightMost > 105) {
+                        strafeImu(Direction.RIGHT, .2, 10);
+                    } else if (rightMost < 95) {
+                        strafeImu(Direction.LEFT, .2, 10);
+                    } else {
+                        stopAll();
+                    }
+                }
+
+            case CENTER:
+                while (95 < cRight && leftMost < cRight) {
+                    if (leftMost > 105) {
+                        strafeImu(Direction.RIGHT, .2, 10);
+                    }
+
+                }
+
+            }
+        }
+
+
+    public void alignCryptoClose(){
+
+    }
+
+
+
+
+    public boolean isCryptoInView(double [] linePos){
+        if(linePos.length == 4) return true;
         return false;
     }
 

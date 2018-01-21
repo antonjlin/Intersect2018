@@ -1,10 +1,14 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
+import android.app.Activity;
+import android.graphics.Bitmap;
+import android.media.Image;
 import android.util.Log;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.robotcore.internal.opmode.TelemetryInternal;
+import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.robotutil.DriveTrain;
 import org.firstinspires.ftc.teamcode.robotutil.Functions;
 import org.firstinspires.ftc.teamcode.robotutil.IMU;
@@ -13,23 +17,29 @@ import org.firstinspires.ftc.teamcode.robotutil.Team;
 import org.firstinspires.ftc.teamcode.robotutil.VuMark;
 import org.lasarobotics.vision.opmode.ManualVisionOpMode;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.GyroSensor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TimestampedI2cData;
 import com.qualcomm.robotcore.util.RobotLog;
 import com.qualcomm.robotcore.util.ThreadPool;
 
 import org.lasarobotics.vision.opmode.ManualVisionOpMode;
+import org.opencv.android.Utils;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
+import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.concurrent.CancellationException;
@@ -37,11 +47,13 @@ import java.util.concurrent.ExecutorService;
 
 import static android.R.attr.hardwareAccelerated;
 import static android.R.attr.process;
+import static android.graphics.Bitmap.Config.RGB_565;
 import static com.sun.tools.javac.main.Option.O;
 import static java.lang.Math.PI;
 import static org.firstinspires.ftc.teamcode.robotutil.DriveTrain.Direction.*;
 import static org.opencv.core.Core.bitwise_and;
 import static org.opencv.core.Core.inRange;
+import static org.opencv.imgproc.Imgproc.COLOR_BGR2HSV;
 import static org.opencv.imgproc.Imgproc.HoughLines;
 import static org.opencv.imgproc.Imgproc.line;
 
@@ -66,6 +78,8 @@ public class VisionTesting1 extends ManualVisionOpMode {
     private boolean strafeRight;
     private boolean alignWithCryptoCol;
     private int detectedLines;
+    double [] linePos;
+    Activity activity;
 
     static double jewelArmInitPosition = 0, jewelArmDownPos = 0.96, jewelArmUpPos = 0.3;
     static Servo jewelArm;
@@ -86,6 +100,9 @@ public class VisionTesting1 extends ManualVisionOpMode {
 
     private volatile boolean isStarted = false;
     private volatile boolean stopRequested = false;
+
+    //ImageView view;
+    //Bitmap bm;
 
 
 
@@ -114,8 +131,16 @@ public class VisionTesting1 extends ManualVisionOpMode {
         this.isStarted = false;
         this.stopRequested = false;
         this.executorService.execute(this.helper);
+        //activity = (Activity) this.hardwareMap.appContext;
+
+        //view = (ImageView) activity.findViewById(R.id.MyVision);
+
+
+
+
 
     }
+
 
     @Override
     public void stop(){
@@ -128,7 +153,9 @@ public class VisionTesting1 extends ManualVisionOpMode {
     public void start(){
         driveTrain.opmodeActivated();
     }
-    public  Mat frame(Mat rgba, Mat gray) {
+
+
+    public Mat frame(Mat rgba, Mat gray) {
         /*
         Detect objects from rgba or grayscale matrix
         Include commands to control robot.
@@ -136,54 +163,81 @@ public class VisionTesting1 extends ManualVisionOpMode {
         This method will be called for each frame. You need to set instance variables to keep
         the state. Most likely another thread will call this method.
         */
+        linePos = lineDetect(rgba);
         Log.d(VisionTesting1.class.getName(), "frame called");
         Log.d(VisionTesting1.class.getName(), "size " + rgba.size());
-        if(strafeleft) {
-            double[] vals = lineDetect(rgba);
-            driveTrain.StrafeImuCrypto(LEFT, .2, 5, this.telemetry, vals);
+        /*if(strafeleft) {
+            linePos = lineDetect(rgba);
+            driveTrain.StrafeImuCrypto(LEFT, .2, 5, this.telemetry, linePos);
+
 
         }
         if(strafeRight){
-            double[] vals = lineDetect(rgba);
-            driveTrain.StrafeImuCrypto(RIGHT, .2, 5, this.telemetry, vals);
+            linePos = lineDetect(rgba);
+            driveTrain.StrafeImuCrypto(RIGHT, .2, 5, this.telemetry, linePos);
 
         }
         if(alignWithCryptoCol) {
             switch (vuMark) {
                 case RIGHT:
 
+
             }
-        }
+        }*/
+       /* bm = Bitmap.createBitmap(rgba.cols(), rgba.rows(),RGB_565);
+        Utils.matToBitmap(rgba, bm);
+        activity.runOnUiThread(new Runnable() {
+
+            @Override
+            public void run() {
+
+                if(bm != null)
+                    view.setImageBitmap(bm);
+
+
+            }
+        });*/
+
+
+        driveTrain.updateLinePos(linePos);
         telemetry.addData("frame size  -->  ", rgba.cols() + "  "+ rgba.rows());
+        if(linePos != null) {
+            telemetry.addData("Lines Detected --->", "   " + linePos.length);
+        }
         return null;
     }
 
+
     public double[] lineDetect(Mat RGB){
 
-        double [] vals = new double [10];
-        //List <Double> list = new ArrayList<Double>();
+        Log.d("linedetect", "entered linedetect");
+
         Mat hsv = new Mat();
         Mat mask = new Mat();
         Mat res = new Mat();
-        //Mat original = Imgcodecs.imread("/home/pranav/Desktop/Crypto.jpg");
+
         Mat original = RGB;
+        Imgproc.cvtColor(original, hsv, COLOR_BGR2HSV);
         Scalar lower_red = new Scalar(0,1,1);
         Scalar upper_red = new Scalar(10,255,255);
+        Log.d("linedetect", "before inRange");
         inRange(hsv, lower_red, upper_red,mask);
+        Log.d("linedetect", "before bitwise");
         bitwise_and(original,original,res ,mask );
-       /* Imgcodecs.imwrite("/tmp/frame.jpg", original);
-        Imgcodecs.imwrite("/tmp/mask.jpg", mask);
-        Imgcodecs.imwrite("/tmp/res.jpg", res);*/
+
         Mat source = new Mat();
-        Imgproc.cvtColor( original, source, Imgproc.COLOR_BGR2GRAY);
-        /*Imgcodecs.imwrite("/tmp/crypto.jpg", source);
-        Imgcodecs.imwrite("/tmp/blur.jpg", source);*/
+        Log.d("linedetect", "before cvtColor");
+
         Mat vector = new Mat();
+        Log.d("linedetect", "before HoughLines");
         HoughLines(mask, vector, 3, PI/5, 200, 1, 1,0, PI/9);
         //HoughLinesP(mask, vector, 1, PI/180, 80, 30, 10);
+        double [] vals = new double[vector.rows()];
+        Log.d("linedetect", "before loop");
         for (int i = 0; i < vector.rows(); i++) {
             double data[] = vector.get(i,0 );
             double rho1 = data[0];
+
             //System.out.println(rho1);
             vals[i] = rho1;
 
@@ -197,9 +251,10 @@ public class VisionTesting1 extends ManualVisionOpMode {
             Imgproc.line(original, pt1, pt2, new Scalar(0, 0, 255), 2);
 
         }
-        System.out.println("rows " + vector.rows() + "  "+ "columns " + vector.cols() );
+        Log.d("linedetect", "rows " + vector.rows() + "  "+ "columns " + vector.cols());
         //Imgcodecs.imwrite("/tmp/withLines.jpg", original);
 
+        Log.d("linedetect", "before returning vals");
         return vals;
         //return vals;
         /*
@@ -222,6 +277,7 @@ public class VisionTesting1 extends ManualVisionOpMode {
            Imgcodecs.imwrite("/tmp/skel.jpg", skel);*/
 
     }
+
 
 
     private void moveRobot(){
@@ -277,11 +333,17 @@ public class VisionTesting1 extends ManualVisionOpMode {
             return this.isShutdown;
         }
     }
+    protected class Display {
+
+    }
 
     void runOpMode()throws InterruptedException{
+
         telemetry.addData("Status", "= Initialized");
         telemetry.update();
         //initialize();
+
+        
         while(driveTrain.opmodeIsActive == false){
 
             telemetry.addData("Status  -->", "  waiting for start");
@@ -290,22 +352,19 @@ public class VisionTesting1 extends ManualVisionOpMode {
         telemetry.addData("Status -->", "  started");
         telemetry.update();
         Functions.waitFor(1000000);
-        if(startingPos == 0){
+        if(startingPos == 1){
             if(red){
-                /*
-                driveTrain.hitJewel(red);
-                driveTrain.imuDriveCryptoGraph(.3, 2, this.telemetry);
+
+                //driveTrain.hitJewel(red);
+
+
                 RelicRecoveryVuMark vuMark = vm.detectColumn(3);
                 this.vuMark = vuMark;
-                driveTrain.encoderDrive(.3, 5, FORWARD, 4);*/
-                strafeLeftToCrypto(5000);
-                switch (vuMark) {
-                    case CENTER:
-                        driveTrain.encoderDrive(.4, 5, FORWARD, 3);
-                        driveTrain.dumpBlock();
-                    case RIGHT:
-
-                }
+                driveTrain.encoderDrive(.3, 12, FORWARD, 4);
+                driveTrain.rotateIMURamp(-90, .4, 10, this.telemetry);
+                driveTrain.strafeImuCrypto(LEFT, .4, 10, this.telemetry);
+                driveTrain.alignCrypto(vuMark);
+                driveTrain.encoderDrive(.2, 12, FORWARD, 4);
 
             }
             if(!red){
@@ -391,17 +450,10 @@ public class VisionTesting1 extends ManualVisionOpMode {
         }
         strafeRight= false;
     }
-    public void alignWithCryptoCol(long timeout){
-        long start = System.currentTimeMillis();
-        while (System.currentTimeMillis() - start < timeout) {
-            if(!alignWithCryptoCol) {
-                alignWithCryptoCol = true;
-            }
-        }
-        alignWithCryptoCol= false;
 
 
-    }
+
+
     public void options(){
         telemetry.addData("Team", "Blue");
         telemetry.update();

@@ -14,9 +14,13 @@ public class FlipTask extends TaskThread {
 
     private Servo lFlip,rFlip;
 
-    double flipDownPos = 0;
-    double flipUpPos = .6;
-    double flipInterPos = 0.1;
+    double flipDownPosR = 0;
+    double flipUpPosR = .6;
+    double flipInterPosR = 0.1;
+    double flipDownPosL = 0;
+    double flipUpPosL = .9;
+    double flipInterPosL = 0.4;
+
     int pos = 0;
     ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
@@ -38,11 +42,11 @@ public class FlipTask extends TaskThread {
             if(pos == -1){
                 pos = 0;
             } else if (pos == 0){
-                setFlipPos(flipDownPos);
+                setFlipPosDown();
             } else if(pos == 1){
-                setFlipPos(flipInterPos);
+                setFlipPosInter();
             } else if(pos == 2){
-                setFlipPos(flipUpPos);
+                setFlipPosUp();
             } else if(pos == 3){
                 pos = 2;
             }
@@ -56,16 +60,25 @@ public class FlipTask extends TaskThread {
 
     }
 
-    public void setFlipPos(double position) {
-        lFlip.setPosition(position);
-        rFlip.setPosition(position);
+    public void setFlipPosDown() {
+        lFlip.setPosition(flipDownPosL);
+        rFlip.setPosition(flipDownPosR);
+    }
+    public void setFlipPosInter() {
+        lFlip.setPosition(flipInterPosL);
+        rFlip.setPosition(flipInterPosR);
+    }
+    public void setFlipPosUp(){
+        lFlip.setPosition(flipUpPosL);
+        rFlip.setPosition(flipUpPosR);
+
     }
     @Override
     public void initialize() {
         lFlip = opMode.hardwareMap.servo.get("lFlip");
         rFlip = opMode.hardwareMap.servo.get("rFlip");
-        lFlip.setDirection(Servo.Direction.FORWARD);
+        lFlip.setDirection(Servo.Direction.REVERSE);
         rFlip.setDirection(Servo.Direction.REVERSE);
-        setFlipPos(flipDownPos);
+        setFlipPosDown();
     }
 }
