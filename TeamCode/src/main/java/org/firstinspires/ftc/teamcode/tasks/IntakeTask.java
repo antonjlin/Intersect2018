@@ -22,10 +22,10 @@ public class IntakeTask extends TaskThread {
     public void run() {
         timer.reset();
         while (opMode.opModeIsActive() && running) {
-            if (opMode.gamepad1.dpad_up || opMode.gamepad2.b) {
-                setRollerPower(1);
-            } else if (opMode.gamepad1.dpad_down || opMode.gamepad2.x) {
+            if (opMode.gamepad1.dpad_up || opMode.gamepad2.dpad_up) {
                 setRollerPower(-1);
+            } else if (opMode.gamepad1.dpad_down || opMode.gamepad2.dpad_down) {
+                setRollerPower(1);
             } else{
                 setRollerPower(0);
             }

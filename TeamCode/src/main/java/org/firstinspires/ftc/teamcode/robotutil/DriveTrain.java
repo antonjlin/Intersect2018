@@ -4,10 +4,14 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 //import com.qualcomm.hardware.adafruit.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 
+import org.firstinspires.ftc.robotcontroller.external.samples.SensorDigitalTouch;
 import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
@@ -17,10 +21,15 @@ public class DriveTrain {
     static final double TICKS_PER_INCH_FORWARD = 62;
     static final double TICKS_PER_INCH_STRAFE = 61.3;
     public DcMotor rF, rB, lF, lB, rIntake, lIntake, rSlide, lSlide;
+    public DigitalChannel cryptoTouch;
+    public Servo flipServo,cryptoArm;
     public double minMotorPower = 0.085; //minimum power that robot still moves
     public IMU imu;
-
-
+    public double flipDownPos = 0.56;
+    public double flipInterPos = flipDownPos - 0.1;
+    public double flipUpPos = flipDownPos - 0.5;
+    public double cryptoDownPos = 0.56;
+    public double cryptoUpPos = cryptoDownPos - 0.5;
     // Tunable parameters
 
     private int conversionFactor = 50;
@@ -78,11 +87,27 @@ public class DriveTrain {
         rIntake.setDirection(DcMotorSimple.Direction.FORWARD);
         lIntake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rIntake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        cryptoArm = opMode.hardwareMap.servo.get("cryptoArm");
+        flipServo = opMode.hardwareMap.servo.get("flipServo");
+
+        cryptoArm.setPosition(cryptoDownPos);
+        flipServo.setPosition(flipDownPos);
+
+        cryptoTouch  = opMode.hardwareMap.get(DigitalChannel.class, "cryptoTouch");
     }
 
     public void rollersSetPower(double power) {
         rIntake.setPower(power);
         lIntake.setPower(power);
+    }
+
+    public void alignCrypto(double speed, Direction direction){
+       cryptoArm.setPosition(cryptoDownPos);
+       while(cryptoTouch.getState() == false){
+           moveAtSpeed(direction,speed);
+       }
+       stopAll();
     }
 
     public void moveRollersTime(double power, int timeMS) {

@@ -5,9 +5,12 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.teamcode.robotutil.DriveTrain;
 
 import org.firstinspires.ftc.teamcode.robotutil.DriveTrain;
+import org.firstinspires.ftc.teamcode.robotutil.Functions;
 
 /**
  * Created by Howard on 10/15/16.
@@ -33,25 +36,30 @@ public class SlideTask extends TaskThread {
     @Override
     public void run() {
         timer.reset();
-        while (opMode.opModeIsActive() && running) {
-            /*if (opMode.gamepad1.right_bumper || opMode.gamepad2.right_bumper) {
-                setSlidePower(-1);
-            } else if (opMode.gamepad1.left_bumper || opMode.gamepad2.left_bumper) {
-                setSlidePower(1);
+        while (opMode.opModeIsActive()/* && running*/) {
+            long start  = System.currentTimeMillis();
+            int debounce = 200;
+            if (opMode.gamepad1.x || opMode.gamepad2.x && System.currentTimeMillis()- start > debounce) {
+                setSlidePower(-.8);
+            } else if (opMode.gamepad1.a || opMode.gamepad2.a && System.currentTimeMillis()- start > debounce) {
+                setSlidePower(.8);
             } else{
                 setSlidePower(0);
-            }*/
+            }
 
-            if(opMode.gamepad1.a){
-                setSlidePosition(pos0,3);
-                zeroSlides();
-            }
-            if(opMode.gamepad1.x){
-                setSlidePosition(pos3,3);
-            }
-            if(opMode.gamepad1.y){
-                setSlidePosition(pos4,3);
-            }
+
+
+
+//            if(opMode.gamepad1.a || opMode.gamepad2.a){
+//                setSlidePosition(pos0,3);
+//                zeroSlides();
+//            }
+//            if(opMode.gamepad1.x || opMode.gamepad2.x){
+//                setSlidePosition(pos3,3);
+//            }
+//            if(opMode.gamepad1.y || opMode.gamepad2.y){
+//                setSlidePosition(pos4,3);
+//            }
 
         }
     }
@@ -97,8 +105,8 @@ public class SlideTask extends TaskThread {
 
     public void setSlidePosition(int posInch, int timeoutS){
          boolean up = true;
-        lSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        lSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        rSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         int newLTarget = inchToEncoder(posInch);
         int newRTarget = inchToEncoder(posInch);
@@ -129,13 +137,13 @@ public class SlideTask extends TaskThread {
             opMode.telemetry.addData("lpos ", lSlide.getCurrentPosition());
             opMode.telemetry.addData("rpos ", rSlide.getCurrentPosition());
             opMode.telemetry.update();
-
+            /*
             if(!lSlide.isBusy()){
                     lSlide.setPower(0);
                 }
             if(!rSlide.isBusy()){
                 rSlide.setPower(0);
-            }
+            }*/
             /*if(up){
                 if(rSlide.getCurrentPosition() >= newRTarget){
                     rSlide.setPower(0);
