@@ -39,10 +39,10 @@ public class SlideTask extends TaskThread {
         while (opMode.opModeIsActive()/* && running*/) {
             long start  = System.currentTimeMillis();
             int debounce = 200;
-            if (opMode.gamepad1.x || opMode.gamepad2.x) {
+            if (opMode.gamepad1.left_bumper || opMode.gamepad2.left_bumper) {
                 opMode.telemetry.addLine("down");
                 setSlidePower(-.8);
-            } else if (opMode.gamepad1.a || opMode.gamepad2.a) {
+            } else if (opMode.gamepad1.right_bumper || opMode.gamepad2.right_bumper) {
                 setSlidePower(.8);
                 opMode.telemetry.addLine("up");
 

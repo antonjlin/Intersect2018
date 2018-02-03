@@ -56,6 +56,7 @@ public class ThreadedTeleOp extends LinearOpMode {
     private FlipTask flipTask;
     private BlockPushTask blockPushTask;
     Servo jewelArm;
+    Servo cryptoArm;
     Team team = Team.BLUE;
     int leftSlidePos;
     int rightSlidePos;
@@ -111,6 +112,9 @@ public class ThreadedTeleOp extends LinearOpMode {
             jewelArm = hardwareMap.servo.get("jewelArm");
             jewelArm.setDirection(Servo.Direction.REVERSE);
             jewelArm.setPosition(AutoFull.jewelArmUpPos);
+            cryptoArm = hardwareMap.servo.get("cryptoArm");
+//            decrease value to go more vertically\
+            cryptoArm.setPosition(0.3);
         }
 
     public void setTeam() {

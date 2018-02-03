@@ -32,30 +32,25 @@ public class BlockPushTask extends TaskThread{
     public void run() {
         timer.reset();
         while (opMode.opModeIsActive() && running) {
-            if(opMode.gamepad2.a){
+            if(opMode.gamepad2.b || opMode.gamepad1.b){
                 blockPush.setPosition(0);
             }
-            if (opMode.gamepad2.b){
-                blockPush.setPosition(0.5);
+            if (opMode.gamepad2.a || opMode.gamepad1.a){
+                blockPush.setPosition(.7);
             }
-
-            Functions.waitFor(200);
+            Functions.waitFor(100);
             opMode.telemetry.addData("position: ",pos);
             touchState = String.valueOf(cryptoTouch.getState());
             opMode.telemetry.addData("TouchSensor", touchState);
             opMode.telemetry.update();
-
         }
-
-
     }
-
 
     @Override
     public void initialize() {
         blockPush = opMode.hardwareMap.servo.get("blockPusher");
         blockPush.setDirection(Servo.Direction.FORWARD);
-        blockPush.setPosition(0.5);
+        blockPush.setPosition(.7);
         cryptoTouch  = opMode.hardwareMap.get(DigitalChannel.class, "cryptoTouch");
 
     }

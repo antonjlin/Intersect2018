@@ -14,19 +14,16 @@ import org.firstinspires.ftc.teamcode.robotutil.IMU;
 import org.firstinspires.ftc.teamcode.robotutil.MRColorSensor;
 import org.firstinspires.ftc.teamcode.robotutil.Team;
 import org.firstinspires.ftc.teamcode.robotutil.VuMark;
-@Autonomous(name = "Auto Testing")
+@Autonomous(name = "Auto Full")
 public class AutoFull extends LinearOpMode {
-    static double jewelArmInitPosition = 0, jewelArmDownPos = 0.8, jewelArmUpPos = 0.3 , cryptoDownPos = 0, cryptoUpPos = .5;
-    static DcMotor rF, rB, lF, lB, flywheel1, flywheel2, sweeperLow;
+    static double jewelArmInitPosition = .3, jewelArmDownPos = 0.8, jewelArmUpPos = 0.6 , cryptoDownPos = 0, cryptoUpPos = .5;
+    static DcMotor rF, rB, lF, lB;
     static GyroSensor gyro;
-    static Servo jewelArm , cryptoArm , jewelFinger;
+    static Servo jewelArm ;
     boolean red = false;
     DriveTrain driveTrain;
     ColorSensor jewelColor;
     MRColorSensor colorSensor;
-    static double fingerMiddlePos = 0.5;
-    static double leftFingerPos = 0.1;
-    static double rightFingerPos = 0.0;
     StartingPositions startingPos = StartingPositions.CORNER;
     int state;
     private BNO055IMU adaImu;
@@ -38,9 +35,8 @@ public class AutoFull extends LinearOpMode {
         initHardware();
 //        options();
         waitForStart();
-
         if (opModeIsActive()) {
-            driveTrain.alignCrypto(0.5, DriveTrain.Direction.RIGHT);
+            driveTrain.moveFwd(0.5,10,10);
         }
     }
 
@@ -57,23 +53,12 @@ public class AutoFull extends LinearOpMode {
 
     public void fullJewel(){
         jewelArm.setPosition(jewelArmDownPos);
-        flickJewel();
         jewelArm.setPosition(jewelArmUpPos);
     }
 
     public void moveToCrypto(){
         if (colorSensor.team == colorSensor.team.BLUE) {
             driveTrain.encoderDriveIMU(0.3,30, DriveTrain.Direction.BACKWARD,10);
-        }
-    }
-
-    
-
-    public void flickJewel(){
-        if(colorSensor.wrongColor()){
-            jewelFinger.setPosition(leftFingerPos);
-        }else{
-            jewelFinger.setPosition(rightFingerPos);
         }
     }
 
@@ -100,14 +85,14 @@ public class AutoFull extends LinearOpMode {
         lB.setDirection(DcMotor.Direction.REVERSE);
         lF.setDirection(DcMotor.Direction.REVERSE);
 
-        cryptoArm = hardwareMap.servo.get("cryptoArm");
+//        cryptoArm = hardwareMap.servo.get("cryptoArm");
         jewelArm = hardwareMap.servo.get("jewelArm");
         jewelColor = hardwareMap.colorSensor.get("jewelColor");
         adaImu = hardwareMap.get(BNO055IMU.class, "imu");
-        jewelFinger = hardwareMap.servo.get("jewelFinger");
-
-        jewelFinger.setPosition(fingerMiddlePos);
-        cryptoArm.setPosition(cryptoUpPos);
+//        jewelFinger = hardwareMap.servo.get("jewelFinger");
+//
+//        jewelFinger.setPosition(fingerMiddlePos);
+//        cryptoArm.setPosition(cryptoUpPos);
         jewelArm.setPosition(jewelArmInitPosition);
 
         imu = new IMU(adaImu);
