@@ -311,7 +311,7 @@ public class VisionTesting1 extends ManualVisionOpMode {
         Imgproc.cvtColor(original, hsv, COLOR_BGR2HSV);
         //Scalar lower_red = new Scalar(30,150,150);
         //Scalar upper_red = new Scalar(255,255,180);
-        Scalar lower_red = new Scalar(80,150,80);
+        Scalar lower_red = new Scalar(100,150,80);
         Scalar upper_red = new Scalar(150,180,140);
         //Scalar lower_red = new Scalar(0,0,0);
         //Scalar upper_red = new Scalar(20,255,255);
@@ -328,10 +328,10 @@ public class VisionTesting1 extends ManualVisionOpMode {
 
         Mat vector = new Mat();
         Log.d("linedetect", "before HoughLines");
-        HoughLines(mask, vector, 3, PI/5, 200, 1, 1,0, PI/9);
+        //HoughLines(mask, vector, 3, PI/5, 200, 1, 1,0, PI/9);
         //HoughLines(mask, vector, 3, PI/5, 200, 1, 1,0, PI/9);
         //HoughLines(mask, vector, HOUGH_PROBABILISTIC, PI/5, 200, 1, 1,0, PI/9);
-        //HoughLinesP(mask, vector, 1, PI/180, 200, 30, 10);
+        HoughLinesP(mask, vector, 1, PI/180, 200, 30, 10);
         double [] vals = new double[vector.rows()];
         Log.d("linedetect", "before loop");
         for (int i = 0; i < vector.rows(); i++) { // for regular houghlines
@@ -351,9 +351,14 @@ public class VisionTesting1 extends ManualVisionOpMode {
             Imgproc.line(original, pt1, pt2, new Scalar(0, 0, 255), 2);
 
         }
+        for(int i = 0; i < vector.rows();i++){
+            double data[] = vector.get(i,0);
+            Point pt1 = new Point(vector.get(0))
+            Imgproc.line(original,);
+        }
 
-        bm = Bitmap.createBitmap(mask.cols(), mask.rows(),RGB_565);
-        Utils.matToBitmap(mask, bm);
+        bm = Bitmap.createBitmap(original.cols(), original.rows(),RGB_565);
+        Utils.matToBitmap(original, bm);
         withMarkers = bm;
 
         Log.d("linedetect", "rows " + vector.rows() + "  "+ "columns " + vector.cols());
