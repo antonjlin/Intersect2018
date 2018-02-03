@@ -39,16 +39,19 @@ public class SlideTask extends TaskThread {
         while (opMode.opModeIsActive()/* && running*/) {
             long start  = System.currentTimeMillis();
             int debounce = 200;
-            if (opMode.gamepad1.x || opMode.gamepad2.x && System.currentTimeMillis()- start > debounce) {
+            if (opMode.gamepad1.x || opMode.gamepad2.x) {
+                opMode.telemetry.addLine("down");
                 setSlidePower(-.8);
-            } else if (opMode.gamepad1.a || opMode.gamepad2.a && System.currentTimeMillis()- start > debounce) {
+            } else if (opMode.gamepad1.a || opMode.gamepad2.a) {
                 setSlidePower(.8);
+                opMode.telemetry.addLine("up");
+
             } else{
                 setSlidePower(0);
+                opMode.telemetry.addLine("idle");
+
             }
-
-
-
+            opMode.telemetry.update();
 
 //            if(opMode.gamepad1.a || opMode.gamepad2.a){
 //                setSlidePosition(pos0,3);
@@ -81,8 +84,8 @@ public class SlideTask extends TaskThread {
         lZeroPosition = lSlide.getCurrentPosition();
         rZeroPosition = rSlide.getCurrentPosition();
         opMode.telemetry.addData("lSlideZero", lZeroPosition);
-         opMode.telemetry.addData("rSlideZero", rZeroPosition);
-         opMode.telemetry.update();
+        opMode.telemetry.addData("rSlideZero", rZeroPosition);
+        opMode.telemetry.update();
 
 
      }
@@ -178,14 +181,14 @@ public class SlideTask extends TaskThread {
     public void initialize() {
         lSlide = opMode.hardwareMap.dcMotor.get("lSlide");
         rSlide = opMode.hardwareMap.dcMotor.get("rSlide");
-        lSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        lSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         lSlide.setDirection(DcMotorSimple.Direction.FORWARD);
         rSlide.setDirection(DcMotorSimple.Direction.REVERSE);
         lSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         //lTouch = opMode.hardwareMap.touchSensor.get("lTouch");
         //rTouch = opMode.hardwareMap.touchSensor.get("rTouch");
-        zeroSlides();
+//        zeroSlides();
     }
 }

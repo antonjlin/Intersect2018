@@ -22,9 +22,11 @@ public class IntakeTask extends TaskThread {
     public void run() {
         timer.reset();
         while (opMode.opModeIsActive() && running) {
-          /*  if (opMode.gamepad1.dpad_up || opMode.gamepad2.b) {
+/*
+            if (opMode.gamepad1.dpad_up || opMode.gamepad2.dpad_up) {
                 setRollerPower(1);
-            } else if (opMode.gamepad1.dpad_down || opMode.gamepad2.x) {
+            } else if (opMode.gamepad1.dpad_down || opMode.gamepad2.dpad_down) {
+
                 setRollerPower(-1);
             } else{
                 setRollerPower(0);
@@ -40,11 +42,13 @@ public class IntakeTask extends TaskThread {
         rIntake.setPower(power);
         lIntake.setPower(power);
     }
+
     public void tankControl(){
         lIntake.setPower(opMode.gamepad2.left_stick_y);
         rIntake.setPower(opMode.gamepad2.right_stick_y);
 
     }
+
     @Override
     public void initialize() {
         lIntake = opMode.hardwareMap.dcMotor.get("lIntake");

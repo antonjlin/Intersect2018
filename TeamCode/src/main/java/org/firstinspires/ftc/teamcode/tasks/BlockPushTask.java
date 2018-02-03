@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.tasks;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -13,6 +15,8 @@ import org.firstinspires.ftc.teamcode.robotutil.Functions;
 public class BlockPushTask extends TaskThread{
 
     private Servo blockPush;
+    private DigitalChannel cryptoTouch;
+    private String touchState;
 
 
 
@@ -29,14 +33,16 @@ public class BlockPushTask extends TaskThread{
         timer.reset();
         while (opMode.opModeIsActive() && running) {
             if(opMode.gamepad2.a){
-                blockPush.setPosition(.5);
-            }
-            if (opMode.gamepad2.a){
                 blockPush.setPosition(0);
+            }
+            if (opMode.gamepad2.b){
+                blockPush.setPosition(0.5);
             }
 
             Functions.waitFor(200);
             opMode.telemetry.addData("position: ",pos);
+            touchState = String.valueOf(cryptoTouch.getState());
+            opMode.telemetry.addData("TouchSensor", touchState);
             opMode.telemetry.update();
 
         }
@@ -49,7 +55,9 @@ public class BlockPushTask extends TaskThread{
     public void initialize() {
         blockPush = opMode.hardwareMap.servo.get("blockPusher");
         blockPush.setDirection(Servo.Direction.FORWARD);
-        blockPush.setPosition(0);
+        blockPush.setPosition(0.5);
+        cryptoTouch  = opMode.hardwareMap.get(DigitalChannel.class, "cryptoTouch");
+
     }
 
 
