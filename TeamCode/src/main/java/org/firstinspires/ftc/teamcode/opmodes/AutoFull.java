@@ -16,14 +16,17 @@ import org.firstinspires.ftc.teamcode.robotutil.Team;
 import org.firstinspires.ftc.teamcode.robotutil.VuMark;
 @Autonomous(name = "Auto Full")
 public class AutoFull extends LinearOpMode {
-    static double jewelArmInitPosition = .3, jewelArmDownPos = 0.8, jewelArmUpPos = 0.6 , cryptoDownPos = 0, cryptoUpPos = .5;
+    static double jewelArmInitPosition = .3, jewelArmDownPos = 0.8, jewelArmUpPos = 0.4 , cryptoDownPos = 0, cryptoUpPos = .5;
     static DcMotor rF, rB, lF, lB;
     static GyroSensor gyro;
-    static Servo jewelArm ;
+    static Servo jewelArm,flipServo ;
     boolean red = false;
     DriveTrain driveTrain;
     ColorSensor jewelColor;
     MRColorSensor colorSensor;
+    double flipDownPos = 0.56;
+    double flipInterPos = flipDownPos - 0.1;
+    double flipUpPos = flipDownPos - 0.5;
     StartingPositions startingPos = StartingPositions.CORNER;
     int state;
     private BNO055IMU adaImu;
@@ -36,7 +39,23 @@ public class AutoFull extends LinearOpMode {
 //        options();
         waitForStart();
         if (opModeIsActive()) {
-            driveTrain.moveFwd(0.5,10,10);
+            if(red) {
+                if (startingPos == StartingPositions.CORNER) {
+                    driveTrain.encoderDrive(0.4, 26, DriveTrain.Direction.FORWARD, 10);
+                    driveTrain.rotateIMURamp(-90, .5, 5, telemetry);
+                    flipServo.setPosition(flipUpPos);
+                    driveTrain.encoderDrive(0.5, 20, DriveTrain.Direction.BACKWARD, 10);
+                    driveTrain.encoderDrive(0.5, 10, DriveTrain.Direction.FORWARD, 10);
+
+                }else{
+                    flipServo.setPosition(flipUpPos);
+                    driveTrain.encoderDrive(0.5, 60, DriveTrain.Direction.BACKWARD, 10);
+                    driveTrain.encoderDrive(0.5, 10, DriveTrain.Direction.FORWARD, 10);
+
+                }
+            }
+
+
         }
     }
 
@@ -89,6 +108,8 @@ public class AutoFull extends LinearOpMode {
         jewelArm = hardwareMap.servo.get("jewelArm");
         jewelColor = hardwareMap.colorSensor.get("jewelColor");
         adaImu = hardwareMap.get(BNO055IMU.class, "imu");
+        flipServo = hardwareMap.servo.get("flipServo");
+        flipServo.setPosition(flipDownPos);
 //        jewelFinger = hardwareMap.servo.get("jewelFinger");
 //
 //        jewelFinger.setPosition(fingerMiddlePos);
