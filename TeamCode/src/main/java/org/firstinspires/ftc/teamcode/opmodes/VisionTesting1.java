@@ -351,7 +351,7 @@ public class VisionTesting1 extends ManualVisionOpMode {
             Imgproc.line(original, pt1, pt2, new Scalar(0, 0, 255), 2);
 
         }
-        
+
         bm = Bitmap.createBitmap(mask.cols(), mask.rows(),RGB_565);
         Utils.matToBitmap(mask, bm);
         withMarkers = bm;

@@ -96,7 +96,7 @@ public class ThreadedTeleOp extends LinearOpMode {
 //            } else {
 //                int seconds = 120 - (int) (elapsed / 1000L);
 //                String timeString = (seconds / 60) + ":";
-//                if (seconds % 60 < 10) {
+    //                if (seconds % 60 < 10) {
 //                    timeString += 0;
 //                }
 //                timeString += seconds % 60;
