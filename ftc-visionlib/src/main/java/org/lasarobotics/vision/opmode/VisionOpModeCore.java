@@ -180,6 +180,7 @@ abstract class VisionOpModeCore extends OpMode implements CameraBridgeViewBase.C
                 layout.setLayoutParams(new LinearLayout.LayoutParams(
                         ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
+
                 openCVCamera = new JavaCameraView(hardwareMap.appContext, 0);
 
                 layout.addView(openCVCamera);

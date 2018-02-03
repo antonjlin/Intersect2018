@@ -54,7 +54,11 @@ import static org.firstinspires.ftc.teamcode.robotutil.DriveTrain.Direction.*;
 import static org.opencv.core.Core.bitwise_and;
 import static org.opencv.core.Core.inRange;
 import static org.opencv.imgproc.Imgproc.COLOR_BGR2HSV;
+import static org.opencv.imgproc.Imgproc.Canny;
+import static org.opencv.imgproc.Imgproc.HOUGH_PROBABILISTIC;
 import static org.opencv.imgproc.Imgproc.HoughLines;
+import static org.opencv.imgproc.Imgproc.HoughLinesP;
+import static org.opencv.imgproc.Imgproc.blur;
 import static org.opencv.imgproc.Imgproc.line;
 
 /**
@@ -79,7 +83,7 @@ public class VisionTesting1 extends ManualVisionOpMode {
     private boolean alignWithCryptoCol;
     private int detectedLines;
     double [] linePos;
-    Activity activity;
+
 
     static double jewelArmInitPosition = 0, jewelArmDownPos = 0.96, jewelArmUpPos = 0.3;
     static Servo jewelArm;
@@ -98,11 +102,13 @@ public class VisionTesting1 extends ManualVisionOpMode {
     private VisionTesting1.RelicOpModeHelper helper = null;
     private ExecutorService executorService = null;
 
+
     private volatile boolean isStarted = false;
     private volatile boolean stopRequested = false;
 
-    //ImageView view;
-    //Bitmap bm;
+    ImageView view;
+    Bitmap bm = null;
+    private Bitmap withMarkers = null;
 
 
 
@@ -131,10 +137,15 @@ public class VisionTesting1 extends ManualVisionOpMode {
         this.isStarted = false;
         this.stopRequested = false;
         this.executorService.execute(this.helper);
-        //activity = (Activity) this.hardwareMap.appContext;
 
-        //view = (ImageView) activity.findViewById(R.id.MyVision);
 
+        view = (ImageView) ((Activity) this.hardwareMap.appContext).findViewById(R.id.MyVision);
+       ((Activity) this.hardwareMap.appContext).runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                view.setRotation(90);
+            }
+        });
 
 
 
@@ -163,7 +174,7 @@ public class VisionTesting1 extends ManualVisionOpMode {
         This method will be called for each frame. You need to set instance variables to keep
         the state. Most likely another thread will call this method.
         */
-        linePos = lineDetect(rgba);
+        linePos = lineDetectRed(rgba);
         Log.d(VisionTesting1.class.getName(), "frame called");
         Log.d(VisionTesting1.class.getName(), "size " + rgba.size());
         /*if(strafeleft) {
@@ -184,19 +195,25 @@ public class VisionTesting1 extends ManualVisionOpMode {
 
             }
         }*/
-       /* bm = Bitmap.createBitmap(rgba.cols(), rgba.rows(),RGB_565);
-        Utils.matToBitmap(rgba, bm);
-        activity.runOnUiThread(new Runnable() {
+       /* if(bm == null) {
+            bm = Bitmap.createBitmap(rgba.cols(), rgba.rows(), RGB_565);
+        }
+        Utils.matToBitmap(rgba, bm);*/
+        ((Activity) this.hardwareMap.appContext).runOnUiThread(new Runnable() {
 
             @Override
             public void run() {
+                if(view.getVisibility() == View.INVISIBLE){
+                    view.setVisibility(View.VISIBLE);
+                }
 
-                if(bm != null)
-                    view.setImageBitmap(bm);
+                if(withMarkers != null)
+
+                    view.setImageBitmap(withMarkers);
 
 
             }
-        });*/
+        });
 
 
         driveTrain.updateLinePos(linePos);
@@ -208,7 +225,7 @@ public class VisionTesting1 extends ManualVisionOpMode {
     }
 
 
-    public double[] lineDetect(Mat RGB){
+    public double[] lineDetectBlue(Mat RGB){
 
         Log.d("linedetect", "entered linedetect");
 
@@ -251,6 +268,94 @@ public class VisionTesting1 extends ManualVisionOpMode {
             Imgproc.line(original, pt1, pt2, new Scalar(0, 0, 255), 2);
 
         }
+        bm = Bitmap.createBitmap(res.cols(), res.rows(),RGB_565);
+        Utils.matToBitmap(res, bm);
+        withMarkers = bm;
+
+        Log.d("linedetect", "rows " + vector.rows() + "  "+ "columns " + vector.cols());
+        //Imgcodecs.imwrite("/tmp/withLines.jpg", original);
+
+        Log.d("linedetect", "before returning vals");
+        return vals;
+        //return vals;
+        /*
+           Imgproc.threshold(source, source, 127, 255, TRESH_BINARY);
+           Mat skel = new Mat(source.size(), CV_8UC1, new Scalar(0));
+           Mat temp = new Mat(source.size(), CV_8UC1);
+           Mat element = getStructuringElement(MORPH_CROSS, new Size(3, 3));
+           boolean done;
+           do{
+               morphologyEx(source, temp, MORPH_OPEN, element);
+               bitwise_not(temp, temp);
+               bitwise_and(source, temp, temp);
+               bitwise_or(skel, temp, skel);
+               erode(source, source, element);
+               double max;
+               MinMaxLocResult minMx = minMaxLoc(source);
+               System.out.println(minMx.maxLoc);
+               done = (minMx.maxVal == 0 );
+           }while(!done);
+           Imgcodecs.imwrite("/tmp/skel.jpg", skel);*/
+
+    }
+    public double[] lineDetectRed(Mat RGB){
+
+        Log.d("linedetect", "entered linedetect");
+
+        Mat hsv = new Mat();
+        Mat mask = new Mat();
+        Mat res = new Mat();
+        Mat canny = new Mat();
+
+        Mat original = RGB;
+        Imgproc.cvtColor(original, hsv, COLOR_BGR2HSV);
+        //Scalar lower_red = new Scalar(30,150,150);
+        //Scalar upper_red = new Scalar(255,255,180);
+        Scalar lower_red = new Scalar(80,150,80);
+        Scalar upper_red = new Scalar(150,180,140);
+        //Scalar lower_red = new Scalar(0,0,0);
+        //Scalar upper_red = new Scalar(20,255,255);
+        Log.d("linedetect", "before inRange");
+        inRange(hsv, lower_red, upper_red,mask);
+        Log.d("linedetect", "before bitwise");
+        bitwise_and(original,original,res ,mask );
+
+        Mat source = new Mat();
+        Log.d("linedetect", "before cvtColor");
+
+        //Canny(mask, canny,50,150);
+
+
+        Mat vector = new Mat();
+        Log.d("linedetect", "before HoughLines");
+        HoughLines(mask, vector, 3, PI/5, 200, 1, 1,0, PI/9);
+        //HoughLines(mask, vector, 3, PI/5, 200, 1, 1,0, PI/9);
+        //HoughLines(mask, vector, HOUGH_PROBABILISTIC, PI/5, 200, 1, 1,0, PI/9);
+        //HoughLinesP(mask, vector, 1, PI/180, 200, 30, 10);
+        double [] vals = new double[vector.rows()];
+        Log.d("linedetect", "before loop");
+        for (int i = 0; i < vector.rows(); i++) { // for regular houghlines
+            double data[] = vector.get(i,0 );
+            double rho1 = data[0];
+
+            //System.out.println(rho1);
+            vals[i] = rho1;
+
+            double theta1 = data[1];
+            double cosTheta = Math.cos(theta1);
+            double sinTheta = Math.sin(theta1);
+            double x0 = cosTheta * rho1;
+            double y0 = sinTheta * rho1;
+            Point pt1 = new Point(x0 + 10000 * (-sinTheta), y0 + 10000 * cosTheta);
+            Point pt2 = new Point(x0 - 10000 * (-sinTheta), y0 - 10000 * cosTheta);
+            Imgproc.line(original, pt1, pt2, new Scalar(0, 0, 255), 2);
+
+        }
+        
+        bm = Bitmap.createBitmap(mask.cols(), mask.rows(),RGB_565);
+        Utils.matToBitmap(mask, bm);
+        withMarkers = bm;
+
         Log.d("linedetect", "rows " + vector.rows() + "  "+ "columns " + vector.cols());
         //Imgcodecs.imwrite("/tmp/withLines.jpg", original);
 
@@ -343,7 +448,7 @@ public class VisionTesting1 extends ManualVisionOpMode {
         telemetry.update();
         //initialize();
 
-        
+
         while(driveTrain.opmodeIsActive == false){
 
             telemetry.addData("Status  -->", "  waiting for start");
