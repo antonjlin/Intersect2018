@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.robotutil.Team;
 import org.firstinspires.ftc.teamcode.robotutil.VuMark;
 @Autonomous(name = "Auto Full")
 public class AutoFull extends LinearOpMode {
-    static double jewelArmInitPosition = .3, jewelArmDownPos = 0.8, jewelArmUpPos = 0.6 , cryptoDownPos = 0, cryptoUpPos = .5;
+    static double jewelArmInitPosition = .3, jewelArmDownPos = 0.8, jewelArmUpPos = 0.4 , cryptoDownPos = 0, cryptoUpPos = .5;
     static DcMotor rF, rB, lF, lB;
     static GyroSensor gyro;
     static Servo jewelArm ;
@@ -36,7 +36,12 @@ public class AutoFull extends LinearOpMode {
 //        options();
         waitForStart();
         if (opModeIsActive()) {
-            driveTrain.moveFwd(0.5,10,10);
+            if(red) {
+                driveTrain.moveFwd(0.5, 10, 10);
+            }
+            else {
+                
+            }
         }
     }
 
