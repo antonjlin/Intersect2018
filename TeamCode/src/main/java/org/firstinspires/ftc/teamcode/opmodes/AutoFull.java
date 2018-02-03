@@ -14,9 +14,9 @@ import org.firstinspires.ftc.teamcode.robotutil.IMU;
 import org.firstinspires.ftc.teamcode.robotutil.MRColorSensor;
 import org.firstinspires.ftc.teamcode.robotutil.Team;
 import org.firstinspires.ftc.teamcode.robotutil.VuMark;
-@Autonomous(name = "Auto Full")
+@Autonomous(name = "GarbAuto")
 public class AutoFull extends LinearOpMode {
-    static double jewelArmInitPosition = .3, jewelArmDownPos = 0.8, jewelArmUpPos = 0.4 , cryptoDownPos = 0, cryptoUpPos = .5;
+    static double jewelArmInitPosition = .3, jewelArmDownPos = 0.8, jewelArmUpPos = 0.35 , cryptoDownPos = 0, cryptoUpPos = .5;
     static DcMotor rF, rB, lF, lB;
     static GyroSensor gyro;
     static Servo jewelArm ;
@@ -30,23 +30,50 @@ public class AutoFull extends LinearOpMode {
     private IMU imu;
     public int crypHeading = 0;
     VuMark vm;
+    Boolean garb = false;
+
     @Override
     public void runOpMode() throws InterruptedException {
         initHardware();
 //        options();
         waitForStart();
         if (opModeIsActive()) {
-            if(red) {
-                driveTrain.moveFwd(0.5, 10, 10);
-            }
-            else {
-                
+
+            if (red) {
+                if (startingPos == StartingPositions.CORNER) {
+                    driveTrain.encoderDrive(0.4, 26, DriveTrain.Direction.FORWARD, 10);
+                    driveTrain.rotateIMURamp(-90, .5, 5, telemetry);
+                    flipServo.setPosition(flipUpPos);
+                    driveTrain.encoderDrive(0.5, 20, DriveTrain.Direction.BACKWARD, 10);
+                    driveTrain.encoderDrive(0.5, 10, DriveTrain.Direction.FORWARD, 10);
+                } else {
+                    flipServo.setPosition(flipUpPos);
+                    driveTrain.encoderDrive(0.5, 60, DriveTrain.Direction.BACKWARD, 10);
+                    driveTrain.encoderDrive(0.5, 10, DriveTrain.Direction.FORWARD, 10);
+                }
+            } else {
+                if (startingPos == StartingPositions.CORNER) {
+                    driveTrain.encoderDrive(0.4, 26, DriveTrain.Direction.BACKWARD, 10);
+                    driveTrain.rotateIMURamp(-90, .5, 5, telemetry);
+                    flipServo.setPosition(flipUpPos);
+                    driveTrain.encoderDrive(0.5, 20, DriveTrain.Direction.BACKWARD, 10);
+                    driveTrain.encoderDrive(0.5, 10, DriveTrain.Direction.FORWARD, 10);
+                } else {
+                    flipServo.setPosition(flipUpPos);
+                    driveTrain.encoderDrive(0.5, 60, DriveTrain.Direction.BACKWARD, 10);
+                    driveTrain.encoderDrive(0.5, 10, DriveTrain.Direction.FORWARD, 10);
+                }
+
             }
         }
     }
 
     public enum StartingPositions {
         CORNER, SANDWITCH;
+    }
+    public void knockJewel() {
+        driveTrain.rotateIMURamp(-15, 0.3, 5, telemetry);
+        driveTrain.rotateIMURamp(15, 0.3, 5, telemetry);
     }
 
     public void dumpBlock(double slidePower, double rollerPower, int slideTime, int rollerTime){
