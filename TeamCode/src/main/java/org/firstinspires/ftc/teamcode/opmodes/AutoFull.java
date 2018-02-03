@@ -1,6 +1,4 @@
-
 package org.firstinspires.ftc.teamcode.opmodes;
-
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -16,7 +14,6 @@ import org.firstinspires.ftc.teamcode.robotutil.IMU;
 import org.firstinspires.ftc.teamcode.robotutil.MRColorSensor;
 import org.firstinspires.ftc.teamcode.robotutil.Team;
 import org.firstinspires.ftc.teamcode.robotutil.VuMark;
-
 @Autonomous(name = "Auto Testing")
 public class AutoFull extends LinearOpMode {
     static double jewelArmInitPosition = 0, jewelArmDownPos = 0.8, jewelArmUpPos = 0.3 , cryptoDownPos = 0, cryptoUpPos = .5;

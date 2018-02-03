@@ -12,7 +12,6 @@ import org.firstinspires.ftc.teamcode.robotutil.Functions;
 
 public class FlipTask extends TaskThread {
     private Servo flipServo;
-
     double flipDownPos = 0.56;
     double flipInterPos = flipDownPos - 0.1;
     double flipUpPos = flipDownPos - 0.5;
