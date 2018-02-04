@@ -38,18 +38,19 @@ public class AutoFull extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         initHardware();
-//        options();
+       options();
         waitForStart();
         if (opModeIsActive()) {
             if (red) {
+                
                 if (startingPos == StartingPositions.CORNER) {
                     driveTrain.encoderDrive(0.4, 26, DriveTrain.Direction.FORWARD, 10);
                     driveTrain.rotateIMURamp(-90, .5, 5, telemetry);
-                    flipServo.setPosition(flipUpPos);
+                    flipServo.setPosition(0);
                     driveTrain.encoderDrive(0.5, 20, DriveTrain.Direction.BACKWARD, 10);
                     driveTrain.encoderDrive(0.5, 10, DriveTrain.Direction.FORWARD, 10);
                 } else {
-                    flipServo.setPosition(flipUpPos);
+
                     driveTrain.encoderDrive(0.5, 60, DriveTrain.Direction.BACKWARD, 10);
                     driveTrain.encoderDrive(0.5, 10, DriveTrain.Direction.FORWARD, 10);
                 }
@@ -57,11 +58,11 @@ public class AutoFull extends LinearOpMode {
                 if (startingPos == StartingPositions.CORNER) {
                     driveTrain.encoderDrive(0.4, 26, DriveTrain.Direction.BACKWARD, 10);
                     driveTrain.rotateIMURamp(-90, .5, 5, telemetry);
-                    flipServo.setPosition(flipUpPos);
+                    flipServo.setPosition(0);
                     driveTrain.encoderDrive(0.5, 20, DriveTrain.Direction.BACKWARD, 10);
                     driveTrain.encoderDrive(0.5, 10, DriveTrain.Direction.FORWARD, 10);
                 } else {
-                    flipServo.setPosition(flipUpPos);
+                    flipServo.setPosition(0);
                     driveTrain.encoderDrive(0.5, 60, DriveTrain.Direction.BACKWARD, 10);
                     driveTrain.encoderDrive(0.5, 10, DriveTrain.Direction.FORWARD, 10);
                 }
@@ -123,6 +124,7 @@ public class AutoFull extends LinearOpMode {
         jewelColor = hardwareMap.colorSensor.get("jewelColor");
         adaImu = hardwareMap.get(BNO055IMU.class, "imu");
         flipServo = hardwareMap.servo.get("flipServo");
+        flipServo.setDirection(Servo.Direction.REVERSE);
         flipServo.setPosition(flipDownPos);
 //        jewelFinger = hardwareMap.servo.get("jewelFinger");
 //
