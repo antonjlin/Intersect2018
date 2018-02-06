@@ -42,7 +42,7 @@ public class AutoFull extends LinearOpMode {
         waitForStart();
         if (opModeIsActive()) {
             if (red) {
-                
+
                 if (startingPos == StartingPositions.CORNER) {
                     driveTrain.encoderDrive(0.4, 26, DriveTrain.Direction.FORWARD, 10);
                     driveTrain.rotateIMURamp(-90, .5, 5, telemetry);
@@ -70,12 +70,37 @@ public class AutoFull extends LinearOpMode {
         }
     }
 
+    public void redCorner(){
+        driveTrain.encoderDrive(0.4, 26, DriveTrain.Direction.FORWARD, 10);
+        driveTrain.rotateIMURamp(-90, .5, 5, telemetry);
+        flipServo.setPosition(0);
+        driveTrain.encoderDrive(0.5, 20, DriveTrain.Direction.BACKWARD, 10);
+        driveTrain.encoderDrive(0.5, 10, DriveTrain.Direction.FORWARD, 10);
+    }
+    public void blueCorner(){
+        driveTrain.encoderDrive(0.4, 26, DriveTrain.Direction.BACKWARD, 10);
+        driveTrain.rotateIMURamp(-90, .5, 5, telemetry);
+        flipServo.setPosition(0);
+        driveTrain.encoderDrive(0.5, 20, DriveTrain.Direction.BACKWARD, 10);
+        driveTrain.encoderDrive(0.5, 10, DriveTrain.Direction.FORWARD, 10);
+    }
+    public void redSandwich(){
+        flipServo.setPosition(0);
+        driveTrain.encoderDrive(0.5, 60, DriveTrain.Direction.BACKWARD, 10);
+        driveTrain.encoderDrive(0.5, 10, DriveTrain.Direction.FORWARD, 10);
+    }
+    public void blueSandwich(){
+        flipServo.setPosition(0);
+        driveTrain.encoderDrive(0.5, 60, DriveTrain.Direction.BACKWARD, 10);
+        driveTrain.encoderDrive(0.5, 10, DriveTrain.Direction.FORWARD, 10);
+    }
+
     public enum StartingPositions {
-        CORNER, SANDWITCH;
+        CORNER, SANDWICH;
     }
     public void knockJewel() {
-        driveTrain.rotateIMURamp(-15, 0.3, 5, telemetry);
-        driveTrain.rotateIMURamp(15, 0.3, 5, telemetry);
+        driveTrain.encoderDriveIMU(.25,3, DriveTrain.Direction.FORWARD, 5);
+        driveTrain.encoderDriveIMU(.25,-3, DriveTrain.Direction.FORWARD, 5);
     }
 
     public void dumpBlock(double slidePower, double rollerPower, int slideTime, int rollerTime){
@@ -165,7 +190,7 @@ public class AutoFull extends LinearOpMode {
                 telemetry.addData("Starting Position", startingPos == StartingPositions.CORNER ? "corner": "sandwich");
             }
             if (gamepad1.y){
-                startingPos = StartingPositions.SANDWITCH;
+                startingPos = StartingPositions.SANDWICH;
 
                 telemetry.addData("Starting Position", startingPos == StartingPositions.CORNER ? "corner": "sandwich");
             }
