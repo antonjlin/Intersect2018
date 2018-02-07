@@ -19,21 +19,7 @@ import org.firstinspires.ftc.teamcode.robotutil.IMU;
 @TeleOp(name = "Outreach")
 
 public class Outreach extends LinearOpMode {
-    static DcMotor rightSide, leftSide;
-    DriveTrain driveTrain;
-    static GyroSensor gyro;
-    static ColorSensor floorColor;
-    static DcMotor rIntake, lIntake, lSlide, rSlide,lWheel,rWheel;
-    private BNO055IMU adaImu;
-    private IMU imu;
-    int lSlidePos;
-    int rSlidePos;
-    int slideTicksPerInch;
-    int pos0 = 0;
-    int pos1 = 6;
-    int pos2 = 12;
-    int pos3 = 18;
-    int pos4 = 24;
+    static DcMotor lWheel, rWheel;
 
 
     // RampFlywheel rampFlywheel = new RampFlywheel();
@@ -45,8 +31,8 @@ public class Outreach extends LinearOpMode {
         while (opModeIsActive()) {
             double leftPower = scaleDrive(gamepad1.left_stick_y);
             double rightPower = scaleDrive(gamepad1.right_stick_y);
-            rightSide.setPower(rightPower);
-            leftSide.setPower(leftPower);
+            rWheel.setPower(rightPower);
+            lWheel.setPower(leftPower);
         }
     }
 
@@ -63,9 +49,14 @@ public class Outreach extends LinearOpMode {
     }
 
     public void initHardware() {
-
-      lWheel = hardwareMap.dcMotor.get("leftSide");
-      rWheel = hardwareMap.dcMotor.get("rightSide");
+        lWheel = hardwareMap.dcMotor.get("leftSide");
+        rWheel = hardwareMap.dcMotor.get("rightSide");
+        lWheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rWheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        lWheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rWheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rWheel.setDirection(DcMotorSimple.Direction.FORWARD);
+        lWheel.setDirection(DcMotorSimple.Direction.REVERSE);
 
     }
 
