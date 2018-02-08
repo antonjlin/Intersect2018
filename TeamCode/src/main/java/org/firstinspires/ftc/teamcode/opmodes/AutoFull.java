@@ -19,7 +19,8 @@ public class AutoFull extends LinearOpMode {
     static double jewelArmInitPosition = .3, jewelArmDownPos = 0.8, jewelArmUpPos = 0.35 , cryptoDownPos = 0, cryptoUpPos = .5;
     static DcMotor rF, rB, lF, lB;
     static GyroSensor gyro;
-    static Servo jewelArm ;
+    static Servo jewelArm;
+    static Servo flipServo;
     boolean red = false;
     DriveTrain driveTrain;
     ColorSensor jewelColor;
@@ -35,19 +36,20 @@ public class AutoFull extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         initHardware();
-//        options();
+       options();
         waitForStart();
         if (opModeIsActive()) {
 
             if (red) {
+
                 if (startingPos == StartingPositions.CORNER) {
                     driveTrain.encoderDrive(0.4, 26, DriveTrain.Direction.FORWARD, 10);
                     driveTrain.rotateIMURamp(-90, .5, 5, telemetry);
-                    flipServo.setPosition(flipUpPos);
+                    flipServo.setPosition(0);
                     driveTrain.encoderDrive(0.5, 20, DriveTrain.Direction.BACKWARD, 10);
                     driveTrain.encoderDrive(0.5, 10, DriveTrain.Direction.FORWARD, 10);
                 } else {
-                    flipServo.setPosition(flipUpPos);
+
                     driveTrain.encoderDrive(0.5, 60, DriveTrain.Direction.BACKWARD, 10);
                     driveTrain.encoderDrive(0.5, 10, DriveTrain.Direction.FORWARD, 10);
                 }
@@ -55,11 +57,11 @@ public class AutoFull extends LinearOpMode {
                 if (startingPos == StartingPositions.CORNER) {
                     driveTrain.encoderDrive(0.4, 26, DriveTrain.Direction.BACKWARD, 10);
                     driveTrain.rotateIMURamp(-90, .5, 5, telemetry);
-                    flipServo.setPosition(flipUpPos);
+                    flipServo.setPosition(0);
                     driveTrain.encoderDrive(0.5, 20, DriveTrain.Direction.BACKWARD, 10);
                     driveTrain.encoderDrive(0.5, 10, DriveTrain.Direction.FORWARD, 10);
                 } else {
-                    flipServo.setPosition(flipUpPos);
+                    flipServo.setPosition(0);
                     driveTrain.encoderDrive(0.5, 60, DriveTrain.Direction.BACKWARD, 10);
                     driveTrain.encoderDrive(0.5, 10, DriveTrain.Direction.FORWARD, 10);
                 }
@@ -68,12 +70,37 @@ public class AutoFull extends LinearOpMode {
         }
     }
 
+    public void redCorner(){
+        driveTrain.encoderDrive(0.4, 26, DriveTrain.Direction.FORWARD, 10);
+        driveTrain.rotateIMURamp(-90, .5, 5, telemetry);
+        flipServo.setPosition(0);
+        driveTrain.encoderDrive(0.5, 20, DriveTrain.Direction.BACKWARD, 10);
+        driveTrain.encoderDrive(0.5, 10, DriveTrain.Direction.FORWARD, 10);
+    }
+    public void blueCorner(){
+        driveTrain.encoderDrive(0.4, 26, DriveTrain.Direction.BACKWARD, 10);
+        driveTrain.rotateIMURamp(-90, .5, 5, telemetry);
+        flipServo.setPosition(0);
+        driveTrain.encoderDrive(0.5, 20, DriveTrain.Direction.BACKWARD, 10);
+        driveTrain.encoderDrive(0.5, 10, DriveTrain.Direction.FORWARD, 10);
+    }
+    public void redSandwich(){
+        flipServo.setPosition(0);
+        driveTrain.encoderDrive(0.5, 60, DriveTrain.Direction.BACKWARD, 10);
+        driveTrain.encoderDrive(0.5, 10, DriveTrain.Direction.FORWARD, 10);
+    }
+    public void blueSandwich(){
+        flipServo.setPosition(0);
+        driveTrain.encoderDrive(0.5, 60, DriveTrain.Direction.BACKWARD, 10);
+        driveTrain.encoderDrive(0.5, 10, DriveTrain.Direction.FORWARD, 10);
+    }
+
     public enum StartingPositions {
-        CORNER, SANDWITCH;
+        CORNER, SANDWICH;
     }
     public void knockJewel() {
-        driveTrain.rotateIMURamp(-15, 0.3, 5, telemetry);
-        driveTrain.rotateIMURamp(15, 0.3, 5, telemetry);
+        driveTrain.encoderDriveIMU(.25,3, DriveTrain.Direction.FORWARD, 5);
+        driveTrain.encoderDriveIMU(.25,-3, DriveTrain.Direction.FORWARD, 5);
     }
 
     public void dumpBlock(double slidePower, double rollerPower, int slideTime, int rollerTime){
@@ -121,6 +148,11 @@ public class AutoFull extends LinearOpMode {
         jewelArm = hardwareMap.servo.get("jewelArm");
         jewelColor = hardwareMap.colorSensor.get("jewelColor");
         adaImu = hardwareMap.get(BNO055IMU.class, "imu");
+
+        flipServo = hardwareMap.servo.get("flipServo");
+        flipServo.setDirection(Servo.Direction.REVERSE);
+        //flipServo.setPosition(flipDownPos);
+
 //        jewelFinger = hardwareMap.servo.get("jewelFinger");
 //
 //        jewelFinger.setPosition(fingerMiddlePos);
@@ -160,7 +192,7 @@ public class AutoFull extends LinearOpMode {
                 telemetry.addData("Starting Position", startingPos == StartingPositions.CORNER ? "corner": "sandwich");
             }
             if (gamepad1.y){
-                startingPos = StartingPositions.SANDWITCH;
+                startingPos = StartingPositions.SANDWICH;
 
                 telemetry.addData("Starting Position", startingPos == StartingPositions.CORNER ? "corner": "sandwich");
             }
