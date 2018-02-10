@@ -26,6 +26,7 @@ public class DriveTrain {
     public double minMotorPower = 0.085; //minimum power that robot still moves
     public IMU imu;
     public double flipDownPos = 0.56;
+    public int goodAngle = 0;
     public double flipInterPos = flipDownPos - 0.1;
     public double flipUpPos = flipDownPos - 0.5;
     public double cryptoDownPos = 0.56;

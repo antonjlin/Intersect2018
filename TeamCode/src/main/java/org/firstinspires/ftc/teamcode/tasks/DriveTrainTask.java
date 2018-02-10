@@ -63,10 +63,16 @@ public class DriveTrainTask extends TaskThread {
         lB = opMode.hardwareMap.dcMotor.get("lB");
         rB = opMode.hardwareMap.dcMotor.get("rB");
 
-        lB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        lF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        lB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        lF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        rB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        rF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
+        lB.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        lF.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rB.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rF.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         lF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
