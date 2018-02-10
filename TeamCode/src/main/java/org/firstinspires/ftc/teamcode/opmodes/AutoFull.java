@@ -5,11 +5,14 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.GyroSensor;
+import com.qualcomm.robotcore.hardware.I2cAddr;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.robotcore.external.Func;
+
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
+
 import org.firstinspires.ftc.teamcode.robotutil.DriveTrain;
 import org.firstinspires.ftc.teamcode.robotutil.Functions;
 import org.firstinspires.ftc.teamcode.robotutil.IMU;
@@ -18,7 +21,7 @@ import org.firstinspires.ftc.teamcode.robotutil.Team;
 import org.firstinspires.ftc.teamcode.robotutil.VuMark;
 @Autonomous(name = "GarbAuto")
 public class AutoFull extends LinearOpMode {
-    static double jewelArmInitPosition = .3, jewelArmDownPos = 0.8, jewelArmUpPos = 0.35 , cryptoDownPos = 0, cryptoUpPos = .5;
+    static double jewelArmInitPosition = .3, jewelArmDownPos = 0.85, jewelArmUpPos = 0.35 , cryptoDownPos = 0, cryptoUpPos = .5;
     static DcMotor rF, rB, lF, lB;
     static GyroSensor gyro;
     static Servo jewelArm;
@@ -41,9 +44,17 @@ public class AutoFull extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         initHardware();
-       options();
+//       options();
+        red = true;
+        colorSensor.team = Team.RED;
+        startingPos = StartingPositions.CORNER;
         waitForStart();
         if (opModeIsActive()) {
+            jewelArm.setPosition(jewelArmDownPos-.15);
+            Functions.waitFor(1000);
+            jewelArm.setPosition(jewelArmDownPos);
+            Functions.waitFor(1500);
+            jewel();
 
             jewelArm.setPosition(jewelArmDownPos);
             long time = System.currentTimeMillis();
@@ -61,6 +72,7 @@ public class AutoFull extends LinearOpMode {
             jewelArm.setPosition(jewelArmDownPos);
             Functions.waitFor(1000);
             if (red) {
+<<<<<<< HEAD
 
                 if (startingPos == StartingPositions.CORNER) {
                     driveTrain.encoderDrive(0.4, 10, DriveTrain.Direction.FORWARD, 3);
@@ -91,16 +103,37 @@ public class AutoFull extends LinearOpMode {
                     driveTrain.encoderDrive(0.5, 10, DriveTrain.Direction.FORWARD, 10);
                 }
 
+
             }
+        }
+    }
+    public void telemetry(String field1,String field2){
+        telemetry.addData(field1 + ": ",field2);
+        telemetry.update();
+    }
+    public void telemetry(String field1,int field2){
+        telemetry.addData(field1 + ": ",field2);
+        telemetry.update();
+    }
+    public void telemetry(String field1,double field2){
+        telemetry.addData(field1 + ": ",field2);
+        telemetry.update();
+    }
+    public void jewel(){
+        if(colorSensor.correctColor()){
+            telemetry("color","red");
+            knockJewel(DriveTrain.Direction.BACKWARD);
+        }else {
+            telemetry("color","Blue");
+
+            knockJewel(DriveTrain.Direction.FORWARD);
         }
     }
 
     public void redCorner(){
-        driveTrain.encoderDrive(0.4, 26, DriveTrain.Direction.FORWARD, 10);
-        driveTrain.rotateIMURamp(-90, .5, 5, telemetry);
-        flipServo.setPosition(0);
-        driveTrain.encoderDrive(0.5, 20, DriveTrain.Direction.BACKWARD, 10);
-        driveTrain.encoderDrive(0.5, 10, DriveTrain.Direction.FORWARD, 10);
+        driveTrain.encoderDrive(.6,27,DriveTrain.Direction.FORWARD,10);
+        driveTrain.rotateIMURamp(-90,.4,10,telemetry);
+        driveTrain.encoderDrive(.6,27,DriveTrain.Direction.BACKWARD,10);
     }
     public void blueCorner(){
         driveTrain.encoderDrive(0.4, 26, DriveTrain.Direction.BACKWARD, 10);
@@ -123,9 +156,29 @@ public class AutoFull extends LinearOpMode {
     public enum StartingPositions {
         CORNER, SANDWICH;
     }
-    public void knockJewel() {
-        driveTrain.encoderDriveIMU(.25,3, DriveTrain.Direction.FORWARD, 5);
-        driveTrain.encoderDriveIMU(.25,-3, DriveTrain.Direction.FORWARD, 5);
+    public void knockJewel(DriveTrain.Direction direction) {
+        if(direction == DriveTrain.Direction.BACKWARD) {
+            //COUNTERINTUITIVE, BUT THIS CONTROLS THE KNOCK FORWARDS (COUNTERCLOCKWISE)
+            driveTrain.rotateIMURamp(-12,0.4,5,telemetry);
+            jewelArm.setPosition(jewelArmInitPosition);
+            Functions.waitFor(500);
+            driveTrain.rotateIMURamp(12,0.4,5,telemetry);
+        } else{
+            //COUNTERINTUITIVE, BUT THIS CONTROLS THE KNOCK BACKWARDS (CLOCKWISE)
+            jewelArm.setPosition(jewelArmInitPosition);
+            Functions.waitFor(1000);
+            driveTrain.encoderDrive(0.1,2, DriveTrain.Direction.FORWARD,5);
+            driveTrain.rotateIMURamp(9 ,0.4,5,telemetry);
+            jewelArm.setPosition(jewelArmDownPos-.15);
+            Functions.waitFor(1000);
+            jewelArm.setPosition(jewelArmDownPos);
+            Functions.waitFor(1000);
+            driveTrain.rotateIMURamp(10,0.4,5,telemetry);
+
+            jewelArm.setPosition(jewelArmInitPosition);
+            Functions.waitFor(500);
+            driveTrain.rotateIMURamp(-20,0.4,5,telemetry);
+        }
     }
 
     public void dumpBlock(double slidePower, double rollerPower, int slideTime, int rollerTime){
@@ -140,11 +193,11 @@ public class AutoFull extends LinearOpMode {
         jewelArm.setPosition(jewelArmUpPos);
     }
 
-    public void moveToCrypto(){
-        if (colorSensor.team == colorSensor.team.BLUE) {
-            driveTrain.encoderDriveIMU(0.3,30, DriveTrain.Direction.BACKWARD,10);
-        }
-    }
+//    public void moveToCrypto(){
+//        if (colorSensor.team == colorSensor.team.BLUE) {
+//            driveTrain.encoderDriveIMU(0.3,30, DriveTrain.Direction.BACKWARD,10);
+//        }
+//    }
 
     public void dumpBlock(){
 
@@ -171,6 +224,7 @@ public class AutoFull extends LinearOpMode {
 
 //        cryptoArm = hardwareMap.servo.get("cryptoArm");
         jewelArm = hardwareMap.servo.get("jewelArm");
+        jewelArm.setDirection(Servo.Direction.REVERSE);
         jewelColor = hardwareMap.colorSensor.get("jewelColor");
         touch = hardwareMap.touchSensor.get("touch");
         adaImu = hardwareMap.get(BNO055IMU.class, "imu");
@@ -187,52 +241,52 @@ public class AutoFull extends LinearOpMode {
 
         colorSensor = new MRColorSensor(jewelColor, this);
         driveTrain = new DriveTrain(this);
-        driveTrain.detectAmbientLight(jewelColor);
+//        driveTrain.detectAmbientLight(jewelColor);
         vm = new VuMark(this);
 
     }
 
-    public void options(){
-        telemetry.addData("Team", "Blue");
-        telemetry.update();
-        boolean confirmed = false;
-        red = false;
-        while(!confirmed){
-            if (gamepad1.a){
-                red = true;
-                colorSensor.team = Team.RED;
-
-                telemetry.addData("Team", red ? "Red": "Blue");
-            }
-            if (gamepad1.b){
-                red = false;
-                colorSensor.team = Team.BLUE;
-
-                telemetry.addData("Team", red ? "Red": "Blue");
-            }
-            if (gamepad1.x){
-                startingPos = StartingPositions.CORNER;
-
-                telemetry.addData("Starting Position", startingPos == StartingPositions.CORNER ? "corner": "sandwich");
-            }
-            if (gamepad1.y){
-                startingPos = StartingPositions.SANDWICH;
-
-                telemetry.addData("Starting Position", startingPos == StartingPositions.CORNER ? "corner": "sandwich");
-            }
-
-            telemetry.update();
-
-            if (gamepad1.left_stick_button && gamepad1.right_stick_button){
-                telemetry.addData("Team", red ? "Red" : "Blue");
-                telemetry.addData("Starting Position", startingPos == StartingPositions.CORNER ? "corner": "sandwich");
-                telemetry.addData("Confirmed!", "");
-                telemetry.update();
-                confirmed = true;
-            }
-
-        }
-    }
+//    public void options(){
+//        telemetry.addData("Team", "Blue");
+//        telemetry.update();
+//        boolean confirmed = false;
+//        red = false;
+//        while(!confirmed){
+//            if (gamepad1.a){
+//                red = true;
+//                colorSensor.team = Team.RED;
+//
+//                telemetry.addData("Team", red ? "Red": "Blue");
+//            }
+//            if (gamepad1.b){
+//                red = false;
+//                colorSensor.team = Team.BLUE;
+//
+//                telemetry.addData("Team", red ? "Red": "Blue");
+//            }
+//            if (gamepad1.x){
+//                startingPos = StartingPositions.CORNER;
+//
+//                telemetry.addData("Starting Position", startingPos == StartingPositions.CORNER ? "corner": "sandwich");
+//            }
+//            if (gamepad1.y){
+//                startingPos = StartingPositions.SANDWICH;
+//
+//                telemetry.addData("Starting Position", startingPos == StartingPositions.CORNER ? "corner": "sandwich");
+//            }
+//
+//            telemetry.update();
+//
+//            if (gamepad1.left_stick_button && gamepad1.right_stick_button){
+//                telemetry.addData("Team", red ? "Red" : "Blue");
+//                telemetry.addData("Starting Position", startingPos == StartingPositions.CORNER ? "corner": "sandwich");
+//                telemetry.addData("Confirmed!", "");
+//                telemetry.update();
+//                confirmed = true;
+//            }
+//
+//        }
+//    }
 
     private void haltUntilPressStart() {
         while (!gamepad1.start  && !isStopRequested()) {

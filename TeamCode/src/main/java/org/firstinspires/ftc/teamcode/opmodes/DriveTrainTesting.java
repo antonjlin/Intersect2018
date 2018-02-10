@@ -25,7 +25,6 @@ public class DriveTrainTesting extends LinearOpMode {
     private DcMotor rF, rB, lF, lB;
     private BNO055IMU adaImu;
     IMU imu;
-
     static Servo servoMain;
     static Servo servoSec;
     //static GyroSensor gyro;
