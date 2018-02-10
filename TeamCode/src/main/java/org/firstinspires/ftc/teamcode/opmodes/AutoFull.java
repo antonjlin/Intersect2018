@@ -72,7 +72,6 @@ public class AutoFull extends LinearOpMode {
             jewelArm.setPosition(jewelArmDownPos);
             Functions.waitFor(1000);
             if (red) {
-<<<<<<< HEAD
 
                 if (startingPos == StartingPositions.CORNER) {
                     driveTrain.encoderDrive(0.4, 10, DriveTrain.Direction.FORWARD, 3);
