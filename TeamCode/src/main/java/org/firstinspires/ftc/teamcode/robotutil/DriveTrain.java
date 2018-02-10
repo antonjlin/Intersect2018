@@ -22,7 +22,8 @@ public class DriveTrain {
     static final double TICKS_PER_INCH_STRAFE = 61.3;
     public DcMotor rF, rB, lF, lB, rIntake, lIntake, rSlide, lSlide;
     public DigitalChannel cryptoTouch;
-    public Servo flipServo,cryptoArm;
+    public Servo flipServo,cryptoArm,touchServoRight,touchServoLeft;
+    TouchSensor touch;
     public double minMotorPower = 0.085; //minimum power that robot still moves
     public IMU imu;
     public double flipDownPos = 0.56;
@@ -90,12 +91,64 @@ public class DriveTrain {
 
         cryptoArm = opMode.hardwareMap.servo.get("cryptoArm");
         flipServo = opMode.hardwareMap.servo.get("flipServo");
+        touchServoRight = opMode.hardwareMap.servo.get("touchServoRight");
+        touchServoLeft = opMode.hardwareMap.servo.get("touchServoLeft");
+        flipServo.setDirection(Servo.Direction.REVERSE);
+        touch = opMode.hardwareMap.touchSensor.get("touch");
 
         cryptoArm.setPosition(cryptoDownPos);
-        flipServo.setPosition(flipDownPos);
+
+
 
         cryptoTouch  = opMode.hardwareMap.get(DigitalChannel.class, "cryptoTouch");
     }
+
+    public void dumpBlock(){
+
+        flipServo.setPosition(0);
+        Functions.waitFor(1000);
+        flipServo.setPosition(1);
+        Functions.waitFor(300);
+    }
+
+    public void columnBlockRed(RelicRecoveryVuMark vuMark){
+        switch(vuMark){
+            case RIGHT:
+                dumpBlock();
+            case CENTER:
+                touchServoRight.setPosition(0);
+                encoderDriveIMU(.3, 3, Direction.RIGHT, 2);
+                touchServoRight.setPosition(.5);
+                moveUntilTouchRed(3000);
+                dumpBlock();
+            case LEFT:
+                encoderDriveIMU(.3, 10, Direction.RIGHT, 4);
+                moveUntilTouchRed(3000);
+                dumpBlock();
+        }
+
+
+    }
+    public void columnBlockBlue(RelicRecoveryVuMark vuMark){
+        switch(vuMark){
+            case LEFT:
+                dumpBlock();
+            case CENTER:
+                touchServoLeft.setPosition(0);
+                encoderDriveIMU(.3, 3, Direction.LEFT, 2);
+                touchServoLeft.setPosition(.5);
+                moveUntilTouchBlue(3000);
+                dumpBlock();
+            case RIGHT:
+                encoderDriveIMU(.3, 10, Direction.LEFT, 4);
+                moveUntilTouchBlue(3000);
+                dumpBlock();
+        }
+
+
+    }
+
+
 
     public void rollersSetPower(double power) {
         rIntake.setPower(power);
@@ -889,6 +942,31 @@ public class DriveTrain {
         rB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //  sleep(250);   // optional pause after each move
+    }
+
+    public void moveUntilTouchRed(int timeout) {
+        long startTime = System.currentTimeMillis();
+
+        while (timeout > System.currentTimeMillis() - startTime)
+            strafeRight(.4);
+        if (touch.isPressed()) {
+            stopAll();
+        }
+
+    }
+    public void moveUntilTouchBlue(int timeout) {
+        long startTime = System.currentTimeMillis();
+
+        while (timeout > System.currentTimeMillis() - startTime)
+            strafeLeft(.4);
+        if (touch.isPressed()) {
+            stopAll();
+        }
+
+    }
+
+    public enum Position{
+        LEFT,RIGHT;
     }
 
     public void selfBalance(Telemetry telemetry) {

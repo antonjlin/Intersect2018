@@ -8,6 +8,8 @@ import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
+import org.firstinspires.ftc.robotcore.external.Func;
+import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.teamcode.robotutil.DriveTrain;
 import org.firstinspires.ftc.teamcode.robotutil.Functions;
 import org.firstinspires.ftc.teamcode.robotutil.IMU;
@@ -21,6 +23,7 @@ public class AutoFull extends LinearOpMode {
     static GyroSensor gyro;
     static Servo jewelArm;
     static Servo flipServo;
+    static Servo jewelFinger;
     boolean red = false;
     DriveTrain driveTrain;
     ColorSensor jewelColor;
@@ -31,7 +34,9 @@ public class AutoFull extends LinearOpMode {
     private IMU imu;
     public int crypHeading = 0;
     VuMark vm;
+    RelicRecoveryVuMark vumark;
     Boolean garb = false;
+    TouchSensor touch;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -39,27 +44,44 @@ public class AutoFull extends LinearOpMode {
        options();
         waitForStart();
         if (opModeIsActive()) {
-
+            jewelArm.setPosition(jewelArmDownPos);
+            if(driveTrain.detectRed(jewelColor)){
+                jewelFinger.setPosition(1);
+                Functions.waitFor(200);
+                jewelFinger.setPosition(.5);
+            }
+            else{
+                jewelFinger.setPosition(0);
+                Functions.waitFor(200);
+                jewelFinger.setPosition(.5);
+            }
+            jewelArm.setPosition(jewelArmDownPos);
+            Functions.waitFor(1000);
             if (red) {
 
                 if (startingPos == StartingPositions.CORNER) {
-                    driveTrain.encoderDrive(0.4, 26, DriveTrain.Direction.FORWARD, 10);
-                    driveTrain.rotateIMURamp(-90, .5, 5, telemetry);
-                    flipServo.setPosition(0);
-                    driveTrain.encoderDrive(0.5, 20, DriveTrain.Direction.BACKWARD, 10);
-                    driveTrain.encoderDrive(0.5, 10, DriveTrain.Direction.FORWARD, 10);
+                    driveTrain.encoderDrive(0.4, 10, DriveTrain.Direction.FORWARD, 3);
+                    vumark = vm.detectColumn(5);
+                    driveTrain.encoderDrive(.4, 10, DriveTrain.Direction.FORWARD, 4);
+                    driveTrain.rotateIMURamp(-90, .4,1, this.telemetry);
+                    driveTrain.moveUntilTouchRed(5000);
+                    driveTrain.columnBlockRed(vumark);
+
                 } else {
 
-                    driveTrain.encoderDrive(0.5, 60, DriveTrain.Direction.BACKWARD, 10);
-                    driveTrain.encoderDrive(0.5, 10, DriveTrain.Direction.FORWARD, 10);
+                    driveTrain.encoderDrive(0.5, 10, DriveTrain.Direction.BACKWARD, 10);
+                    vumark = vm.detectColumn(5);
                 }
+
             } else {
                 if (startingPos == StartingPositions.CORNER) {
-                    driveTrain.encoderDrive(0.4, 26, DriveTrain.Direction.BACKWARD, 10);
+                    driveTrain.encoderDrive(0.4, 10, DriveTrain.Direction.FORWARD, 3);
+                    vumark = vm.detectColumn(5);
+                    driveTrain.encoderDrive(.4, 25, DriveTrain.Direction.BACKWARD, 4);
                     driveTrain.rotateIMURamp(-90, .5, 5, telemetry);
-                    flipServo.setPosition(0);
-                    driveTrain.encoderDrive(0.5, 20, DriveTrain.Direction.BACKWARD, 10);
-                    driveTrain.encoderDrive(0.5, 10, DriveTrain.Direction.FORWARD, 10);
+                    driveTrain.moveUntilTouchBlue(5000);
+                    driveTrain.columnBlockBlue(vumark);
+                    
                 } else {
                     flipServo.setPosition(0);
                     driveTrain.encoderDrive(0.5, 60, DriveTrain.Direction.BACKWARD, 10);
@@ -147,16 +169,17 @@ public class AutoFull extends LinearOpMode {
 //        cryptoArm = hardwareMap.servo.get("cryptoArm");
         jewelArm = hardwareMap.servo.get("jewelArm");
         jewelColor = hardwareMap.colorSensor.get("jewelColor");
+        touch = hardwareMap.touchSensor.get("touch");
         adaImu = hardwareMap.get(BNO055IMU.class, "imu");
 
         flipServo = hardwareMap.servo.get("flipServo");
         flipServo.setDirection(Servo.Direction.REVERSE);
-        //flipServo.setPosition(flipDownPos);
 
-//        jewelFinger = hardwareMap.servo.get("jewelFinger");
-//
-//        jewelFinger.setPosition(fingerMiddlePos);
-//        cryptoArm.setPosition(cryptoUpPos);
+
+        jewelFinger = hardwareMap.servo.get("jewelFinger");
+
+        jewelFinger.setPosition(.5);
+       //cryptoArm.setPosition(cryptoUpPos);
         jewelArm.setPosition(jewelArmInitPosition);
 
         imu = new IMU(adaImu);
