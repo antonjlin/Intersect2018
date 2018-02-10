@@ -23,7 +23,7 @@ public class DriveTrain {
     public DcMotor rF, rB, lF, lB, rIntake, lIntake, rSlide, lSlide;
     public DigitalChannel cryptoTouch;
     public Servo flipServo,cryptoArm,touchServoRight,touchServoLeft;
-    TouchSensor touch;
+    public TouchSensor touch;
     public double minMotorPower = 0.085; //minimum power that robot still moves
     public IMU imu;
     public double flipDownPos = 0.56;

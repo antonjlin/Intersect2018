@@ -44,16 +44,19 @@ public class AutoFull extends LinearOpMode {
        options();
         waitForStart();
         if (opModeIsActive()) {
+
             jewelArm.setPosition(jewelArmDownPos);
+            long time = System.currentTimeMillis();
+            while(System.currentTimeMillis() - time < 1000000) {
+                telemetry.addData("touchsensor" , driveTrain.touch.isPressed());
+
+
+            }
             if(driveTrain.detectRed(jewelColor)){
-                jewelFinger.setPosition(1);
-                Functions.waitFor(200);
-                jewelFinger.setPosition(.5);
+
             }
             else{
-                jewelFinger.setPosition(0);
-                Functions.waitFor(200);
-                jewelFinger.setPosition(.5);
+
             }
             jewelArm.setPosition(jewelArmDownPos);
             Functions.waitFor(1000);
@@ -81,7 +84,7 @@ public class AutoFull extends LinearOpMode {
                     driveTrain.rotateIMURamp(-90, .5, 5, telemetry);
                     driveTrain.moveUntilTouchBlue(5000);
                     driveTrain.columnBlockBlue(vumark);
-                    
+
                 } else {
                     flipServo.setPosition(0);
                     driveTrain.encoderDrive(0.5, 60, DriveTrain.Direction.BACKWARD, 10);
@@ -176,10 +179,8 @@ public class AutoFull extends LinearOpMode {
         flipServo.setDirection(Servo.Direction.REVERSE);
 
 
-        jewelFinger = hardwareMap.servo.get("jewelFinger");
 
-        jewelFinger.setPosition(.5);
-       //cryptoArm.setPosition(cryptoUpPos);
+       
         jewelArm.setPosition(jewelArmInitPosition);
 
         imu = new IMU(adaImu);
