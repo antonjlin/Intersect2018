@@ -34,6 +34,8 @@ public class DriveTrain {
     public double flipUpPos = flipDownPos - 0.5;
     public double cryptoDownPos = 0.56;
     public double cryptoUpPos = cryptoDownPos - 0.5;
+    public double touchDownPos = .7;
+    public double touchUpPos = .1;
     // Tunable parameters
 
     private int conversionFactor = 50;
@@ -98,7 +100,7 @@ public class DriveTrain {
         touchServoLeft = opMode.hardwareMap.servo.get("touchServoLeft");
         flipServo.setDirection(Servo.Direction.REVERSE);
         //touch = opMode.hardwareMap.touchSensor.get("touch");
-        touchServoRight.setPosition(.7);
+        touchServoRight.setPosition(touchDownPos);
 
 
        // cryptoArm.setPosition(cryptoDownPos);
@@ -120,20 +122,29 @@ public class DriveTrain {
     public void columnBlockRed(RelicRecoveryVuMark vuMark){
         switch(vuMark){
             case RIGHT:
-                dumpBlock();
+                break;
             case CENTER:
-                touchServoRight.setPosition(0);
-                Functions.waitFor(200);
-                encoderDriveIMU(.2, 3, Direction.RIGHT, 2);
-                touchServoRight.setPosition(.7);
-                moveUntilTouchRed(3000);
-                dumpBlock();
-                Log.d("status", "dumped block");
+                touchServoRight.setPosition(touchUpPos);
+                Functions.waitFor(1000);
+                encoderDrive(.2, 3, Direction.RIGHT, 2);
+                touchServoRight.setPosition(touchDownPos);
+                Functions.waitFor(1000);
+                moveUntilTouch(.2,3000);
+                touchServoRight.setPosition(touchUpPos);
+                break;
             case LEFT:
-                encoderDriveIMU(.3, 10, Direction.RIGHT, 4);
-                moveUntilTouchRed(3000);
-                dumpBlock();
+                touchServoRight.setPosition(touchUpPos);
+                Functions.waitFor(1000);
+                encoderDrive(.2, 3, Direction.RIGHT, 2);
+                touchServoRight.setPosition(touchDownPos);
+                moveUntilTouch(.2,3000);
+                touchServoRight.setPosition(touchUpPos);
+                opMode.telemetry.addLine("LEFT DONE");
+                opMode.telemetry.update();
+                break;
+
         }
+        dumpBlock();
 
         Log.d("columnBlockRed","exited");
     }
@@ -963,10 +974,10 @@ public class DriveTrain {
 
 
     }
-    public void moveUntilTouchRed(int timeout) {
+    public void moveUntilTouch(double speed,int timeout) {
         long startTime = System.currentTimeMillis();
         while (timeout > System.currentTimeMillis() - startTime && touch.getState()){
-            strafeRight(.4);
+            strafeRight(speed);
         opMode.telemetry.addData("touchdata", touch.getMode());
         opMode.telemetry.update();
 

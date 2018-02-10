@@ -63,13 +63,15 @@ public class AutoFull extends LinearOpMode {
 
         }*/
         if (opModeIsActive()) {
-            jewelArm.setPosition(jewelArmDownPos);
-            Functions.waitFor(2000);
-            jewelArm.setPosition(jewelArmInitPosition);
-            driveTrain.encoderDriveIMU(.4, 20, DriveTrain.Direction.BACKWARD, 10);
-            driveTrain.encoderDriveIMU(.3, 3, DriveTrain.Direction.FORWARD, 4);
-            driveTrain.moveUntilTouchRed(10000);
+//            jewelArm.setPosition(jewelArmDownPos);
+//            Functions.waitFor(2000);
+//            jewelArm.setPosition(jewelArmInitPosition);
+//            driveTrain.encoderDriveIMU(.2, 30, DriveTrain.Direction.RIGHT, 10);
+            driveTrain.encoderDrive(.2, 30, DriveTrain.Direction.BACKWARD, 10);
+            driveTrain.encoderDrive(.2, 3, DriveTrain.Direction.FORWARD, 4);
+            driveTrain.moveUntilTouch(.2,10000);
             driveTrain.columnBlockRed(RelicRecoveryVuMark.CENTER);
+
             Log.d("Functions.", "waitfor");
             Functions.waitFor(30000);
 
@@ -90,7 +92,7 @@ public class AutoFull extends LinearOpMode {
                     vumark = vm.detectColumn(5);
                     driveTrain.encoderDrive(.4, 10, DriveTrain.Direction.FORWARD, 4);
                     driveTrain.rotateIMURamp(-90, .4,1, this.telemetry);
-                    driveTrain.moveUntilTouchRed(5000);
+                    driveTrain.moveUntilTouch(.2,5000);
                     driveTrain.columnBlockRed(vumark);
 
                 } else {
