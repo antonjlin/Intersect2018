@@ -45,11 +45,11 @@ public class IntakeTask extends TaskThread {
 
     public void tankControl(){
         if (opMode.gamepad1.dpad_up || opMode.gamepad2.dpad_up) {
-            lIntake.setPower(1);
-            rIntake.setPower(0.85);
+            lIntake.setPower(.7);
+            rIntake.setPower(0.7);
         } else if (opMode.gamepad1.dpad_down || opMode.gamepad2.dpad_down) {
-            lIntake.setPower(-1);
-            rIntake.setPower(-0.85);
+            lIntake.setPower(-.7);
+            rIntake.setPower(-0.7);
         } else if(Math.abs(opMode.gamepad2.left_stick_y)>0.05 || Math.abs(opMode.gamepad2.right_stick_y)>0.05){
             lIntake.setPower(opMode.gamepad2.left_stick_y);
             rIntake.setPower(opMode.gamepad2.right_stick_y);

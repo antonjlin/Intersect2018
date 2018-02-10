@@ -21,14 +21,12 @@ public class AutoFull extends LinearOpMode {
     static double jewelArmInitPosition = .3, jewelArmDownPos = 0.85, jewelArmUpPos = 0.35 , cryptoDownPos = 0, cryptoUpPos = .5;
     static DcMotor rF, rB, lF, lB;
     static GyroSensor gyro;
-    static Servo jewelArm,flipServo ;
+    static Servo jewelArm;
+    static Servo flipServo;
     boolean red = false;
     DriveTrain driveTrain;
     ColorSensor jewelColor;
     MRColorSensor colorSensor;
-    double flipDownPos = 0.56;
-    double flipInterPos = flipDownPos - 0.1;
-    double flipUpPos = flipDownPos - 0.5;
     StartingPositions startingPos = StartingPositions.CORNER;
     int state;
     private BNO055IMU adaImu;
@@ -51,12 +49,14 @@ public class AutoFull extends LinearOpMode {
             jewelArm.setPosition(jewelArmDownPos);
             Functions.waitFor(1500);
             jewel();
+
             if (red) {
                 if (startingPos == StartingPositions.CORNER) {redCorner();}
                 else {redSandwich();}
             } else {
                 if (startingPos == StartingPositions.CORNER) {blueCorner();}
                 else {blueSandwich();}
+
             }
         }
     }
@@ -180,9 +180,11 @@ public class AutoFull extends LinearOpMode {
         jewelArm.setDirection(Servo.Direction.REVERSE);
         jewelColor = hardwareMap.colorSensor.get("jewelColor");
         adaImu = hardwareMap.get(BNO055IMU.class, "imu");
+
         flipServo = hardwareMap.servo.get("flipServo");
         flipServo.setDirection(Servo.Direction.REVERSE);
-        flipServo.setPosition(flipDownPos);
+        //flipServo.setPosition(flipDownPos);
+
 //        jewelFinger = hardwareMap.servo.get("jewelFinger");
 //
 //        jewelFinger.setPosition(fingerMiddlePos);
