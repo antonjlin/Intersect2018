@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.robotutil;
 
+import android.util.Log;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -23,7 +25,7 @@ public class DriveTrain {
     public DcMotor rF, rB, lF, lB, rIntake, lIntake, rSlide, lSlide;
     public DigitalChannel cryptoTouch;
     public Servo flipServo,cryptoArm,touchServoRight,touchServoLeft;
-    public TouchSensor touch;
+    public DigitalChannel touch;
     public double minMotorPower = 0.085; //minimum power that robot still moves
     public IMU imu;
     public double flipDownPos = 0.56;
@@ -90,18 +92,21 @@ public class DriveTrain {
         lIntake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rIntake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        cryptoArm = opMode.hardwareMap.servo.get("cryptoArm");
+
         flipServo = opMode.hardwareMap.servo.get("flipServo");
         touchServoRight = opMode.hardwareMap.servo.get("touchServoRight");
         touchServoLeft = opMode.hardwareMap.servo.get("touchServoLeft");
         flipServo.setDirection(Servo.Direction.REVERSE);
-        touch = opMode.hardwareMap.touchSensor.get("touch");
-
-        cryptoArm.setPosition(cryptoDownPos);
-
+        //touch = opMode.hardwareMap.touchSensor.get("touch");
+        touchServoRight.setPosition(.7);
 
 
-        cryptoTouch  = opMode.hardwareMap.get(DigitalChannel.class, "cryptoTouch");
+       // cryptoArm.setPosition(cryptoDownPos);
+
+
+
+        touch  = opMode.hardwareMap.get(DigitalChannel.class, "touch");
+        touch.setMode(DigitalChannel.Mode.INPUT);
     }
 
     public void dumpBlock(){
@@ -118,17 +123,19 @@ public class DriveTrain {
                 dumpBlock();
             case CENTER:
                 touchServoRight.setPosition(0);
-                encoderDriveIMU(.3, 3, Direction.RIGHT, 2);
-                touchServoRight.setPosition(.5);
+                Functions.waitFor(200);
+                encoderDriveIMU(.2, 3, Direction.RIGHT, 2);
+                touchServoRight.setPosition(.7);
                 moveUntilTouchRed(3000);
                 dumpBlock();
+                Log.d("status", "dumped block");
             case LEFT:
                 encoderDriveIMU(.3, 10, Direction.RIGHT, 4);
                 moveUntilTouchRed(3000);
                 dumpBlock();
         }
 
-
+        Log.d("columnBlockRed","exited");
     }
     public void columnBlockBlue(RelicRecoveryVuMark vuMark){
         switch(vuMark){
@@ -945,26 +952,29 @@ public class DriveTrain {
         //  sleep(250);   // optional pause after each move
     }
 
-    public void moveUntilTouchRed(int timeout) {
-        long startTime = System.currentTimeMillis();
-
-        while (timeout > System.currentTimeMillis() - startTime)
-            strafeRight(.4);
-        if (touch.isPressed()) {
-            stopAll();
-        }
-
-    }
     public void moveUntilTouchBlue(int timeout) {
         long startTime = System.currentTimeMillis();
-
+        boolean b = true;
         while (timeout > System.currentTimeMillis() - startTime)
-            strafeLeft(.4);
-        if (touch.isPressed()) {
+            strafeRight(.4);
+        if (touch.getState()) {
             stopAll();
         }
 
+
     }
+    public void moveUntilTouchRed(int timeout) {
+        long startTime = System.currentTimeMillis();
+        while (timeout > System.currentTimeMillis() - startTime && touch.getState()){
+            strafeRight(.4);
+        opMode.telemetry.addData("touchdata", touch.getMode());
+        opMode.telemetry.update();
+
+        }
+        stopAll();
+    }
+
+
 
     public enum Position{
         LEFT,RIGHT;
@@ -1094,6 +1104,7 @@ public class DriveTrain {
 
         //  sleep(250);   // optional pause after each move
     }
+
 
 
     public void debugColor(ColorSensor colorsensor, Telemetry telemetry) {

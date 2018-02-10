@@ -1,9 +1,13 @@
 package org.firstinspires.ftc.teamcode.opmodes;
+import android.util.Log;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.DigitalChannelController;
 import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.hardware.I2cAddr;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -19,7 +23,7 @@ import org.firstinspires.ftc.teamcode.robotutil.IMU;
 import org.firstinspires.ftc.teamcode.robotutil.MRColorSensor;
 import org.firstinspires.ftc.teamcode.robotutil.Team;
 import org.firstinspires.ftc.teamcode.robotutil.VuMark;
-@Autonomous(name = "GarbAuto")
+@Autonomous(name = "TouchAuto")
 public class AutoFull extends LinearOpMode {
     static double jewelArmInitPosition = .3, jewelArmDownPos = 0.85, jewelArmUpPos = 0.35 , cryptoDownPos = 0, cryptoUpPos = .5;
     static DcMotor rF, rB, lF, lB;
@@ -49,7 +53,26 @@ public class AutoFull extends LinearOpMode {
         colorSensor.team = Team.RED;
         startingPos = StartingPositions.CORNER;
         waitForStart();
+        long time = System.currentTimeMillis();
+        driveTrain.touch.setMode(DigitalChannel.Mode.INPUT);
+        /*while(System.currentTimeMillis() - time < 10000000) {
+            telemetry.addData("touchsensor" , driveTrain.touch.getState());
+            telemetry.addData("touch", driveTrain.touch.getMode());
+            telemetry.update();
+
+
+        }*/
         if (opModeIsActive()) {
+            jewelArm.setPosition(jewelArmDownPos);
+            Functions.waitFor(2000);
+            jewelArm.setPosition(jewelArmInitPosition);
+            driveTrain.encoderDriveIMU(.4, 20, DriveTrain.Direction.BACKWARD, 10);
+            driveTrain.encoderDriveIMU(.3, 3, DriveTrain.Direction.FORWARD, 4);
+            driveTrain.moveUntilTouchRed(10000);
+            driveTrain.columnBlockRed(RelicRecoveryVuMark.CENTER);
+            Log.d("Functions.", "waitfor");
+            Functions.waitFor(30000);
+
             jewelArm.setPosition(jewelArmDownPos-.15);
             Functions.waitFor(1000);
             jewelArm.setPosition(jewelArmDownPos);
@@ -57,20 +80,9 @@ public class AutoFull extends LinearOpMode {
             jewel();
 
             jewelArm.setPosition(jewelArmDownPos);
-            long time = System.currentTimeMillis();
-            while(System.currentTimeMillis() - time < 1000000) {
-                telemetry.addData("touchsensor" , driveTrain.touch.isPressed());
 
 
-            }
-            if(driveTrain.detectRed(jewelColor)){
 
-            }
-            else{
-
-            }
-            jewelArm.setPosition(jewelArmDownPos);
-            Functions.waitFor(1000);
             if (red) {
 
                 if (startingPos == StartingPositions.CORNER) {
@@ -225,7 +237,7 @@ public class AutoFull extends LinearOpMode {
         jewelArm = hardwareMap.servo.get("jewelArm");
         jewelArm.setDirection(Servo.Direction.REVERSE);
         jewelColor = hardwareMap.colorSensor.get("jewelColor");
-        touch = hardwareMap.touchSensor.get("touch");
+
         adaImu = hardwareMap.get(BNO055IMU.class, "imu");
 
         flipServo = hardwareMap.servo.get("flipServo");
