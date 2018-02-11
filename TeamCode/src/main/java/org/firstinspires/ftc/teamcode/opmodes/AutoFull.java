@@ -71,9 +71,25 @@ public class AutoFull extends LinearOpMode {
 //            driveTrain.encoderDriveIMU(.2, 30, DriveTrain.Direction.RIGHT, 10);
             /*driveTrain.encoderDrive(.2, 30, DriveTrain.Direction.BACKWARD, 10);
             driveTrain.encoderDrive(.2, 3, DriveTrain.Direction.FORWARD, 4);*/
-            driveTrain.strafeRightTouchImu(.45,10000);
+
+            jewelArm.setPosition(jewelArmDownPos-.15);
+            jewelArm.setPosition(jewelArmDownPos);
+            Functions.waitFor(1000);
+            jewel();
+            driveTrain.encoderDrive(.4, 43, DriveTrain.Direction.FORWARD, 4);
+            driveTrain.rotateIMURamp(-90,.2,10,telemetry);
+            driveTrain.encoderDrive(.4, 30, DriveTrain.Direction.BACKWARD, 4);
+            driveTrain.encoderDrive(.4, 3, DriveTrain.Direction.FORWARD, 4);
+            driveTrain.touchServoRight.setPosition(driveTrain.touchDownPos);
+            Functions.waitFor(1000);
+            driveTrain.strafeRightTouchImu(.45,10);
             driveTrain.columnBlockRed(RelicRecoveryVuMark.CENTER);
+            driveTrain.encoderDrive(0.4,15, DriveTrain.Direction.BACKWARD,10);
+            driveTrain.encoderDrive(0.4,9, DriveTrain.Direction.FORWARD,10);
             driveTrain.dumpBlock();
+            driveTrain.encoderDrive(0.4,20, DriveTrain.Direction.BACKWARD,10);
+            driveTrain.encoderDrive(0.4,4, DriveTrain.Direction.FORWARD,10);
+
             Log.d("Functions.", "waitfor");
             Functions.waitFor(30000);
 
@@ -94,7 +110,7 @@ public class AutoFull extends LinearOpMode {
                     vumark = vm.detectColumn(5);
                     driveTrain.encoderDrive(.4, 10, DriveTrain.Direction.FORWARD, 4);
                     driveTrain.rotateIMURamp(-90, .4,1, this.telemetry);
-                    driveTrain.moveUntilTouch(.2,5000);
+                    driveTrain.moveRightUntilTouch(.2,5000);
                     driveTrain.columnBlockRed(vumark);
 
                 } else {
@@ -256,6 +272,8 @@ public class AutoFull extends LinearOpMode {
 
         colorSensor = new MRColorSensor(jewelColor, this);
         driveTrain = new DriveTrain(this);
+        driveTrain.touchServoRight.setPosition(driveTrain.touchUpPos);
+
 //        driveTrain.detectAmbientLight(jewelColor);
         vm = new VuMark(this);
 

@@ -122,15 +122,21 @@ public class DriveTrain {
     public void columnBlockRed(RelicRecoveryVuMark vuMark){
         switch(vuMark){
             case RIGHT:
+
                 break;
             case CENTER:
+                Functions.waitFor(1000);
+                moveLeftUntilNotTouch(.2,5);
                 touchServoRight.setPosition(touchUpPos);
                 Functions.waitFor(1000);
-                encoderDrive(.2, 3, Direction.RIGHT, 2);
+                encoderDrive(.2, 6, Direction.RIGHT, 2);
                 touchServoRight.setPosition(touchDownPos);
                 Functions.waitFor(1000);
                 strafeRightTouchImu(.45,3000);
+                Functions.waitFor(1000);
+                moveLeftUntilNotTouch(.2,5);
                 touchServoRight.setPosition(touchUpPos);
+                encoderDrive(.4,3,Direction.LEFT,3);
                 break;
             case LEFT:
                 touchServoRight.setPosition(touchUpPos);
@@ -971,18 +977,32 @@ public class DriveTrain {
         if (touch.getState()) {
             stopAll();
         }
-
-
     }
-    public void moveUntilTouch(double speed,int timeout) {
+
+
+    public void moveRightUntilTouch(double speed,int timeout) {
         long startTime = System.currentTimeMillis();
-        while (timeout > System.currentTimeMillis() - startTime && touch.getState()){
-            strafeRight(speed);
+        strafeRight(speed);
+
+        while (opMode.opModeIsActive() && timeout > System.currentTimeMillis() - startTime && touch.getState()){
         opMode.telemetry.addData("touchdata", touch.getMode());
         opMode.telemetry.update();
 
         }
         stopAll();
+    }
+
+    public void moveLeftUntilNotTouch(double speed,int timeoutS) {
+        long startTime = System.currentTimeMillis();
+        strafeLeft(speed);
+        while (opMode.opModeIsActive() && timeoutS*1000 > System.currentTimeMillis() - startTime && !touch.getState()){
+            opMode.telemetry.addData("Pressed", !touch.getState());
+            opMode.telemetry.update();
+        }
+        stopAll();
+        opMode.telemetry.addData("touchdata", touch.getMode());
+        opMode.telemetry.addData("Pressed", !touch.getState());
+        opMode.telemetry.update();
     }
 
 
@@ -1003,7 +1023,7 @@ public class DriveTrain {
         double start = imu.getAngle();
         if(direction == Direction.LEFT){
             long timecounter = System.currentTimeMillis();
-            while (System.currentTimeMillis() <= endtime) {
+            while (opMode.opModeIsActive() && System.currentTimeMillis() <= endtime) {
                 opMode.telemetry.addData("Heading", imu.getAngle());
                 opMode.telemetry.update();
                 lF.setPower(Math.abs(power)+l);
@@ -1107,7 +1127,7 @@ public class DriveTrain {
             double anglePos = imu.getAngle();
             double angleNeg = imu.getAngle();
             double angle;
-            while (System.currentTimeMillis() <= endtime && touch.getState() ) {
+            while (opMode.opModeIsActive() && System.currentTimeMillis() <= endtime && touch.getState() ) {
                 anglePos = imu.getAnglePositive();
                 angleNeg = imu.getAngleNegative();
 
