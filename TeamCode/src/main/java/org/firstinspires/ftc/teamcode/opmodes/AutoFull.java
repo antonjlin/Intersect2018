@@ -62,16 +62,18 @@ public class AutoFull extends LinearOpMode {
 
 
         }*/
+        //driveTrain.strafeRightTouchImu( .2,10000);
+
         if (opModeIsActive()) {
 //            jewelArm.setPosition(jewelArmDownPos);
 //            Functions.waitFor(2000);
 //            jewelArm.setPosition(jewelArmInitPosition);
 //            driveTrain.encoderDriveIMU(.2, 30, DriveTrain.Direction.RIGHT, 10);
-            driveTrain.encoderDrive(.2, 30, DriveTrain.Direction.BACKWARD, 10);
-            driveTrain.encoderDrive(.2, 3, DriveTrain.Direction.FORWARD, 4);
-            driveTrain.moveUntilTouch(.2,10000);
+            /*driveTrain.encoderDrive(.2, 30, DriveTrain.Direction.BACKWARD, 10);
+            driveTrain.encoderDrive(.2, 3, DriveTrain.Direction.FORWARD, 4);*/
+            driveTrain.strafeRightTouchImu(.45,10000);
             driveTrain.columnBlockRed(RelicRecoveryVuMark.CENTER);
-
+            driveTrain.dumpBlock();
             Log.d("Functions.", "waitfor");
             Functions.waitFor(30000);
 
