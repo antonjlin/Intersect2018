@@ -35,7 +35,7 @@ public class DriveTrain {
     public double cryptoDownPos = 0.56;
     public double cryptoUpPos = cryptoDownPos - 0.5;
     public double touchDownPos = .7;
-    public double touchUpPos = .1;
+    public double touchUpPos = .4;
     // Tunable parameters
 
     private int conversionFactor = 50;
@@ -1111,6 +1111,15 @@ public class DriveTrain {
 
     }
 
+    public void testCode() {
+
+        while(true) {
+            opMode.telemetry.addData("touch.getState(): ", touch.getState());
+            opMode.telemetry.addData("system time: ", System.currentTimeMillis());
+            opMode.telemetry.update();
+        }
+    }
+
     public void strafeRightTouchImu(double power, int timeoutS){
         //imustraferight only works
         double l = 0;
@@ -1122,69 +1131,71 @@ public class DriveTrain {
         long endtime =  System.currentTimeMillis() + (timeoutS * 1000);
         double start = imu.getAngle();
 
-            double i = 0;
-            long timecounter = System.currentTimeMillis();
-            double anglePos = imu.getAngle();
-            double angleNeg = imu.getAngle();
-            double angle;
-            while (opMode.opModeIsActive() && System.currentTimeMillis() <= endtime && touch.getState() ) {
-                anglePos = imu.getAnglePositive();
-                angleNeg = imu.getAngleNegative();
+        double i = 0;
+        long timecounter = System.currentTimeMillis();
+        double anglePos = imu.getAngle();
+        double angleNeg = imu.getAngle();
+        double angle;
+        while (opMode.opModeIsActive() && System.currentTimeMillis() <= endtime && touch.getState() ) {
+            opMode.telemetry.addData("touch.getState(): ", touch.getState());
+            opMode.telemetry.addData("system time: ", System.currentTimeMillis());
+            opMode.telemetry.update();
 
-                if(imu.getAnglePositive() < Math.abs(angleNeg)){
-                    angle = anglePos;
-                }
-                else if( anglePos > Math.abs(angleNeg)){
-                    angle  = angleNeg;
-                }
-                else{
-                    angle = imu.getAngle();
-                }
+            anglePos = imu.getAnglePositive();
+            angleNeg = imu.getAngleNegative();
 
-                opMode.telemetry.addData("Heading", angle);
-                opMode.telemetry.addData("Start", start);
-                opMode.telemetry.addData("diff", start -angle);
-                opMode.telemetry.addData("anglePos", anglePos);
-                opMode.telemetry.addData("angleNeg", angleNeg);
-                opMode.telemetry.update();
-                lF.setPower(-Math.abs(power+l));
-                lB.setPower(Math.abs(power+r));
-                rF.setPower(Math.abs(power+l) );
-                rB.setPower(-Math.abs(power+r));
+            if(imu.getAnglePositive() < Math.abs(angleNeg)){
+                angle = anglePos;
+            }
+            else if( anglePos > Math.abs(angleNeg)){
+                angle  = angleNeg;
+            }
+            else{
+                angle = imu.getAngle();
+            }
+
+            /*opMode.telemetry.addData("Heading", angle);
+            opMode.telemetry.addData("Start", start);
+            opMode.telemetry.addData("diff", start -angle);
+            opMode.telemetry.addData("anglePos", anglePos);
+            opMode.telemetry.addData("angleNeg", angleNeg);
+            opMode.telemetry.update();*/
+            lF.setPower(-Math.abs(power+l));
+            lB.setPower(Math.abs(power+r));
+            rF.setPower(Math.abs(power+l) );
+            rB.setPower(-Math.abs(power+r));
 
 
-                if ((System.currentTimeMillis() - timecounter) > 200 && start - angle < -2 ) {
+            if ((System.currentTimeMillis() - timecounter) > 200 && start - angle < -2 ) {
 
-                    i = i +.005;
+                i = i +.005;
                     /*r = r - .05;
                     l = l + .05;*/
-                    r = r - (((.01* Math.abs(angle))/2.4));
-                    l = l+(((.01* Math.abs(angle))/2.4));
-                    timecounter = System.currentTimeMillis();
+                r = r - (((.01* Math.abs(angle))/2.4));
+                l = l+(((.01* Math.abs(angle))/2.4));
+                timecounter = System.currentTimeMillis();
 
 
 
-                } else if (start - angle > 2) {
+            } else if (start - angle > 2) {
 
-                    l = l - ((.01* Math.abs(angle))/2.4);
-                    r = r + ((.01* Math.abs(angle))/2.4);
+                l = l - ((.01* Math.abs(angle))/2.4);
+                r = r + ((.01* Math.abs(angle))/2.4);
 
-                    timecounter = System.currentTimeMillis();
+                timecounter = System.currentTimeMillis();
 
-                } else {
-                    r = 0;
-                    l = 0;
-                    timecounter = System.currentTimeMillis();
-
-                }
+            } else {
+                r = 0;
+                l = 0;
+                timecounter = System.currentTimeMillis();
 
             }
 
-            stopAll();
-
         }
 
+        stopAll();
 
+    }
 
     public void selfBalance(Telemetry telemetry) {
         // call when the robot is fully on the platform

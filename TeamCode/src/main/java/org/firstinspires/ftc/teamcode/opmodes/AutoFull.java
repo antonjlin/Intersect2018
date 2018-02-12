@@ -65,6 +65,7 @@ public class AutoFull extends LinearOpMode {
         //driveTrain.strafeRightTouchImu( .2,10000);
 
         if (opModeIsActive()) {
+            driveTrain.testCode();
 //            jewelArm.setPosition(jewelArmDownPos);
 //            Functions.waitFor(2000);
 //            jewelArm.setPosition(jewelArmInitPosition);
@@ -72,7 +73,7 @@ public class AutoFull extends LinearOpMode {
             /*driveTrain.encoderDrive(.2, 30, DriveTrain.Direction.BACKWARD, 10);
             driveTrain.encoderDrive(.2, 3, DriveTrain.Direction.FORWARD, 4);*/
 
-            jewelArm.setPosition(jewelArmDownPos-.15);
+            /*jewelArm.setPosition(jewelArmDownPos-.15);
             jewelArm.setPosition(jewelArmDownPos);
             Functions.waitFor(1000);
             jewel();
@@ -135,7 +136,7 @@ public class AutoFull extends LinearOpMode {
                 }
 
 
-            }
+            }*/
         }
     }
     public void telemetry(String field1,String field2){
