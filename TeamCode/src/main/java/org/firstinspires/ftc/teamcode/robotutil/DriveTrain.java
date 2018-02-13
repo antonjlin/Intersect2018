@@ -1090,6 +1090,140 @@ public class DriveTrain {
         }
 
     }
+    public void strafeImuPDD(Direction direction, double power, int timeoutS){
+        //imustraferight only works
+        double pf = 0;
+        double pb = 0;
+        double initialTime = System.currentTimeMillis()/1000;
+        boolean alignedWithCrypto = false;
+        double heading;
+        int e;
+        long endtime =  System.currentTimeMillis() + (timeoutS * 1000);
+        double start = imu.getAngle();
+        if(direction == Direction.LEFT){
+            long timecounter = System.currentTimeMillis();
+            while (System.currentTimeMillis() <= endtime) {
+                timecounter = System.currentTimeMillis();
+                double anglePos = imu.getAngle();
+                double angleNeg = imu.getAngle();
+                double angle;
+
+                anglePos = imu.getAnglePositive();
+                angleNeg = imu.getAngleNegative();
+
+                if(imu.getAnglePositive() < Math.abs(angleNeg)){
+                    angle = anglePos;
+                }
+                else if( anglePos > Math.abs(angleNeg)){
+                    angle  = angleNeg;
+                }
+                else{
+                    angle = imu.getAngle();
+                }
+
+                opMode.telemetry.addData("Heading", angle);
+                opMode.telemetry.addData("Start", start);
+                opMode.telemetry.addData("diff", start -angle);
+                opMode.telemetry.addData("anglePos", anglePos);
+                opMode.telemetry.addData("angleNeg", angleNeg);
+                opMode.telemetry.update();
+                lF.setPower(-Math.abs(power+pf));
+                lB.setPower(Math.abs(power+pb));
+                rF.setPower(Math.abs(power+pf) );
+                rB.setPower(-Math.abs(power+pb));
+
+
+                if (start - angle < -2 && System.currentTimeMillis() - timecounter > 200 ) {
+
+
+                    pb = pb + ((.01* Math.abs(angle))/2.5);
+                    pf = pf-((.01* Math.abs(angle))/2.5);
+                    timecounter = System.currentTimeMillis();
+
+
+                } else if (start - angle > 2) {
+
+                    pf = pf + ((.01* Math.abs(angle))/2.5);
+                    pb = pb - ((.01* Math.abs(angle))/2.5);
+                    timecounter = System.currentTimeMillis();
+
+                } else {
+                    pb = 0;
+                    pf = 0;
+                    timecounter = System.currentTimeMillis();
+
+                }
+
+            }
+
+        }
+
+
+        else if(direction == Direction.RIGHT){
+            long timecounter = System.currentTimeMillis();
+            double anglePos = imu.getAngle();
+            double angleNeg = imu.getAngle();
+            double angle;
+            double velocity;
+            double velocity1 = 0;
+            double velocityDiff;
+            double accleration;
+            double proportional;
+            while (System.currentTimeMillis() <= endtime) {
+                anglePos = imu.getAnglePositive();
+                angleNeg = imu.getAngleNegative();
+
+                if(imu.getAnglePositive() < Math.abs(angleNeg)){
+                    angle = anglePos;
+                }
+                else if( anglePos > Math.abs(angleNeg)){
+                    angle  = angleNeg;
+                }
+                else{
+                    angle = imu.getAngle();
+                }
+
+                opMode.telemetry.addData("Heading", angle);
+                opMode.telemetry.addData("Start", start);
+                opMode.telemetry.addData("diff", start -angle);
+                opMode.telemetry.addData("anglePos", anglePos);
+                opMode.telemetry.addData("angleNeg", angleNeg);
+                opMode.telemetry.update();
+                lF.setPower(-Math.abs(power+pf));
+                lB.setPower(Math.abs(power+pb));
+                rF.setPower(Math.abs(power+pf) );
+                rB.setPower(-Math.abs(power+pb));
+
+                long diff = System.currentTimeMillis() - timecounter;
+                if(diff > 200 ) {
+                    proportional = ((.01 * Math.abs(angle)) / 2.5);
+                    //velocity = Math.abs(start - angle)/diff;
+                    velocity = (start - angle )/ diff;
+                    velocityDiff = velocity - velocity1;
+                    accleration = velocityDiff/diff;
+                    if (start - angle < -2) {
+
+                        pb = (pb - proportional) + velocity;
+                        pf = (pf + proportional) -velocity;
+
+
+                    } else if (start - angle > 2) {
+
+                        pf = (pf - proportional) - velocity;
+                        pb = (pb + proportional) + velocity;
+
+                    } else {
+                        pb = 0;
+                        pf = 0;
+
+                    }
+                }
+
+            }
+
+        }
+
+    }
 
     public void strafeRightTouchImu(double power, int timeoutS){
         //imustraferight only works
@@ -1135,7 +1269,7 @@ public class DriveTrain {
 
                 if ((System.currentTimeMillis() - timecounter) > 200 && start - angle < -2 ) {
 
-                    i = i +.005;
+
                     /*r = r - .05;
                     l = l + .05;*/
                     r = r - (((.01* Math.abs(angle))/2.4));
