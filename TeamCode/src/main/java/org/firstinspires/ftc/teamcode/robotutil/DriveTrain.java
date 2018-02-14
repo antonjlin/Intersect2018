@@ -35,7 +35,7 @@ public class DriveTrain {
     public double cryptoDownPos = 0.56;
     public double cryptoUpPos = cryptoDownPos - 0.5;
     public double touchDownPos = .7;
-    public double touchUpPos = .1;
+    public double touchUpPos = .3;
     // Tunable parameters
 
     private int conversionFactor = 50;
@@ -100,7 +100,7 @@ public class DriveTrain {
         touchServoLeft = opMode.hardwareMap.servo.get("touchServoLeft");
         flipServo.setDirection(Servo.Direction.REVERSE);
         //touch = opMode.hardwareMap.touchSensor.get("touch");
-        touchServoRight.setPosition(touchDownPos);
+        touchServoRight.setPosition(touchUpPos);
 
 
        // cryptoArm.setPosition(cryptoDownPos);
@@ -125,25 +125,22 @@ public class DriveTrain {
 
                 break;
             case CENTER:
-                Functions.waitFor(1000);
-                moveLeftUntilNotTouch(.2,5);
                 touchServoRight.setPosition(touchUpPos);
                 Functions.waitFor(1000);
-                encoderDrive(.2, 6, Direction.RIGHT, 2);
+                encoderDrive(.2, 3, Direction.RIGHT, 2);
                 touchServoRight.setPosition(touchDownPos);
                 Functions.waitFor(1000);
-                strafeRightTouchImu(.45,3000);
+                strafeImuPDD(Direction.RIGHT, .45,3000);
                 Functions.waitFor(1000);
-                moveLeftUntilNotTouch(.2,5);
                 touchServoRight.setPosition(touchUpPos);
-                encoderDrive(.4,3,Direction.LEFT,3);
+                encoderDrive(.4,4,Direction.LEFT,3);
                 break;
             case LEFT:
                 touchServoRight.setPosition(touchUpPos);
                 Functions.waitFor(1000);
                 encoderDrive(.2, 3, Direction.RIGHT, 2);
                 touchServoRight.setPosition(touchDownPos);
-                strafeRightTouchImu(.45,3000);
+                strafeImuPDD(Direction.RIGHT,.45,3000);
                 touchServoRight.setPosition(touchUpPos);
                 opMode.telemetry.addLine("LEFT DONE");
                 opMode.telemetry.update();
@@ -1110,6 +1107,153 @@ public class DriveTrain {
         }
 
     }
+    public void strafeImuPDD(Direction direction, double power, int timeoutS){
+        //imustraferight only works
+        double pf = 0;
+        double pb = 0;
+        double initialTime = System.currentTimeMillis()/1000;
+        boolean alignedWithCrypto = false;
+        double heading;
+        int e;
+        long endtime =  System.currentTimeMillis() + (timeoutS * 1000);
+        double start = imu.getAngle();
+        if(direction == Direction.LEFT){
+            long timecounter = System.currentTimeMillis();
+            while (System.currentTimeMillis() <= endtime) {
+                timecounter = System.currentTimeMillis();
+                double anglePos = imu.getAngle();
+                double angleNeg = imu.getAngle();
+                double angle;
+
+                anglePos = imu.getAnglePositive();
+                angleNeg = imu.getAngleNegative();
+
+                if(imu.getAnglePositive() < Math.abs(angleNeg)){
+                    angle = anglePos;
+                }
+                else if( anglePos > Math.abs(angleNeg)){
+                    angle  = angleNeg;
+                }
+                else{
+                    angle = imu.getAngle();
+                }
+
+                opMode.telemetry.addData("Heading", angle);
+                opMode.telemetry.addData("Start", start);
+                opMode.telemetry.addData("diff", start -angle);
+                opMode.telemetry.addData("anglePos", anglePos);
+                opMode.telemetry.addData("angleNeg", angleNeg);
+                opMode.telemetry.addData("touch", touch.getState());
+                opMode.telemetry.update();
+                lF.setPower(-Math.abs(power+pf));
+                lB.setPower(Math.abs(power+pb));
+                rF.setPower(Math.abs(power+pf) );
+                rB.setPower(-Math.abs(power+pb));
+
+
+                if (start - angle < -2 && System.currentTimeMillis() - timecounter > 200 ) {
+
+
+                    pb = pb + ((.01* Math.abs(angle))/2.5);
+                    pf = pf-((.01* Math.abs(angle))/2.5);
+                    timecounter = System.currentTimeMillis();
+
+
+                } else if (start - angle > 2) {
+
+                    pf = pf + ((.01* Math.abs(angle))/2.5);
+                    pb = pb - ((.01* Math.abs(angle))/2.5);
+                    timecounter = System.currentTimeMillis();
+
+                } else {
+                    pb = 0;
+                    pf = 0;
+                    timecounter = System.currentTimeMillis();
+
+                }
+
+            }
+
+        }
+
+
+        else if(direction == Direction.RIGHT){
+            long timecounter = System.currentTimeMillis();
+            double anglePos = imu.getAngle();
+            double angleNeg = imu.getAngle();
+            double angle;
+            double angle1 = imu.getAngle();
+            double velocity = 0;
+            double velocity1 = 0;
+            double velocityDiff;
+            double accleration;
+            double proportional;
+            long diff;
+
+            while (System.currentTimeMillis() <= endtime && touch.getState()) {
+                diff = System.currentTimeMillis() - timecounter;
+                anglePos = imu.getAnglePositive();
+                angleNeg = imu.getAngleNegative();
+
+                if(imu.getAnglePositive() < Math.abs(angleNeg)){
+                    angle = anglePos;
+                }
+                else if( anglePos > Math.abs(angleNeg)){
+                    angle  = angleNeg;
+                }
+                else{
+                    angle = imu.getAngle();
+                }
+
+                opMode.telemetry.addData("Heading", angle);
+                opMode.telemetry.addData("Start", start);
+                opMode.telemetry.addData("diff", start -angle);
+                opMode.telemetry.addData("anglePos", anglePos);
+                opMode.telemetry.addData("angleNeg", angleNeg);
+                opMode.telemetry.addData("velocity", velocity);
+                opMode.telemetry.addData("touch" , touch.getState());
+                opMode.telemetry.update();
+
+                lF.setPower(-Math.abs(power+pf + velocity));
+                lB.setPower(Math.abs(power+pb-velocity));
+                rF.setPower(Math.abs(power+pf +velocity));
+                rB.setPower(-Math.abs(power+pb -velocity));
+
+
+                if(diff > 200 ) {
+                    proportional = ((.01 * Math.abs(angle)) / 3.8);
+                    //velocity = Math.abs(start - angle)/diff;
+                    velocity = (angle - angle1 )/ diff;
+                    velocity = velocity/400;
+                    velocityDiff = velocity - velocity1;
+                    accleration = velocityDiff/diff;
+
+                    angle1 = angle;
+                    if (start - angle < -2) {
+
+                        pb = -proportional;
+                        pf =  proportional;
+
+
+                    } else if (start - angle > 2) {
+
+                        pf = -proportional;
+                        pb =  proportional;
+
+                    } else {
+                        pb = 0;
+                        pf = 0;
+
+                    }
+                    timecounter = System.currentTimeMillis();
+                }
+
+            }
+            stopAll();
+
+        }
+
+    }
 
     public void strafeRightTouchImu(double power, int timeoutS){
         //imustraferight only works
@@ -1120,7 +1264,13 @@ public class DriveTrain {
         double heading;
         int e;
         long endtime =  System.currentTimeMillis() + (timeoutS * 1000);
-        double start = imu.getAngle();
+        double start;
+        if(imu.getAnglePositive() > 180) {
+            start = imu.getAngleNegative();
+        }
+        else {
+            start = imu.getAnglePositive();
+        }
 
             double i = 0;
             long timecounter = System.currentTimeMillis();
@@ -1152,30 +1302,35 @@ public class DriveTrain {
                 rF.setPower(Math.abs(power+l) );
                 rB.setPower(-Math.abs(power+r));
 
+                if((System.currentTimeMillis() - timecounter) > 50 ) {
+                    if (start - angle < -2) {
 
-                if ((System.currentTimeMillis() - timecounter) > 200 && start - angle < -2 ) {
 
-                    i = i +.005;
                     /*r = r - .05;
                     l = l + .05;*/
-                    r = r - (((.01* Math.abs(angle))/2.4));
-                    l = l+(((.01* Math.abs(angle))/2.4));
+                        //r = r - (((.01 * Math.abs(angle)) / 2.7));
+                        //l = l + (((.01 * Math.abs(angle)) / 2.7));
+                        l =  ((.01 * Math.abs(angle)) / 4.5);
+                        r =  -((.01 * Math.abs(angle)) / 4.5);
+
+                        opMode.telemetry.addData("correcting from right ", start - angle);
+
+
+                    } else if (start - angle > 2) {
+
+                        l = -((.01 * Math.abs(angle)) / 4.5);
+                        r = ((.01 * Math.abs(angle)) / 4.5);
+                        //l = l - ((.01 * Math.abs(angle)) / 2.7);
+                        //r = r + ((.01 * Math.abs(angle)) / 2.7);
+                        opMode.telemetry.addData("correcting from left ", start - angle);
+
+                    } else {
+                        r = 0;
+                        l = 0;
+                        opMode.telemetry.addData("center", start - angle);
+
+                    }
                     timecounter = System.currentTimeMillis();
-
-
-
-                } else if (start - angle > 2) {
-
-                    l = l - ((.01* Math.abs(angle))/2.4);
-                    r = r + ((.01* Math.abs(angle))/2.4);
-
-                    timecounter = System.currentTimeMillis();
-
-                } else {
-                    r = 0;
-                    l = 0;
-                    timecounter = System.currentTimeMillis();
-
                 }
 
             }
@@ -1331,6 +1486,7 @@ public class DriveTrain {
         average = (red + green + blue) / 3;
         return (average > 17);
     }
+
 
     public void detectAmbientLight(ColorSensor colorsensor){
         ambientBlue = colorsensor.blue();
