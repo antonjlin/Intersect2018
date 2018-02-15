@@ -1255,6 +1255,184 @@ public class DriveTrain {
 
     }
 
+
+    public void strafeImuEncoderPDD(Direction direction, double power, int inches ,int timeoutS){
+        //imustraferight only works
+        int ticksToMove = (int)(inches * TICKS_PER_INCH_FORWARD);
+
+        resetEncoders();
+        lB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        lF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        int newLBTarget;
+        int newRBTarget;
+        int newRFTarget;
+        int newLFTarget;
+
+        // Ensure that the opmode is still active
+
+        // Determine new target position, and pass to motor controller
+        newLBTarget = lB.getCurrentPosition() + (int)(inches * TICKS_PER_INCH_FORWARD);
+        newRBTarget = rB.getCurrentPosition() - (int)(inches * TICKS_PER_INCH_FORWARD);
+        newLFTarget = lF.getCurrentPosition() - (int)(inches * TICKS_PER_INCH_FORWARD);
+        newRFTarget = rF.getCurrentPosition() + (int)(inches * TICKS_PER_INCH_FORWARD);
+
+
+
+        double pf = 0;
+        double pb = 0;
+        double initialTime = System.currentTimeMillis()/1000;
+        boolean alignedWithCrypto = false;
+        double heading;
+        int e;
+        long endtime =  System.currentTimeMillis() + (timeoutS * 1000);
+        double start = imu.getAngle();
+        if(direction == Direction.LEFT){
+            long timecounter = System.currentTimeMillis();
+            while (System.currentTimeMillis() <= endtime) {
+                timecounter = System.currentTimeMillis();
+                double anglePos = imu.getAngle();
+                double angleNeg = imu.getAngle();
+                double angle;
+
+                anglePos = imu.getAnglePositive();
+                angleNeg = imu.getAngleNegative();
+
+                if(imu.getAnglePositive() < Math.abs(angleNeg)){
+                    angle = anglePos;
+                }
+                else if( anglePos > Math.abs(angleNeg)){
+                    angle  = angleNeg;
+                }
+                else{
+                    angle = imu.getAngle();
+                }
+
+                opMode.telemetry.addData("Heading", angle);
+                opMode.telemetry.addData("Start", start);
+                opMode.telemetry.addData("diff", start -angle);
+                opMode.telemetry.addData("anglePos", anglePos);
+                opMode.telemetry.addData("angleNeg", angleNeg);
+                opMode.telemetry.addData("touch", touch.getState());
+                opMode.telemetry.update();
+                lF.setPower(-Math.abs(power+pf));
+                lB.setPower(Math.abs(power+pb));
+                rF.setPower(Math.abs(power+pf) );
+                rB.setPower(-Math.abs(power+pb));
+
+
+                if (start - angle < -2 && System.currentTimeMillis() - timecounter > 200 ) {
+
+
+                    pb = pb + ((.01* Math.abs(angle))/2.5);
+                    pf = pf-((.01* Math.abs(angle))/2.5);
+                    timecounter = System.currentTimeMillis();
+
+
+                } else if (start - angle > 2) {
+
+                    pf = pf + ((.01* Math.abs(angle))/2.5);
+                    pb = pb - ((.01* Math.abs(angle))/2.5);
+                    timecounter = System.currentTimeMillis();
+
+                } else {
+                    pb = 0;
+                    pf = 0;
+                    timecounter = System.currentTimeMillis();
+
+                }
+
+            }
+
+        }
+
+
+        else if(direction == Direction.RIGHT){
+            long timecounter = System.currentTimeMillis();
+            double anglePos = imu.getAngle();
+            double angleNeg = imu.getAngle();
+            double angle;
+            double angle1 = imu.getAngle();
+            double velocity = 0;
+            double velocity1 = 0;
+            double velocityDiff;
+            double accleration;
+            double proportional;
+            long diff;
+            int avg = 0;
+
+            while (System.currentTimeMillis() <= endtime && avg < ticksToMove ) {
+                int encoLb = lB.getCurrentPosition();
+                int encoLf = lF.getCurrentPosition();
+                int encoRb = rB.getCurrentPosition();
+                int encoRf = rF.getCurrentPosition();
+                avg = (Math.abs(encoRf-newRFTarget)+Math.abs(encoLf-newLFTarget)+
+                        Math.abs(encoLb - newLBTarget)+Math.abs(encoRb - newRBTarget))/4;
+                diff = System.currentTimeMillis() - timecounter;
+                anglePos = imu.getAnglePositive();
+                angleNeg = imu.getAngleNegative();
+
+                if(imu.getAnglePositive() < Math.abs(angleNeg)){
+                    angle = anglePos;
+                }
+                else if( anglePos > Math.abs(angleNeg)){
+                    angle  = angleNeg;
+                }
+                else{
+                    angle = imu.getAngle();
+                }
+
+                opMode.telemetry.addData("Heading", angle);
+                opMode.telemetry.addData("Start", start);
+                opMode.telemetry.addData("diff", start -angle);
+                opMode.telemetry.addData("anglePos", anglePos);
+                opMode.telemetry.addData("angleNeg", angleNeg);
+                opMode.telemetry.addData("velocity", velocity);
+                opMode.telemetry.addData("touch" , touch.getState());
+                opMode.telemetry.update();
+
+                lF.setPower(-Math.abs(power+pf + velocity));
+                lB.setPower(Math.abs(power+pb-velocity));
+                rF.setPower(Math.abs(power+pf +velocity));
+                rB.setPower(-Math.abs(power+pb -velocity));
+
+
+                if(diff > 200   ) {
+                    proportional = ((.01 * Math.abs(angle)) / 3.8);
+                    //velocity = Math.abs(start - angle)/diff;
+                    velocity = (angle - angle1 )/ diff;
+                    velocity = velocity/400;
+                    velocityDiff = velocity - velocity1;
+                    accleration = velocityDiff/diff;
+
+                    angle1 = angle;
+                    if (start - angle < -2) {
+
+                        pb = -proportional;
+                        pf =  proportional;
+
+
+                    } else if (start - angle > 2) {
+
+                        pf = -proportional;
+                        pb =  proportional;
+
+                    } else {
+                        pb = 0;
+                        pf = 0;
+
+                    }
+                    timecounter = System.currentTimeMillis();
+                }
+
+            }
+            stopAll();
+
+        }
+
+    }
+
     public void strafeRightTouchImu(double power, int timeoutS){
         //imustraferight only works
         double l = 0;

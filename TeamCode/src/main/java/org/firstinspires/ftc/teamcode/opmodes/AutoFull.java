@@ -63,6 +63,8 @@ public class AutoFull extends LinearOpMode {
 
         }*/
         //driveTrain.strafeRightTouchImu(.4,10000);
+        driveTrain.strafeImuEncoderPDD(DriveTrain.Direction.RIGHT, .45, 20, 10000);
+        Functions.waitFor(100000);
         driveTrain.touchServoRight.setPosition(driveTrain.touchDownPos);
         Functions.waitFor(200);
         Functions.waitFor(200);
