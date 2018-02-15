@@ -138,14 +138,29 @@ public class DriveTrain {
             case LEFT:
                 touchServoRight.setPosition(touchUpPos);
                 Functions.waitFor(1000);
-                encoderDrive(.2, 3, Direction.RIGHT, 2);
+                encoderDrive(.2, 10, Direction.RIGHT, 2);
                 touchServoRight.setPosition(touchDownPos);
-                strafeImuPDD(Direction.RIGHT,.45,3000);
+                Functions.waitFor(1000);
+                strafeImuPDD(Direction.RIGHT, .45,3000);
+                Functions.waitFor(1000);
                 touchServoRight.setPosition(touchUpPos);
-                opMode.telemetry.addLine("LEFT DONE");
-                opMode.telemetry.update();
+                encoderDrive(.4,4,Direction.LEFT,3);
                 break;
 
+        }
+
+        double currentHeading;
+
+        if (imu.getAnglePositive() <= 180) {
+            currentHeading = imu.getAnglePositive();
+        }
+        else {
+            currentHeading = imu.getAngleNegative();
+        }
+
+        if (Math.abs(currentHeading) > 10) {
+            rotateToHeading(0, 0.3, 3000, opMode.telemetry);
+            rotateToHeading(0, 0.1, 3000, opMode.telemetry);
         }
         dumpBlock();
 
@@ -299,6 +314,21 @@ public class DriveTrain {
     // @param timeout - time out in seconds
     // @param gyro pointer to Gyro object
     // @param telemetry - pointer to telemetry object
+    public void rotateToHeading(int heading, double power, int timeoutS, Telemetry telemetry) {
+        double currentHeading;
+        int degrees;
+
+        if (imu.getAnglePositive() <= 180) {
+            currentHeading = imu.getAnglePositive();
+        }
+        else {
+            currentHeading = imu.getAngleNegative();
+        }
+
+        degrees = heading - (int) currentHeading;
+
+        rotateIMURamp(degrees, power, timeoutS, telemetry);
+    }
 
     public double rotateIMURamp(int degrees, double power, int timeoutS, Telemetry telemetry) {
     //public double rotateIMURamp(int degrees, double power, int timeoutS, IMU imu, Telemetry telemetry) {
@@ -1256,6 +1286,7 @@ public class DriveTrain {
     }
 
 
+
     public void strafeImuEncoderPDD(Direction direction, double power, int inches ,int timeoutS){
         //imustraferight only works
         int ticksToMove = (int)(inches * TICKS_PER_INCH_FORWARD);
@@ -1432,6 +1463,7 @@ public class DriveTrain {
         }
 
     }
+
 
     public void strafeRightTouchImu(double power, int timeoutS){
         //imustraferight only works

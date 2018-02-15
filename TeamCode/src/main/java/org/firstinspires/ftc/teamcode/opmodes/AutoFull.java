@@ -72,7 +72,7 @@ public class AutoFull extends LinearOpMode {
         Functions.waitFor(200);
         driveTrain.touchServoRight.setPosition(driveTrain.touchUpPos);
         Functions.waitFor(400);
-        driveTrain.columnBlockRed(RelicRecoveryVuMark.CENTER);
+        driveTrain.columnBlockRed(RelicRecoveryVuMark.LEFT);
 
         Functions.waitFor(100000);
 
