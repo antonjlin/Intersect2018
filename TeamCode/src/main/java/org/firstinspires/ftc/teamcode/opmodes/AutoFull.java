@@ -25,7 +25,7 @@ import org.firstinspires.ftc.teamcode.robotutil.Team;
 import org.firstinspires.ftc.teamcode.robotutil.VuMark;
 @Autonomous(name = "TouchAuto")
 public class AutoFull extends LinearOpMode {
-    static double jewelArmInitPosition = .3, jewelArmDownPos = 0.85, jewelArmUpPos = 0.35 , cryptoDownPos = 0, cryptoUpPos = .5;
+    static double jewelArmInitPosition = .3, jewelArmDownPos = 0.9, jewelArmUpPos = 0.35 , cryptoDownPos = 0, cryptoUpPos = .5;
     static DcMotor rF, rB, lF, lB;
     static GyroSensor gyro;
     static Servo jewelArm;
@@ -107,36 +107,38 @@ public class AutoFull extends LinearOpMode {
             driveTrain.encoderDrive(0.4,20, DriveTrain.Direction.BACKWARD,10);
             driveTrain.encoderDrive(0.4,4, DriveTrain.Direction.FORWARD,10);
 
-            Log.d("Functions.", "waitfor");
+            Log.d("Functions.", "waitfor");*/
+            /*driveTrain.strafeImuEncoderPDD(DriveTrain.Direction.LEFT, .3, 20, 20);
             Functions.waitFor(30000);*/
             vumark = vm.detectColumn(10);
             telemetry.addData("vumark", vumark);
 
-            jewelArm.setPosition(jewelArmDownPos-.15);
-            Functions.waitFor(1000);
-            jewelArm.setPosition(jewelArmDownPos);
-            Functions.waitFor(1500);
+
+            //jewelArm.setPosition(jewelArmDownPos);
+            //Functions.waitFor(1000);
             jewel();
 
             jewelArm.setPosition(jewelArmDownPos);
             jewelArm.setPosition(jewelArmInitPosition - .15);
             jewelArm.setPosition(jewelArmInitPosition);
-            Functions.waitFor(1000);
-            //driveTrain.encoderDrive(.3, 24,DriveTrain.Direction.FORWARD, 4);
-            Functions.waitFor(1000);
-            //driveTrain.rotateIMURamp(-90, .4, 5, this.telemetry);
-            Functions.waitFor(3000);
-            driveTrain.strafeImuEncoderPDD(DriveTrain.Direction.LEFT, .2, 20, 4);
-            Functions.waitFor(1000);
-            driveTrain.encoderDrive(.4, 8, DriveTrain.Direction.BACKWARD, 4);
-            Functions.waitFor(1000);
-            driveTrain.touchServoRight.setPosition(driveTrain.touchDownPos);
             Functions.waitFor(200);
+            driveTrain.encoderDrive(.5, 30,DriveTrain.Direction.FORWARD, 4);
+            Functions.waitFor(50);
+            driveTrain.rotateIMURamp(-90, .5, 5, this.telemetry);
+            Functions.waitFor(100);
+            driveTrain.strafeImuEncoderPDD(DriveTrain.Direction.LEFT, .3, 9, 4);
+            Functions.waitFor(100);
+            driveTrain.strafeImuEncoderPDD(DriveTrain.Direction.RIGHT, .2, 2, 2);
+            Functions.waitFor(100);
+            driveTrain.encoderDrive(.4, 6.35, DriveTrain.Direction.BACKWARD, 4);
+            Functions.waitFor(100);
+            driveTrain.touchServoRight.setPosition(driveTrain.touchDownPos);
+
             driveTrain.strafeImuPDD(DriveTrain.Direction.RIGHT, .4, 4);
             Functions.waitFor(200);
             driveTrain.touchServoRight.setPosition(driveTrain.touchUpPos);
-            Functions.waitFor(400);
-            driveTrain.columnBlockRed(RelicRecoveryVuMark.LEFT);
+            Functions.waitFor(200);
+            driveTrain.columnBlockRed(vumark);
 
 
 
@@ -188,6 +190,12 @@ public class AutoFull extends LinearOpMode {
         telemetry.update();
     }
     public void jewel(){
+        driveTrain.encoderDrive(0.1,2, DriveTrain.Direction.FORWARD,5);
+        Functions.waitFor(150);
+        driveTrain.rotateIMURamp(8 ,0.4,5,telemetry);
+        Functions.waitFor(500);
+        jewelArm.setPosition(jewelArmDownPos);
+        Functions.waitFor(100);
         if(colorSensor.correctColor()){
             telemetry("color","red");
             knockJewel(DriveTrain.Direction.BACKWARD);
@@ -225,24 +233,38 @@ public class AutoFull extends LinearOpMode {
         CORNER, SANDWICH;
     }
     public void knockJewel(DriveTrain.Direction direction) {
+
+       /* driveTrain.encoderDrive(0.1,2, DriveTrain.Direction.FORWARD,5);
+        Functions.waitFor(150);
+        driveTrain.rotateIMURamp(9 ,0.4,5,telemetry);
+        Functions.waitFor(1000);
+
+*/
+
+        jewelArm.setPosition(jewelArmDownPos-.05);
+        Functions.waitFor(100);
+
+
         if(direction == DriveTrain.Direction.BACKWARD) {
             //COUNTERINTUITIVE, BUT THIS CONTROLS THE KNOCK FORWARDS (COUNTERCLOCKWISE)
             driveTrain.rotateIMURamp(-12,0.4,5,telemetry);
             jewelArm.setPosition(jewelArmInitPosition);
             Functions.waitFor(500);
-            driveTrain.rotateIMURamp(12,0.4,5,telemetry);
+            driveTrain.rotateIMURamp(-7,0.4,5,telemetry);
         } else{
             //COUNTERINTUITIVE, BUT THIS CONTROLS THE KNOCK BACKWARDS (CLOCKWISE)
-            jewelArm.setPosition(jewelArmInitPosition);
-            Functions.waitFor(1000);
-            driveTrain.encoderDrive(0.1,2, DriveTrain.Direction.FORWARD,5);
+            //jewelArm.setPosition(jewelArmInitPosition);
+            //Functions.waitFor(150);
+           /* driveTrain.encoderDrive(0.1,2, DriveTrain.Direction.FORWARD,5);
             driveTrain.rotateIMURamp(9 ,0.4,5,telemetry);
-            jewelArm.setPosition(jewelArmDownPos-.15);
-            Functions.waitFor(1000);
+
+
             jewelArm.setPosition(jewelArmDownPos);
             Functions.waitFor(1000);
             driveTrain.rotateIMURamp(10,0.4,5,telemetry);
 
+*/
+            driveTrain.rotateIMURamp(10,0.4,5,telemetry);
             jewelArm.setPosition(jewelArmInitPosition);
             Functions.waitFor(500);
             driveTrain.rotateIMURamp(-20,0.4,5,telemetry);
@@ -299,6 +321,7 @@ public class AutoFull extends LinearOpMode {
 
         flipServo = hardwareMap.servo.get("flipServo");
         flipServo.setDirection(Servo.Direction.REVERSE);
+        flipServo.setPosition(1);
 
 
 

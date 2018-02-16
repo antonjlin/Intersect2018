@@ -45,7 +45,7 @@ public class DriveTrain {
     private int gyroTurnErrorMargin = 3; // turn stop if within the margin of error
     private int gyroTurnRampMax = 60;  // starting point of scaling back speed of motor for turning
     private int gyroTurnRampMin = 3;   // stopping point to turn off motor abs(heading-target)<vlaue
-    private double minRotationPower = 0.05; // minimum power to move robot
+    private double minRotationPower = 0.08; // minimum power to move robot
     private final int driveStraightErrorMargin = 2;
     private final int encoderDriveRampMax = 40;
     private final int encoderDriveRampMin = 1;
@@ -114,37 +114,37 @@ public class DriveTrain {
 
     public void dumpBlock(){
 
-        flipServo.setPosition(.06);
-        Functions.waitFor(1000);
         flipServo.setPosition(.56);
+        Functions.waitFor(1000);
+        flipServo.setPosition(1);
         Functions.waitFor(300);
     }
 
     public void columnBlockRed(RelicRecoveryVuMark vuMark){
         switch(vuMark){
             case RIGHT:
-
+                strafeImuEncoderPDD(Direction.LEFT,.3,1.73,3);
                 break;
             case CENTER:
                 touchServoRight.setPosition(touchUpPos);
-                Functions.waitFor(1000);
+                Functions.waitFor(100);
                 strafeImuEncoderPDD(Direction.RIGHT, .4, 3, 2);
                 touchServoRight.setPosition(touchDownPos);
-                Functions.waitFor(1000);
-                strafeImuPDD(Direction.RIGHT, .3,3000);
-                Functions.waitFor(1000);
+                Functions.waitFor(100);
+                strafeImuPDD(Direction.RIGHT, .4,3000);
+                Functions.waitFor(100);
                 touchServoRight.setPosition(touchUpPos);
-                strafeImuEncoderPDD(Direction.LEFT,.45,1.8,3);
+                strafeImuEncoderPDD(Direction.LEFT,.3,1.73,3);
                 break;
             case LEFT:
                 touchServoRight.setPosition(touchUpPos);
-                Functions.waitFor(1000);
+                Functions.waitFor(100);
                 strafeImuEncoderPDD(Direction.RIGHT, .4,12,5);
-                Functions.waitFor(1000);
+                Functions.waitFor(100);
                 touchServoRight.setPosition(touchDownPos);
-                encoderDriveIMU(.4, 2, Direction.FORWARD, 2);
-                strafeImuPDD(Direction.RIGHT, .3, 2);
-                strafeImuEncoderPDD(Direction.LEFT,.45,1.8 ,3);
+                Functions.waitFor(100);
+                strafeImuPDD(Direction.RIGHT, .4, 2);
+                strafeImuEncoderPDD(Direction.LEFT,.3,1.73 ,3);
                 break;
 
         }
@@ -163,6 +163,9 @@ public class DriveTrain {
             rotateToHeading(0, 0.1, 3000, opMode.telemetry);
         }*/
         dumpBlock();
+        encoderDrive(.4, 7, Direction.FORWARD, 3);
+        dumpBlock();
+        encoderDrive(.4, 7, Direction.BACKWARD, 3);
 
         Log.d("columnBlockRed","exited");
     }
@@ -1146,7 +1149,21 @@ public class DriveTrain {
         double heading;
         int e;
         long endtime =  System.currentTimeMillis() + (timeoutS * 1000);
-        double start = imu.getAngle();
+
+        double start;
+
+        double pos = imu.getAnglePositive();
+        double neg = imu.getAngleNegative();
+
+        if(pos < Math.abs(neg)){
+            start = pos;
+        }
+        else if( pos > Math.abs(neg)){
+            start  = neg;
+        }
+        else{
+            start = imu.getAngle();
+        }
 
 
 
@@ -1185,6 +1202,7 @@ public class DriveTrain {
                 opMode.telemetry.addData("angleNeg", angleNeg);
                 opMode.telemetry.addData("velocity", velocity);
                 opMode.telemetry.addData("touch" , touch.getState());
+                opMode.telemetry.addData("powerset",power+pf + velocity);
                 opMode.telemetry.update();
 
                 lF.setPower(-Math.abs(power+pf + velocity));
@@ -1194,10 +1212,10 @@ public class DriveTrain {
 
 
                 if(diff > 100 ) {
-                    proportional = (.025 * Math.abs(start - angle));
+                    proportional = ((.01 * Math.abs(start - angle))/2.7);
                     //velocity = Math.abs(start - angle)/diff;
                     velocity = (angle - angle1 )/ diff;
-                    velocity = velocity/400;
+                    velocity = velocity/300;
                     velocityDiff = velocity - velocity1;
                     accleration = velocityDiff/diff;
 
@@ -1262,7 +1280,19 @@ public class DriveTrain {
         double heading;
         int e;
         long endtime =  System.currentTimeMillis() + (timeoutS * 1000);
-        double start = imu.getAngle();
+        double pos = imu.getAnglePositive();
+        double neg = imu.getAngleNegative();
+        double start;
+        if(pos < Math.abs(neg)){
+            start = pos;
+        }
+        else if( pos > Math.abs(neg)){
+            start  = neg;
+        }
+        else{
+            start = imu.getAngle();
+        }
+
 
 
 
@@ -1293,7 +1323,7 @@ public class DriveTrain {
                 angleNeg = imu.getAngleNegative();
 
                 if(imu.getAnglePositive() < Math.abs(angleNeg)){
-                    angle = anglePos;
+                        angle = anglePos;
                 }
                 else if( anglePos > Math.abs(angleNeg)){
                     angle  = angleNeg;
@@ -1320,7 +1350,7 @@ public class DriveTrain {
 
 
                 if(diff > 50   ) {
-                    proportional = ((.02 * Math.abs(start - angle)) );
+                    proportional = ((.01 * Math.abs(start - angle))/2.7 );
                     //velocity = Math.abs(start - angle)/diff;
                     velocity = (angle - angle1 )/ diff;
                     velocity = velocity/300;
@@ -1394,7 +1424,7 @@ public class DriveTrain {
                 opMode.telemetry.addData("anglePos", anglePos);
                 opMode.telemetry.addData("angleNeg", angleNeg);
                 opMode.telemetry.addData("velocity", velocity);
-                opMode.telemetry.addData("touch" , touch.getState());
+                opMode.telemetry.addData("power set" , power+pf-velocity);
                 opMode.telemetry.addData("avgEnco", avg);
                 opMode.telemetry.addData("ticksToMove", ticksToMove);
                 opMode.telemetry.update();
@@ -1406,10 +1436,10 @@ public class DriveTrain {
 
 
                 if(diff > 100   ) {
-                    proportional = (.03 * Math.abs(start-angle));
+                    proportional = ((.01 * Math.abs(start-angle))/2.7);
                     //velocity = Math.abs(start - angle)/diff;
                     velocity = (angle - angle1 )/ diff;
-                    velocity = velocity/500;
+                    velocity = velocity/300;
                     velocityDiff = velocity - velocity1;
                     accleration = velocityDiff/diff;
 
