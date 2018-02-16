@@ -15,9 +15,11 @@ import org.firstinspires.ftc.teamcode.robotutil.Functions;
 public class BlockPushTask extends TaskThread{
 
     private Servo blockPush;
-    private DigitalChannel cryptoTouch;
+//    private DigitalChannel cryptoTouch;
     private String touchState;
-
+    private Servo touchServoRight;
+    double touchDownPos = .7;
+    double touchUpPos = .3;
 
 
     int pos = 0;
@@ -40,7 +42,7 @@ public class BlockPushTask extends TaskThread{
             }
             Functions.waitFor(100);
             opMode.telemetry.addData("position: ",pos);
-            touchState = String.valueOf(cryptoTouch.getState());
+//            touchState = String.valueOf(cryptoTouch.getState());
             opMode.telemetry.addData("TouchSensor", touchState);
             opMode.telemetry.update();
         }
@@ -51,7 +53,9 @@ public class BlockPushTask extends TaskThread{
         blockPush = opMode.hardwareMap.servo.get("blockPusher");
         blockPush.setDirection(Servo.Direction.FORWARD);
         blockPush.setPosition(.7);
-        cryptoTouch  = opMode.hardwareMap.get(DigitalChannel.class, "cryptoTouch");
+        touchServoRight = opMode.hardwareMap.servo.get("touchServoRight");
+        touchServoRight.setPosition(touchUpPos);
+//        cryptoTouch  = opMode.hardwareMap.get(DigitalChannel.class, "cryptoTouch");
 
     }
 

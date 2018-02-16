@@ -50,7 +50,6 @@ import static org.firstinspires.ftc.teamcode.robotutil.Team.RED;
 @TeleOp(name = "Threaded Teleop")
 public class ThreadedTeleOp extends LinearOpMode {
     private DriveTrainTask driveTrainTask;
-
     private SlideTask slideTask;
     private IntakeTask intakeTask;
     private FlipTask flipTask;
@@ -112,6 +111,7 @@ public class ThreadedTeleOp extends LinearOpMode {
             jewelArm = hardwareMap.servo.get("jewelArm");
             jewelArm.setDirection(Servo.Direction.REVERSE);
             jewelArm.setPosition(AutoFull.jewelArmUpPos);
+
             cryptoArm = hardwareMap.servo.get("cryptoArm");
 //            decrease value to go more vertically\
             cryptoArm.setPosition(0.3);

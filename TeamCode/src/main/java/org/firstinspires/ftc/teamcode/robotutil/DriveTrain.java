@@ -24,7 +24,7 @@ public class DriveTrain {
     static final double TICKS_PER_INCH_FORWARD = 62;
     static final double TICKS_PER_INCH_STRAFE = 61.3;
     public DcMotor rF, rB, lF, lB, rIntake, lIntake, rSlide, lSlide;
-    public DigitalChannel cryptoTouch;
+//    public DigitalChannel cryptoTouch;
     public Servo flipServo,cryptoArm,touchServoRight,touchServoLeft;
     public DigitalChannel touch;
     public double minMotorPower = 0.085; //minimum power that robot still moves
@@ -165,7 +165,8 @@ public class DriveTrain {
         dumpBlock();
         encoderDrive(.4, 7, Direction.FORWARD, 3);
         dumpBlock();
-        encoderDrive(.4, 7, Direction.BACKWARD, 3);
+        encoderDrive(.4, 10, Direction.BACKWARD, 3);
+        encoderDrive(.4, 6, Direction.FORWARD, 3);
 
         Log.d("columnBlockRed","exited");
     }
@@ -195,13 +196,13 @@ public class DriveTrain {
         lIntake.setPower(power);
     }
 
-    public void alignCrypto(double speed, Direction direction){
-       cryptoArm.setPosition(cryptoDownPos);
-       while(cryptoTouch.getState() == false){
-           moveAtSpeed(direction,speed);
-       }
-       stopAll();
-    }
+//    public void alignCrypto(double speed, Direction direction){
+//       cryptoArm.setPosition(cryptoDownPos);
+//       while(cryptoTouch.getState() == false){
+//           moveAtSpeed(direction,speed);
+//       }
+//       stopAll();
+//    }
 
     public void moveRollersTime(double power, int timeMS) {
         rollersSetPower(power);
@@ -1310,7 +1311,7 @@ public class DriveTrain {
             long diff;
             int avg = 0;
 
-            while (System.currentTimeMillis() <= endtime && avg < ticksToMove ) {
+            while (System.currentTimeMillis() <= endtime && avg < ticksToMove && opMode.opModeIsActive()) {
 
                 diff = System.currentTimeMillis() - timecounter;
                 int encoLb = lB.getCurrentPosition();
@@ -1396,7 +1397,7 @@ public class DriveTrain {
             long diff;
             int avg = 0;
 
-            while (System.currentTimeMillis() <= endtime && avg < ticksToMove ) {
+            while (System.currentTimeMillis() <= endtime && avg < ticksToMove && opMode.opModeIsActive()) {
 
                 diff = System.currentTimeMillis() - timecounter;
                 int encoLb = lB.getCurrentPosition();

@@ -110,9 +110,9 @@ public class AutoFull extends LinearOpMode {
             Log.d("Functions.", "waitfor");*/
             /*driveTrain.strafeImuEncoderPDD(DriveTrain.Direction.LEFT, .3, 20, 20);
             Functions.waitFor(30000);*/
+            vumark = RelicRecoveryVuMark.CENTER;
             vumark = vm.detectColumn(10);
             telemetry.addData("vumark", vumark);
-
 
             //jewelArm.setPosition(jewelArmDownPos);
             //Functions.waitFor(1000);
@@ -126,7 +126,7 @@ public class AutoFull extends LinearOpMode {
             Functions.waitFor(50);
             driveTrain.rotateIMURamp(-90, .5, 5, this.telemetry);
             Functions.waitFor(100);
-            driveTrain.strafeImuEncoderPDD(DriveTrain.Direction.LEFT, .3, 9, 4);
+            driveTrain.strafeImuEncoderPDD(DriveTrain.Direction.LEFT, .3, 8, 4);
             Functions.waitFor(100);
             driveTrain.strafeImuEncoderPDD(DriveTrain.Direction.RIGHT, .2, 2, 2);
             Functions.waitFor(100);
@@ -142,39 +142,39 @@ public class AutoFull extends LinearOpMode {
 
 
 
-            if (red) {
+//            if (red) {
+//
+//                if (startingPos == StartingPositions.CORNER) {
+//                    driveTrain.encoderDrive(0.4, 10, DriveTrain.Direction.FORWARD, 3);
+//                    vumark = vm.detectColumn(5);
+//                    driveTrain.encoderDrive(.4, 10, DriveTrain.Direction.FORWARD, 4);
+//                    driveTrain.rotateIMURamp(-90, .4,1, this.telemetry);
+//                    driveTrain.moveRightUntilTouch(.2,5000);
+//                    driveTrain.columnBlockRed(vumark);
+//
+//                } else {
+//
+//                    driveTrain.encoderDrive(0.5, 10, DriveTrain.Direction.BACKWARD, 10);
+//                    vumark = vm.detectColumn(5);
+//                }
+//
+//            } else {
+//                if (startingPos == StartingPositions.CORNER) {
+//                    driveTrain.encoderDrive(0.4, 10, DriveTrain.Direction.FORWARD, 3);
+//                    vumark = vm.detectColumn(5);
+//                    driveTrain.encoderDrive(.4, 25, DriveTrain.Direction.BACKWARD, 4);
+//                    driveTrain.rotateIMURamp(-90, .5, 5, telemetry);
+//                    driveTrain.moveUntilTouchBlue(5000);
+//                    driveTrain.columnBlockBlue(vumark);
+//
+//                } else {
+//                    flipServo.setPosition(0);
+//                    driveTrain.encoderDrive(0.5, 60, DriveTrain.Direction.BACKWARD, 10);
+//                    driveTrain.encoderDrive(0.5, 10, DriveTrain.Direction.FORWARD, 10);
+//                }
 
-                if (startingPos == StartingPositions.CORNER) {
-                    driveTrain.encoderDrive(0.4, 10, DriveTrain.Direction.FORWARD, 3);
-                    vumark = vm.detectColumn(5);
-                    driveTrain.encoderDrive(.4, 10, DriveTrain.Direction.FORWARD, 4);
-                    driveTrain.rotateIMURamp(-90, .4,1, this.telemetry);
-                    driveTrain.moveRightUntilTouch(.2,5000);
-                    driveTrain.columnBlockRed(vumark);
 
-                } else {
-
-                    driveTrain.encoderDrive(0.5, 10, DriveTrain.Direction.BACKWARD, 10);
-                    vumark = vm.detectColumn(5);
-                }
-
-            } else {
-                if (startingPos == StartingPositions.CORNER) {
-                    driveTrain.encoderDrive(0.4, 10, DriveTrain.Direction.FORWARD, 3);
-                    vumark = vm.detectColumn(5);
-                    driveTrain.encoderDrive(.4, 25, DriveTrain.Direction.BACKWARD, 4);
-                    driveTrain.rotateIMURamp(-90, .5, 5, telemetry);
-                    driveTrain.moveUntilTouchBlue(5000);
-                    driveTrain.columnBlockBlue(vumark);
-
-                } else {
-                    flipServo.setPosition(0);
-                    driveTrain.encoderDrive(0.5, 60, DriveTrain.Direction.BACKWARD, 10);
-                    driveTrain.encoderDrive(0.5, 10, DriveTrain.Direction.FORWARD, 10);
-                }
-
-
-            }
+//            }
         }
     }
     public void telemetry(String field1,String field2){
@@ -190,20 +190,22 @@ public class AutoFull extends LinearOpMode {
         telemetry.update();
     }
     public void jewel(){
-        driveTrain.encoderDrive(0.1,2, DriveTrain.Direction.FORWARD,5);
-        Functions.waitFor(150);
-        driveTrain.rotateIMURamp(8 ,0.4,5,telemetry);
+
+        driveTrain.encoderDrive(0.1,1.5, DriveTrain.Direction.FORWARD,5);
+        Functions.waitFor(500);
+        driveTrain.rotateIMURamp(6 ,0.4,5,telemetry);
         Functions.waitFor(500);
         jewelArm.setPosition(jewelArmDownPos);
-        Functions.waitFor(100);
+        Functions.waitFor(1000);
+//        colorSensor.telemetryDebug(this);
         if(colorSensor.correctColor()){
             telemetry("color","red");
             knockJewel(DriveTrain.Direction.BACKWARD);
         }else {
             telemetry("color","Blue");
-
             knockJewel(DriveTrain.Direction.FORWARD);
         }
+//        Functions.waitFor(3000);
     }
 
     public void redCorner(){
@@ -247,10 +249,10 @@ public class AutoFull extends LinearOpMode {
 
         if(direction == DriveTrain.Direction.BACKWARD) {
             //COUNTERINTUITIVE, BUT THIS CONTROLS THE KNOCK FORWARDS (COUNTERCLOCKWISE)
-            driveTrain.rotateIMURamp(-12,0.4,5,telemetry);
+            driveTrain.rotateIMURamp(-7,0.4,5,telemetry);
             jewelArm.setPosition(jewelArmInitPosition);
             Functions.waitFor(500);
-            driveTrain.rotateIMURamp(-7,0.4,5,telemetry);
+//            driveTrain.rotateIMURamp(-7,0.4,5,telemetry);
         } else{
             //COUNTERINTUITIVE, BUT THIS CONTROLS THE KNOCK BACKWARDS (CLOCKWISE)
             //jewelArm.setPosition(jewelArmInitPosition);
