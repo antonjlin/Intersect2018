@@ -52,70 +52,18 @@ public class AutoFull extends LinearOpMode {
         red = true;
         colorSensor.team = Team.RED;
         startingPos = StartingPositions.CORNER;
-        waitForStart();
+//        default is center
+        vumark = RelicRecoveryVuMark.CENTER;
 
+        waitForStart();
         long time = System.currentTimeMillis();
         driveTrain.touch.setMode(DigitalChannel.Mode.INPUT);
-        /*while(System.currentTimeMillis() - time < 10000000) {
-            telemetry.addData("touchsensor" , driveTrain.touch.getState());
-            telemetry.addData("touch", driveTrain.touch.getMode());
-            telemetry.update();
-
-
-        }*/
-        //driveTrain.strafeRightTouchImu(.4,10000);
-        //driveTrain.strafeImuEncoderPDD(DriveTrain.Direction.LEFT, .45, 40, 10000);
-
-/*
-        vumark = vm.detectColumn(10);
-        telemetry.addData("vumark", vumark);
-        telemetry.update();
-        Functions.waitFor(100000);
-        driveTrain.touchServoRight.setPosition(driveTrain.touchDownPos);
-        Functions.waitFor(200);
-        driveTrain.strafeImuPDD(DriveTrain.Direction.RIGHT, .4, 4);
-        Functions.waitFor(200);
-        driveTrain.touchServoRight.setPosition(driveTrain.touchUpPos);
-        Functions.waitFor(400);
-        driveTrain.columnBlockRed(RelicRecoveryVuMark.LEFT);
-*/
-
 
         if (opModeIsActive()) {
-//            jewelArm.setPosition(jewelArmDownPos);
-//            Functions.waitFor(2000);
-//            jewelArm.setPosition(jewelArmInitPosition);
-//            driveTrain.encoderDriveIMU(.2, 30, DriveTrain.Direction.RIGHT, 10);
-            /*driveTrain.encoderDrive(.2, 30, DriveTrain.Direction.BACKWARD, 10);
-            driveTrain.encoderDrive(.2, 3, DriveTrain.Direction.FORWARD, 4);*/
-/*
-            jewelArm.setPosition(jewelArmDownPos-.15);
-            jewelArm.setPosition(jewelArmDownPos);
-            Functions.waitFor(1000);
-            jewel();
-            driveTrain.encoderDrive(.4, 43, DriveTrain.Direction.FORWARD, 4);
-            driveTrain.rotateIMURamp(-90,.2,10,telemetry);
-            driveTrain.encoderDrive(.4, 30, DriveTrain.Direction.BACKWARD, 4);
-            driveTrain.encoderDrive(.4, 3, DriveTrain.Direction.FORWARD, 4);
-            driveTrain.touchServoRight.setPosition(driveTrain.touchDownPos);
-            Functions.waitFor(1000);
-            driveTrain.strafeRightTouchImu(.45,10);
-            driveTrain.columnBlockRed(RelicRecoveryVuMark.CENTER);
-            driveTrain.encoderDrive(0.4,15, DriveTrain.Direction.BACKWARD,10);
-            driveTrain.encoderDrive(0.4,9, DriveTrain.Direction.FORWARD,10);
-            driveTrain.dumpBlock();
-            driveTrain.encoderDrive(0.4,20, DriveTrain.Direction.BACKWARD,10);
-            driveTrain.encoderDrive(0.4,4, DriveTrain.Direction.FORWARD,10);
 
-            Log.d("Functions.", "waitfor");*/
-            /*driveTrain.strafeImuEncoderPDD(DriveTrain.Direction.LEFT, .3, 20, 20);
-            Functions.waitFor(30000);*/
-            vumark = RelicRecoveryVuMark.CENTER;
-            vumark = vm.detectColumn(10);
+            vumark = vm.detectColumn(5);
             telemetry.addData("vumark", vumark);
 
-            //jewelArm.setPosition(jewelArmDownPos);
-            //Functions.waitFor(1000);
             jewel();
 
             jewelArm.setPosition(jewelArmDownPos);
@@ -172,10 +120,10 @@ public class AutoFull extends LinearOpMode {
 //                    driveTrain.encoderDrive(0.5, 60, DriveTrain.Direction.BACKWARD, 10);
 //                    driveTrain.encoderDrive(0.5, 10, DriveTrain.Direction.FORWARD, 10);
 //                }
-
-
+//
+//
 //            }
-        }
+//        }
     }
     public void telemetry(String field1,String field2){
         telemetry.addData(field1 + ": ",field2);
@@ -236,13 +184,6 @@ public class AutoFull extends LinearOpMode {
     }
     public void knockJewel(DriveTrain.Direction direction) {
 
-       /* driveTrain.encoderDrive(0.1,2, DriveTrain.Direction.FORWARD,5);
-        Functions.waitFor(150);
-        driveTrain.rotateIMURamp(9 ,0.4,5,telemetry);
-        Functions.waitFor(1000);
-
-*/
-
         jewelArm.setPosition(jewelArmDownPos-.05);
         Functions.waitFor(100);
 
@@ -252,20 +193,9 @@ public class AutoFull extends LinearOpMode {
             driveTrain.rotateIMURamp(-7,0.4,5,telemetry);
             jewelArm.setPosition(jewelArmInitPosition);
             Functions.waitFor(500);
-//            driveTrain.rotateIMURamp(-7,0.4,5,telemetry);
         } else{
             //COUNTERINTUITIVE, BUT THIS CONTROLS THE KNOCK BACKWARDS (CLOCKWISE)
-            //jewelArm.setPosition(jewelArmInitPosition);
-            //Functions.waitFor(150);
-           /* driveTrain.encoderDrive(0.1,2, DriveTrain.Direction.FORWARD,5);
-            driveTrain.rotateIMURamp(9 ,0.4,5,telemetry);
 
-
-            jewelArm.setPosition(jewelArmDownPos);
-            Functions.waitFor(1000);
-            driveTrain.rotateIMURamp(10,0.4,5,telemetry);
-
-*/
             driveTrain.rotateIMURamp(10,0.4,5,telemetry);
             jewelArm.setPosition(jewelArmInitPosition);
             Functions.waitFor(500);
