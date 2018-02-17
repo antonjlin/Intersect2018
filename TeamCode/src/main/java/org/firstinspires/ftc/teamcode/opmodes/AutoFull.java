@@ -123,7 +123,7 @@ public class AutoFull extends LinearOpMode {
 //
 //
 //            }
-//        }
+        }
     }
     public void telemetry(String field1,String field2){
         telemetry.addData(field1 + ": ",field2);
