@@ -128,7 +128,7 @@ public class DriveTrain {
             case CENTER:
                 touchServoRight.setPosition(touchUpPos);
                 Functions.waitFor(100);
-                strafeImuEncoderPDD(Direction.RIGHT, .4, 3, 2);
+                strafeImuEncoderPDD(Direction.RIGHT, .4, 2.5, 2);
                 touchServoRight.setPosition(touchDownPos);
                 Functions.waitFor(100);
                 strafeImuPDD(Direction.RIGHT, .4,3000);
@@ -139,29 +139,19 @@ public class DriveTrain {
             case LEFT:
                 touchServoRight.setPosition(touchUpPos);
                 Functions.waitFor(100);
-                strafeImuEncoderPDD(Direction.RIGHT, .4,12,5);
+                strafeImuEncoderPDD(Direction.RIGHT, .4,10.5,5);
                 Functions.waitFor(100);
                 touchServoRight.setPosition(touchDownPos);
                 Functions.waitFor(100);
                 strafeImuPDD(Direction.RIGHT, .4, 2);
                 strafeImuEncoderPDD(Direction.LEFT,.3,1.73 ,3);
+                touchServoRight.setPosition(touchUpPos);
                 break;
 
         }
-/*
-        double currentHeading;
 
-        if (imu.getAnglePositive() <= 180) {
-            currentHeading = imu.getAnglePositive();
-        }
-        else {
-            currentHeading = imu.getAngleNegative();
-        }
+//        encoderDrive(.4, 1, Direction.FORWARD, 3);
 
-        if (Math.abs(currentHeading) > 10) {
-            rotateToHeading(0, 0.3, 3000, opMode.telemetry);
-            rotateToHeading(0, 0.1, 3000, opMode.telemetry);
-        }*/
         dumpBlock();
         encoderDrive(.4, 7, Direction.FORWARD, 3);
         dumpBlock();
