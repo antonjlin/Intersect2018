@@ -63,6 +63,10 @@ public class AutoFull extends LinearOpMode {
         long time = System.currentTimeMillis();
         driveTrain.touch.setMode(DigitalChannel.Mode.INPUT);
 
+        //driveTrain.strafeImuEncoderPDD(DriveTrain.Direction.LEFT, .5, 20, 5);
+
+        //Functions.waitFor(20000);
+
         if (opModeIsActive()) {
 
             vumark = vm.detectColumn(5);
@@ -74,13 +78,14 @@ public class AutoFull extends LinearOpMode {
 //            jewelArm.setPosition(jewelArmInitPosition - .15);
 //            jewelArm.setPosition(jewelArmInitPosition);
             Functions.waitFor(200);
-            driveTrain.encoderDrive(.2, 5,DriveTrain.Direction.FORWARD, 5);
+            driveTrain.encoderDrive(.2, 5,DriveTrain.Direction.BACKWARD, 5);
             jewelArm.setPosition(jewelArmInitPosition);
-            driveTrain.encoderDrive(.5, 21,DriveTrain.Direction.FORWARD, 5);
+            driveTrain.encoderDrive(.5, 21,DriveTrain.Direction.BACKWARD, 5);
             Functions.waitFor(100);
             driveTrain.rotateIMURamp(-90, .5, 5, this.telemetry);
             Functions.waitFor(100);
-            driveTrain.encoderDrive(.5,30, DriveTrain.Direction.BACKWARD,10);
+            driveTrain.strafeImuEncoderPDD(DriveTrain.Direction.LEFT, .5, 17.5, 5);
+            driveTrain.encoderDrive(.5,14, DriveTrain.Direction.BACKWARD,10);
             driveTrain.encoderDrive(.5,3, DriveTrain.Direction.FORWARD,10);
 //            driveTrain.strafeImuEncoderPDD(DriveTrain.Direction.LEFT, .3, 8, 4);
 //            Functions.waitFor(200);
@@ -165,9 +170,36 @@ public class AutoFull extends LinearOpMode {
     }
 
     public void redCorner(){
-        driveTrain.encoderDrive(.6,27,DriveTrain.Direction.FORWARD,10);
-        driveTrain.rotateIMURamp(-90,.4,10,telemetry);
-        driveTrain.encoderDrive(.6,27,DriveTrain.Direction.BACKWARD,10);
+        vumark = vm.detectColumn(5);
+        telemetry.addData("vumark", vumark);
+
+        jewel();
+
+//            jewelArm.setPosition(jewelArmDownPos);
+//            jewelArm.setPosition(jewelArmInitPosition - .15);
+//            jewelArm.setPosition(jewelArmInitPosition);
+        Functions.waitFor(200);
+        driveTrain.encoderDrive(.2, 5,DriveTrain.Direction.FORWARD, 5);
+        jewelArm.setPosition(jewelArmInitPosition);
+        driveTrain.encoderDrive(.5, 21,DriveTrain.Direction.FORWARD, 5);
+        Functions.waitFor(100);
+        driveTrain.rotateIMURamp(-90, .5, 5, this.telemetry);
+        Functions.waitFor(100);
+        driveTrain.encoderDrive(.5,30, DriveTrain.Direction.BACKWARD,10);
+        driveTrain.encoderDrive(.5,3, DriveTrain.Direction.FORWARD,10);
+//            driveTrain.strafeImuEncoderPDD(DriveTrain.Direction.LEFT, .3, 8, 4);
+//            Functions.waitFor(200);
+//            driveTrain.strafeImuEncoderPDD(DriveTrain.Direction.RIGHT, .2, 2, 2);
+//            Functions.waitFor(100);
+//            driveTrain.encoderDrive(.4, 6.35, DriveTrain.Direction.BACKWARD, 4);
+//            Functions.waitFor(100);
+        driveTrain.touchServoRight.setPosition(driveTrain.touchDownPos);
+        Functions.waitFor(1300);
+        driveTrain.strafeImuPDD(DriveTrain.Direction.RIGHT, .4, 4);
+        Functions.waitFor(200);
+        driveTrain.touchServoRight.setPosition(driveTrain.touchUpPos);
+        Functions.waitFor(200);
+        driveTrain.columnBlockRed(vumark);
     }
     public void blueCorner(){
         driveTrain.encoderDrive(0.4, 26, DriveTrain.Direction.BACKWARD, 10);

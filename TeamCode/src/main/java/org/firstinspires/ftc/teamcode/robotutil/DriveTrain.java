@@ -1203,7 +1203,7 @@ public class DriveTrain {
 
 
                 if(diff > 100 ) {
-                    proportional = ((.01 * Math.abs(start - angle))/2.7);
+                    proportional = (((.01 * Math.abs(start - angle))/1.3 )+ .035);
                     //velocity = Math.abs(start - angle)/diff;
                     velocity = (angle - angle1 )/ diff;
                     velocity = velocity/300;
@@ -1313,7 +1313,7 @@ public class DriveTrain {
                 anglePos = imu.getAnglePositive();
                 angleNeg = imu.getAngleNegative();
 
-                if(imu.getAnglePositive() < Math.abs(angleNeg)){
+                if(anglePos < Math.abs(angleNeg)){
                         angle = anglePos;
                 }
                 else if( anglePos > Math.abs(angleNeg)){
@@ -1341,10 +1341,10 @@ public class DriveTrain {
 
 
                 if(diff > 50   ) {
-                    proportional = ((.01 * Math.abs(start - angle))/2.7 );
+                    proportional = (((.01 * Math.abs(start - angle))/1.4 )+ .03);
                     //velocity = Math.abs(start - angle)/diff;
                     velocity = (angle - angle1 )/ diff;
-                    velocity = velocity/300;
+                    velocity = velocity/200;
                     velocityDiff = velocity - velocity1;
                     accleration = velocityDiff/diff;
 
@@ -1427,7 +1427,7 @@ public class DriveTrain {
 
 
                 if(diff > 100   ) {
-                    proportional = ((.01 * Math.abs(start-angle))/2.7);
+                    proportional = (((.01 * Math.abs(start - angle))/1.4 )+ .03);
                     //velocity = Math.abs(start - angle)/diff;
                     velocity = (angle - angle1 )/ diff;
                     velocity = velocity/300;
