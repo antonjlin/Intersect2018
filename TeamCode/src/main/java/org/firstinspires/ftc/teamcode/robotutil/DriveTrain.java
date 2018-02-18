@@ -36,7 +36,7 @@ public class DriveTrain {
     public double cryptoDownPos = 0.56;
     public double cryptoUpPos = cryptoDownPos - 0.5;
     public double touchDownPos = .7;
-    public double touchUpPos = .3;
+    public double touchUpPos = .35;
     // Tunable parameters
 
     private int conversionFactor = 50;
@@ -1216,13 +1216,14 @@ public class DriveTrain {
                 rB.setPower(-Math.abs(power+pb -velocity));
 
 
-                if(diff > 100 ) {
-                    proportional = (((.01 * Math.abs(start - angle))/1.2 )+ .037);
+                if(diff > 50 ) {
+                    proportional = (((.01 * Math.abs(start - angle))/3.5 )+ .02);
                     //velocity = Math.abs(start - angle)/diff;
                     velocity = (angle - angle1 )/ diff;
                     velocity = velocity/200;
                     velocityDiff = velocity - velocity1;
                     accleration = velocityDiff/diff;
+                    velocity1 = velocity;
 
                     angle1 = angle;
                     if (start - angle < -2) {
@@ -1363,7 +1364,7 @@ public class DriveTrain {
                     velocity = velocity/150;
                     velocityDiff = velocity - velocity1;
                     accleration = velocityDiff/diff;
-
+                    velocity1 = velocity;
                     angle1 = angle;
                     if (start - angle < -2) {
 
@@ -1450,6 +1451,7 @@ public class DriveTrain {
                     velocityDiff = velocity - velocity1;
                     accleration = velocityDiff/diff;
 
+                    velocity1 = velocity;
                     angle1 = angle;
                     if (start - angle < -2) {
 

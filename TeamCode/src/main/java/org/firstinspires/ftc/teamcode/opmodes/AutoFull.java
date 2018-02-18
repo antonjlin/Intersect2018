@@ -25,7 +25,7 @@ import org.firstinspires.ftc.teamcode.robotutil.Team;
 import org.firstinspires.ftc.teamcode.robotutil.VuMark;
 @Autonomous(name = "TouchAuto")
 public class AutoFull extends LinearOpMode {
-    static double jewelArmInitPosition = .35, jewelArmDownPos = 0.9, jewelArmUpPos = 0.4 , cryptoDownPos = 0, cryptoUpPos = .5;
+    static double jewelArmInitPosition = .4, jewelArmDownPos = 0.9, jewelArmUpPos = 0.4 , cryptoDownPos = 0, cryptoUpPos = .5;
     static DcMotor rF, rB, lF, lB;
     static GyroSensor gyro;
     static Servo jewelArm;
@@ -67,8 +67,8 @@ public class AutoFull extends LinearOpMode {
         driveTrain.touch.setMode(DigitalChannel.Mode.INPUT);
 
         //driveTrain.strafeImuEncoderPDD(DriveTrain.Direction.LEFT, .5, 20, 5);
-
-        //Functions.waitFor(20000);
+        driveTrain.strafeImuPDD( DriveTrain.Direction.RIGHT, 0 , .4, 10);
+        Functions.waitFor(20000);
 
         if (opModeIsActive()) {
 
@@ -81,7 +81,7 @@ public class AutoFull extends LinearOpMode {
 //            jewelArm.setPosition(jewelArmInitPosition - .15);
 //            jewelArm.setPosition(jewelArmInitPosition);
             Functions.waitFor(200);
-            driveTrain.encoderDrive(.2, 25,DriveTrain.Direction.BACKWARD, 5);
+            driveTrain.encoderDrive(.4, 25,DriveTrain.Direction.BACKWARD, 5);
             //jewelArm.setPosition(jewelArmInitPosition);
             //driveTrain.encoderDrive(.5, 21,DriveTrain.Direction.BACKWARD, 5);HH
             Functions.waitFor(100);
