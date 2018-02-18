@@ -67,8 +67,8 @@ public class AutoFull extends LinearOpMode {
         driveTrain.touch.setMode(DigitalChannel.Mode.INPUT);
 
         //driveTrain.strafeImuEncoderPDD(DriveTrain.Direction.LEFT, .5, 20, 5);
-        driveTrain.strafeImuPDD( DriveTrain.Direction.RIGHT, 0 , .4, 10);
-        Functions.waitFor(20000);
+        //driveTrain.strafeImuPDD( DriveTrain.Direction.RIGHT, 0 , .4, 10);
+        //Functions.waitFor(20000);
 
         if (opModeIsActive()) {
 

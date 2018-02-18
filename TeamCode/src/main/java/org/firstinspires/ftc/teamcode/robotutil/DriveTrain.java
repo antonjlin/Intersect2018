@@ -1358,7 +1358,7 @@ public class DriveTrain {
 
 
                 if(diff > 50   ) {
-                    proportional = (((.01 * Math.abs(start - angle))/1.2 )+ .037);
+                    proportional = (((.01 * Math.abs(start - angle))/3 )+ .2);
                     //velocity = Math.abs(start - angle)/diff;
                     velocity = (angle - angle1 )/ diff;
                     velocity = velocity/150;
@@ -1444,10 +1444,10 @@ public class DriveTrain {
 
 
                 if(diff > 100   ) {
-                    proportional = (((.01 * Math.abs(start - angle))/1.2 )+ .037);
+                    proportional = (((.01 * Math.abs(start - angle))/3 )+ .02);
                     //velocity = Math.abs(start - angle)/diff;
                     velocity = (angle - angle1 )/ diff;
-                    velocity = velocity/300;
+                    velocity = velocity/150;
                     velocityDiff = velocity - velocity1;
                     accleration = velocityDiff/diff;
 
