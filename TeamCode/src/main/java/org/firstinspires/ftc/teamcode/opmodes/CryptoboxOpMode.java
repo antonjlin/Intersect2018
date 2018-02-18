@@ -34,7 +34,7 @@ public class CryptoboxOpMode extends OpMode
 
         cryptoboxDetector = new CryptoboxDetector();
         cryptoboxDetector.init(hardwareMap.appContext, CameraViewDisplay.getInstance());
-        cryptoboxDetector.rotateMat = true;
+        cryptoboxDetector.rotateMat = false;
 
 
 

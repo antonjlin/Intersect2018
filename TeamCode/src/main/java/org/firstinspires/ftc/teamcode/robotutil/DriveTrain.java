@@ -24,7 +24,7 @@ public class DriveTrain {
     static final double TICKS_PER_INCH_FORWARD = 62;
     static final double TICKS_PER_INCH_STRAFE = 61.3;
     public DcMotor rF, rB, lF, lB, rIntake, lIntake, rSlide, lSlide;
-//    public DigitalChannel cryptoTouch;
+   // public DigitalChannel cryptoTouch;
     public Servo flipServo,cryptoArm,touchServoRight,touchServoLeft;
     public DigitalChannel touch;
     public double minMotorPower = 0.085; //minimum power that robot still moves
@@ -128,7 +128,9 @@ public class DriveTrain {
             case CENTER:
                 touchServoRight.setPosition(touchUpPos);
                 Functions.waitFor(100);
+
                 strafeImuEncoderPDD(Direction.RIGHT,-90, .4, 2.5, 2);
+
                 touchServoRight.setPosition(touchDownPos);
                 Functions.waitFor(100);
                 strafeImuPDD(Direction.RIGHT, -90,.4,3000);
@@ -149,14 +151,24 @@ public class DriveTrain {
                 break;
 
         }
+/*
+        double currentHeading;
 
-//        encoderDrive(.4, 1, Direction.FORWARD, 3);
+        if (imu.getAnglePositive() <= 180) {
+            currentHeading = imu.getAnglePositive();
+        }
+        else {
+            currentHeading = imu.getAngleNegative();
+        }
 
+        if (Math.abs(currentHeading) > 10) {
+            rotateToHeading(0, 0.3, 3000, opMode.telemetry);
+            rotateToHeading(0, 0.1, 3000, opMode.telemetry);
+        }*/
         dumpBlock();
         encoderDrive(.4, 7, Direction.FORWARD, 3);
         dumpBlock();
-        encoderDrive(.4, 10, Direction.BACKWARD, 3);
-        encoderDrive(.4, 6, Direction.FORWARD, 3);
+        encoderDrive(.4, 7, Direction.BACKWARD, 3);
 
         Log.d("columnBlockRed","exited");
     }
@@ -1305,7 +1317,7 @@ public class DriveTrain {
             long diff;
             int avg = 0;
 
-            while (System.currentTimeMillis() <= endtime && avg < ticksToMove && opMode.opModeIsActive()) {
+            while (System.currentTimeMillis() <= endtime && avg < ticksToMove ) {
 
                 diff = System.currentTimeMillis() - timecounter;
                 int encoLb = lB.getCurrentPosition();
@@ -1391,7 +1403,7 @@ public class DriveTrain {
             long diff;
             int avg = 0;
 
-            while (System.currentTimeMillis() <= endtime && avg < ticksToMove && opMode.opModeIsActive()) {
+            while (System.currentTimeMillis() <= endtime && avg < ticksToMove ) {
 
                 diff = System.currentTimeMillis() - timecounter;
                 int encoLb = lB.getCurrentPosition();

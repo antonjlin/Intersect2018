@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.sun.tools.javac.code.Type;
 
 import org.firstinspires.ftc.teamcode.robotutil.DriveTrain;
 import org.firstinspires.ftc.teamcode.robotutil.Functions;
@@ -34,7 +35,8 @@ public class DriveTrainTask extends TaskThread {
     public void run() {
         timer.reset();
         while (opMode.opModeIsActive() && running) {
-            balance = opMode.gamepad1.start;
+//            balance = opMode.gamepad1.start;
+            balance = false;
 
             double r = Math.hypot(opMode.gamepad1.left_stick_x, opMode.gamepad1.left_stick_y);
             double robotAngle = Math.atan2(opMode.gamepad1.left_stick_y, opMode.gamepad1.left_stick_x) - Math.PI / 4;
@@ -132,14 +134,14 @@ public class DriveTrainTask extends TaskThread {
                     opMode.telemetry.addLine("Roll Done");
                     driveTrain.stopAll();
                 }
-                opMode.telemetry.update();
+//                opMode.telemetry.update();
                 //Functions.waitFor(50);
             }
             Functions.waitFor(checkTimeMS);
             //CHECK TO SEE IF OVERSHOT AND IS STILL WITHIN THRESHOLD
             if(Math.abs(pitch)<driveTrain.balanceThreshold && Math.abs(roll)<driveTrain.balanceThreshold){
                 opMode.telemetry.addLine("Overall Done");
-                opMode.telemetry.update();
+//                opMode.telemetry.update();
                 driveTrain.stopAll();
                 break;
             }

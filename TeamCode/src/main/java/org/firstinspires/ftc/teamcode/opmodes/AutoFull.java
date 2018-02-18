@@ -25,7 +25,7 @@ import org.firstinspires.ftc.teamcode.robotutil.Team;
 import org.firstinspires.ftc.teamcode.robotutil.VuMark;
 @Autonomous(name = "TouchAuto")
 public class AutoFull extends LinearOpMode {
-    static double jewelArmInitPosition = .3, jewelArmDownPos = 0.9, jewelArmUpPos = 0.35 , cryptoDownPos = 0, cryptoUpPos = .5;
+    static double jewelArmInitPosition = .35, jewelArmDownPos = 0.9, jewelArmUpPos = 0.4 , cryptoDownPos = 0, cryptoUpPos = .5;
     static DcMotor rF, rB, lF, lB;
     static GyroSensor gyro;
     static Servo jewelArm;
@@ -57,11 +57,11 @@ public class AutoFull extends LinearOpMode {
         startingPos = StartingPositions.CORNER;
 //        default is center
         vumark = RelicRecoveryVuMark.CENTER;
-        while(opModeIsActive()){
-            vumark = vm.detectColumn(5);
-            telemetry.addData("vumark", vumark);
-            Functions.waitFor(2000);
-        }
+//        while(opModeIsActive()){
+//            vumark = vm.detectColumn(5);
+//            telemetry.addData("vumark", vumark);
+//            Functions.waitFor(2000);
+//        }
         waitForStart();
         long time = System.currentTimeMillis();
         driveTrain.touch.setMode(DigitalChannel.Mode.INPUT);

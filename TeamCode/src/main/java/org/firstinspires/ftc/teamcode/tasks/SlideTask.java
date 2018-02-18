@@ -51,7 +51,7 @@ public class SlideTask extends TaskThread {
                 opMode.telemetry.addLine("idle");
 
             }
-            opMode.telemetry.update();
+//            opMode.telemetry.update();
 
 //            if(opMode.gamepad1.a || opMode.gamepad2.a){
 //                setSlidePosition(pos0,3);
@@ -85,7 +85,7 @@ public class SlideTask extends TaskThread {
         rZeroPosition = rSlide.getCurrentPosition();
         opMode.telemetry.addData("lSlideZero", lZeroPosition);
         opMode.telemetry.addData("rSlideZero", rZeroPosition);
-        opMode.telemetry.update();
+//        opMode.telemetry.update();
 
 
      }
@@ -139,7 +139,7 @@ public class SlideTask extends TaskThread {
             opMode.telemetry.addData("r target ", newRTarget);
             opMode.telemetry.addData("lpos ", lSlide.getCurrentPosition());
             opMode.telemetry.addData("rpos ", rSlide.getCurrentPosition());
-            opMode.telemetry.update();
+//            opMode.telemetry.update();
             /*
             if(!lSlide.isBusy()){
                     lSlide.setPower(0);
@@ -170,7 +170,7 @@ public class SlideTask extends TaskThread {
         opMode.telemetry.addData("lpos ", lSlide.getCurrentPosition());
         opMode.telemetry.addData("rpos ", rSlide.getCurrentPosition());
         opMode.telemetry.addLine("done ");
-        opMode.telemetry.update();
+//        opMode.telemetry.update();
 
         // Turn off RUN_TO_POSITION
         rSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

@@ -13,8 +13,8 @@ import org.firstinspires.ftc.teamcode.robotutil.Functions;
 public class FlipTask extends TaskThread {
     private Servo flipServo;
     double flipDownPos = 1;
-    double flipInterPos = .2;
-    double flipUpPos = .56;
+    double flipInterPos = .85;
+    double flipUpPos = .45;
 
     int pos = 0;
     ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
@@ -47,7 +47,7 @@ public class FlipTask extends TaskThread {
             }
             Functions.waitFor(200);
             opMode.telemetry.addData("position: ",pos);
-            opMode.telemetry.update();
+//            opMode.telemetry.update();
 
         }
 
