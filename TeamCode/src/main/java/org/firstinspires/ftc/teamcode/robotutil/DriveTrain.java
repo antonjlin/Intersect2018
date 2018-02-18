@@ -38,7 +38,8 @@ public class DriveTrain {
     public double touchDownPos = .7;
     public double touchUpPos = .35;
     // Tunable parameters
-
+    public double pGain = 2.5;
+    public double dGain = 100;
     private int conversionFactor = 50;
     public double balanceThreshold = 1.5;
     public double balanceMultiplier = 0.08;
@@ -1217,10 +1218,11 @@ public class DriveTrain {
 
 
                 if(diff > 50 ) {
-                    proportional = (((.01 * Math.abs(start - angle))/3.5 )+ .02);
+//                    proportional = (((.01 * Math.abs(start - angle))/3.5 )+ .02);
+                    proportional = (((.01 * Math.abs(start - angle))/pGain )+ .02);
                     //velocity = Math.abs(start - angle)/diff;
                     velocity = (angle - angle1 )/ diff;
-                    velocity = velocity/200;
+                    velocity = velocity/dGain;
                     velocityDiff = velocity - velocity1;
                     accleration = velocityDiff/diff;
                     velocity1 = velocity;

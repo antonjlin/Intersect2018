@@ -70,8 +70,43 @@ public class AutoFull extends LinearOpMode {
         //driveTrain.strafeImuPDD( DriveTrain.Direction.RIGHT, 0 , .4, 10);
         //Functions.waitFor(20000);
 
-        if (opModeIsActive()) {
+        while(opModeIsActive()){
+            if (gamepad1.b){
+                driveTrain.strafeImuPDD(DriveTrain.Direction.RIGHT,0,0.4,4);
+                Functions.waitFor(200);
+            }
+            if (gamepad1.a){
+                driveTrain.pGain += -.025;
+                Functions.waitFor(200);
 
+            }
+            if (gamepad1.y){
+                driveTrain.pGain += .025;
+                Functions.waitFor(200);
+
+            }
+            if (gamepad1.dpad_down){
+                driveTrain.dGain += -25;
+                Functions.waitFor(200);
+
+            }
+            if (gamepad1.dpad_up){
+                driveTrain.dGain += 25;
+                Functions.waitFor(200);
+
+            }
+            telemetry.addData("pGain:",driveTrain.pGain);
+            telemetry.addData("dGain:",driveTrain.dGain);
+            telemetry.update();
+        }
+        if (opModeIsActive()) {
+            for(int i = 0;i<5;i++){
+                driveTrain.strafeImuPDD(DriveTrain.Direction.RIGHT,0,0.4,10);
+                Functions.waitFor(3000);
+                driveTrain.strafeImuPDD(DriveTrain.Direction.LEFT,0,0.4,10);
+                Functions.waitFor(3000);
+            }
+            Functions.waitFor(200000);
             vumark = vm.detectColumn(5);
             telemetry.addData("vumark", vumark);
 
