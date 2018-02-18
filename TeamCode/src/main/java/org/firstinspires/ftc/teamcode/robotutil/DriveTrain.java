@@ -123,28 +123,28 @@ public class DriveTrain {
     public void columnBlockRed(RelicRecoveryVuMark vuMark){
         switch(vuMark){
             case RIGHT:
-                strafeImuEncoderPDD(Direction.LEFT,.3,1.73,3);
+                strafeImuEncoderPDD(Direction.LEFT,-90,.3,2,3);
                 break;
             case CENTER:
                 touchServoRight.setPosition(touchUpPos);
                 Functions.waitFor(100);
-                strafeImuEncoderPDD(Direction.RIGHT, .4, 2.5, 2);
+                strafeImuEncoderPDD(Direction.RIGHT,-90, .4, 2.5, 2);
                 touchServoRight.setPosition(touchDownPos);
                 Functions.waitFor(100);
-                strafeImuPDD(Direction.RIGHT, .4,3000);
+                strafeImuPDD(Direction.RIGHT, -90,.4,3000);
                 Functions.waitFor(100);
                 touchServoRight.setPosition(touchUpPos);
-                strafeImuEncoderPDD(Direction.LEFT,.3,1.73,3);
+                strafeImuEncoderPDD(Direction.LEFT, -90,.3,2,3);
                 break;
             case LEFT:
                 touchServoRight.setPosition(touchUpPos);
                 Functions.waitFor(100);
-                strafeImuEncoderPDD(Direction.RIGHT, .4,10.5,5);
+                strafeImuEncoderPDD(Direction.RIGHT, -90, .4,10.5,5);
                 Functions.waitFor(100);
                 touchServoRight.setPosition(touchDownPos);
                 Functions.waitFor(100);
-                strafeImuPDD(Direction.RIGHT, .4, 2);
-                strafeImuEncoderPDD(Direction.LEFT,.3,1.73 ,3);
+                strafeImuPDD(Direction.RIGHT, -90,.4, 2);
+                strafeImuEncoderPDD(Direction.LEFT,-90,.3,2 ,3);
                 touchServoRight.setPosition(touchUpPos);
                 break;
 
@@ -1131,7 +1131,7 @@ public class DriveTrain {
         }
 
     }
-    public void strafeImuPDD(Direction direction, double power, int timeoutS){
+    public void strafeImuPDD(Direction direction, double setAngle, double power, int timeoutS){
         //imustraferight only works
         double pf = 0;
         double pb = 0;
@@ -1155,6 +1155,8 @@ public class DriveTrain {
         else{
             start = imu.getAngle();
         }
+
+        start = setAngle;
 
 
 
@@ -1203,10 +1205,10 @@ public class DriveTrain {
 
 
                 if(diff > 100 ) {
-                    proportional = (((.01 * Math.abs(start - angle))/1.3 )+ .035);
+                    proportional = (((.01 * Math.abs(start - angle))/1.2 )+ .037);
                     //velocity = Math.abs(start - angle)/diff;
                     velocity = (angle - angle1 )/ diff;
-                    velocity = velocity/300;
+                    velocity = velocity/200;
                     velocityDiff = velocity - velocity1;
                     accleration = velocityDiff/diff;
 
@@ -1239,7 +1241,7 @@ public class DriveTrain {
 
 
 
-    public void strafeImuEncoderPDD(Direction direction, double power, double inches ,int timeoutS){
+    public void strafeImuEncoderPDD(Direction direction, double setAngle,  double power, double inches ,int timeoutS){
         //imustraferight only works
         int ticksToMove = (int)(inches * TICKS_PER_INCH_FORWARD);
 
@@ -1283,6 +1285,8 @@ public class DriveTrain {
         else{
             start = imu.getAngle();
         }
+
+        start = setAngle;
 
 
 
@@ -1341,10 +1345,10 @@ public class DriveTrain {
 
 
                 if(diff > 50   ) {
-                    proportional = (((.01 * Math.abs(start - angle))/1.4 )+ .03);
+                    proportional = (((.01 * Math.abs(start - angle))/1.2 )+ .037);
                     //velocity = Math.abs(start - angle)/diff;
                     velocity = (angle - angle1 )/ diff;
-                    velocity = velocity/200;
+                    velocity = velocity/150;
                     velocityDiff = velocity - velocity1;
                     accleration = velocityDiff/diff;
 
@@ -1427,7 +1431,7 @@ public class DriveTrain {
 
 
                 if(diff > 100   ) {
-                    proportional = (((.01 * Math.abs(start - angle))/1.4 )+ .03);
+                    proportional = (((.01 * Math.abs(start - angle))/1.2 )+ .037);
                     //velocity = Math.abs(start - angle)/diff;
                     velocity = (angle - angle1 )/ diff;
                     velocity = velocity/300;

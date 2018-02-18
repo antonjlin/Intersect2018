@@ -45,6 +45,9 @@ public class AutoFull extends LinearOpMode {
     Boolean garb = false;
     TouchSensor touch;
 
+
+    double angle = -90;
+
     @Override
     public void runOpMode() throws InterruptedException {
         initHardware();
@@ -78,15 +81,15 @@ public class AutoFull extends LinearOpMode {
 //            jewelArm.setPosition(jewelArmInitPosition - .15);
 //            jewelArm.setPosition(jewelArmInitPosition);
             Functions.waitFor(200);
-            driveTrain.encoderDrive(.2, 5,DriveTrain.Direction.BACKWARD, 5);
-            jewelArm.setPosition(jewelArmInitPosition);
-            driveTrain.encoderDrive(.5, 21,DriveTrain.Direction.BACKWARD, 5);
+            driveTrain.encoderDrive(.2, 25,DriveTrain.Direction.BACKWARD, 5);
+            //jewelArm.setPosition(jewelArmInitPosition);
+            //driveTrain.encoderDrive(.5, 21,DriveTrain.Direction.BACKWARD, 5);HH
             Functions.waitFor(100);
             driveTrain.rotateIMURamp(-90, .5, 5, this.telemetry);
             Functions.waitFor(100);
-            driveTrain.strafeImuEncoderPDD(DriveTrain.Direction.LEFT, .5, 17.5, 5);
-            driveTrain.encoderDrive(.5,14, DriveTrain.Direction.BACKWARD,10);
-            driveTrain.encoderDrive(.5,3, DriveTrain.Direction.FORWARD,10);
+            driveTrain.strafeImuEncoderPDD(DriveTrain.Direction.LEFT,angle,  .5, 15.5, 5);
+            driveTrain.encoderDrive(.5,12, DriveTrain.Direction.BACKWARD,10);
+            driveTrain.encoderDrive(.5,2.5, DriveTrain.Direction.FORWARD,10);
 //            driveTrain.strafeImuEncoderPDD(DriveTrain.Direction.LEFT, .3, 8, 4);
 //            Functions.waitFor(200);
 //            driveTrain.strafeImuEncoderPDD(DriveTrain.Direction.RIGHT, .2, 2, 2);
@@ -95,7 +98,7 @@ public class AutoFull extends LinearOpMode {
 //            Functions.waitFor(100);
             driveTrain.touchServoRight.setPosition(driveTrain.touchDownPos);
             Functions.waitFor(1300);
-            driveTrain.strafeImuPDD(DriveTrain.Direction.RIGHT, .4, 4);
+            driveTrain.strafeImuPDD(DriveTrain.Direction.RIGHT, angle ,.4, 4);
             Functions.waitFor(200);
             driveTrain.touchServoRight.setPosition(driveTrain.touchUpPos);
             Functions.waitFor(200);
@@ -195,7 +198,7 @@ public class AutoFull extends LinearOpMode {
 //            Functions.waitFor(100);
         driveTrain.touchServoRight.setPosition(driveTrain.touchDownPos);
         Functions.waitFor(1300);
-        driveTrain.strafeImuPDD(DriveTrain.Direction.RIGHT, .4, 4);
+        driveTrain.strafeImuPDD(DriveTrain.Direction.RIGHT, -90,.4, 4);
         Functions.waitFor(200);
         driveTrain.touchServoRight.setPosition(driveTrain.touchUpPos);
         Functions.waitFor(200);
@@ -231,7 +234,7 @@ public class AutoFull extends LinearOpMode {
         if(direction == DriveTrain.Direction.BACKWARD) {
             //COUNTERINTUITIVE, BUT THIS CONTROLS THE KNOCK FORWARDS (COUNTERCLOCKWISE)
             driveTrain.rotateIMURamp(-7,0.4,5,telemetry);
-//            jewelArm.setPosition(jewelArmInitPosition);
+            jewelArm.setPosition(jewelArmInitPosition);
             Functions.waitFor(500);
         } else{
             //COUNTERINTUITIVE, BUT THIS CONTROLS THE KNOCK BACKWARDS (CLOCKWISE)
