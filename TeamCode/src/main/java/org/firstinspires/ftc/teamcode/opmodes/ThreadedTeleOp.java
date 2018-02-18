@@ -50,6 +50,7 @@ import static org.firstinspires.ftc.teamcode.robotutil.Team.RED;
 @TeleOp(name = "Threaded Teleop")
 public class ThreadedTeleOp extends LinearOpMode {
     private DriveTrainTask driveTrainTask;
+
     private SlideTask slideTask;
     private IntakeTask intakeTask;
     private FlipTask flipTask;
@@ -79,6 +80,7 @@ public class ThreadedTeleOp extends LinearOpMode {
         flipTask.start();;
         blockPushTask.start();
         while(opModeIsActive()) {
+            telemetry.update();
            /* //Timer for 2 minute teleop period
             long elapsed = System.currentTimeMillis() - startTime;
 

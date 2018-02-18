@@ -6,11 +6,14 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.robotutil.DriveTrain;
+import org.firstinspires.ftc.teamcode.robotutil.Functions;
 
 public class IntakeTask extends TaskThread {
 
     private DcMotor lIntake, rIntake;
-
+    double lpower = 0;
+    double rpower = 0;
+    int checkDelay = 250;
     ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
     public IntakeTask(LinearOpMode opMode) {
@@ -21,6 +24,7 @@ public class IntakeTask extends TaskThread {
     @Override
     public void run() {
         timer.reset();
+
         while (opMode.opModeIsActive() && running) {
 /*
             if (opMode.gamepad1.dpad_up || opMode.gamepad2.dpad_up) {
@@ -37,26 +41,71 @@ public class IntakeTask extends TaskThread {
         }
     }
 //
-
+/*
     public void setRollerPower(double power) {
         rIntake.setPower(power);
         lIntake.setPower(power);
     }
+*/
 
-    public void tankControl(){
-        if (opMode.gamepad1.dpad_up || opMode.gamepad2.dpad_up) {
-            lIntake.setPower(.7);
-            rIntake.setPower(0.7);
-        } else if (opMode.gamepad1.dpad_down || opMode.gamepad2.dpad_down) {
-            lIntake.setPower(-.7);
-            rIntake.setPower(-0.7);
-        } else if(Math.abs(opMode.gamepad2.left_stick_y)>0.05 || Math.abs(opMode.gamepad2.right_stick_y)>0.05){
-            lIntake.setPower(opMode.gamepad2.left_stick_y);
-            rIntake.setPower(opMode.gamepad2.right_stick_y);
-        } else{
-            setRollerPower(0);
-        }
+    public void tankControl() {
+//        if (opMode.gamepad1.dpad_up || opMode.gamepad2.dpad_up) {
+//            lpower += 0.05;
+//            Functions.waitFor(checkDelay );
+//
+//        }
+//        if (opMode.gamepad2.dpad_down || opMode.gamepad1.dpad_down) {
+//            lpower += -0.05;
+//            Functions.waitFor(checkDelay );
+//
+//        }
+//        if (opMode.gamepad2.y) {
+//            rpower += 0.05;
+//            Functions.waitFor(checkDelay );
+//
+//        }
+//        if (opMode.gamepad2.a) {
+//            rpower += -0.05;
+//            Functions.waitFor(checkDelay );
+//
+//        }
+
+        lpower = opMode.gamepad2.left_stick_y;
+        rpower = opMode.gamepad2.right_stick_y;
+            if(opMode.gamepad2.x){
+                rpower = -.85;
+                lpower = -.85;
+            }
+//            if (opMode.gamepad2.b) {
+//                rpower = 0;
+//                lpower = 0;
+//            }
+        lIntake.setPower(lpower);
+        rIntake.setPower(rpower);
+        opMode.telemetry.addData("lpower: ", lpower);
+        opMode.telemetry.addData("rpower: ", rpower);
+//        opMode.telemetry.update();
+
     }
+
+//    public double getPower() {
+//        return power;
+//    }
+
+       /*( if (opMode.gamepad1.dpad_up || opMode.gamepad2.dpad_up) {
+            lIntake.setPower(-.5);
+            rIntake.setPower(-0.7);
+        } else if (opMode.gamepad1.b || opMode.gamepad2.b) {
+            lIntake.setPower(-.45);
+            rIntake.setPower(-0.6);
+        } else if (opMode.gamepad1.x || opMode.gamepad2.x) {
+            lIntake.setPower(-.35);
+            rIntake.setPower(-0.5);
+        } else if (opMode.gamepad1.dpad_down || opMode.gamepad2.dpad_down) {
+            lIntake.setPower(-.65);
+            rIntake.setPower(-0.85);`*/
+//        }
+//    }
 
     @Override
     public void initialize() {

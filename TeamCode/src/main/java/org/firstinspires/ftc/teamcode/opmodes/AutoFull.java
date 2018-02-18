@@ -25,7 +25,7 @@ import org.firstinspires.ftc.teamcode.robotutil.Team;
 import org.firstinspires.ftc.teamcode.robotutil.VuMark;
 @Autonomous(name = "TouchAuto")
 public class AutoFull extends LinearOpMode {
-    static double jewelArmInitPosition = .3, jewelArmDownPos = 0.9, jewelArmUpPos = 0.35 , cryptoDownPos = 0, cryptoUpPos = .5;
+    static double jewelArmInitPosition = .35, jewelArmDownPos = 0.9, jewelArmUpPos = 0.4 , cryptoDownPos = 0, cryptoUpPos = .5;
     static DcMotor rF, rB, lF, lB;
     static GyroSensor gyro;
     static Servo jewelArm;
@@ -54,11 +54,11 @@ public class AutoFull extends LinearOpMode {
         startingPos = StartingPositions.CORNER;
 //        default is center
         vumark = RelicRecoveryVuMark.CENTER;
-        while(opModeIsActive()){
-            vumark = vm.detectColumn(5);
-            telemetry.addData("vumark", vumark);
-            Functions.waitFor(2000);
-        }
+//        while(opModeIsActive()){
+//            vumark = vm.detectColumn(5);
+//            telemetry.addData("vumark", vumark);
+//            Functions.waitFor(2000);
+//        }
         waitForStart();
         long time = System.currentTimeMillis();
         driveTrain.touch.setMode(DigitalChannel.Mode.INPUT);
@@ -156,7 +156,10 @@ public class AutoFull extends LinearOpMode {
         Functions.waitFor(500);
         driveTrain.rotateIMURamp(6 ,0.4,5,telemetry);
         Functions.waitFor(500);
+        telemetry("jewel"," up nigga");
+
         jewelArm.setPosition(jewelArmDownPos);
+        telemetry("jewel"," down nigga");
         Functions.waitFor(1000);
 //        colorSensor.telemetryDebug(this);
         if(colorSensor.correctColor()){
@@ -181,12 +184,12 @@ public class AutoFull extends LinearOpMode {
         Functions.waitFor(200);
         driveTrain.encoderDrive(.2, 5,DriveTrain.Direction.FORWARD, 5);
         jewelArm.setPosition(jewelArmInitPosition);
-        driveTrain.encoderDrive(.5, 21,DriveTrain.Direction.FORWARD, 5);
+        driveTrain.encoderDrive(.5, 19.5,DriveTrain.Direction.FORWARD, 5);
         Functions.waitFor(100);
         driveTrain.rotateIMURamp(-90, .5, 5, this.telemetry);
         Functions.waitFor(100);
         driveTrain.encoderDrive(.5,30, DriveTrain.Direction.BACKWARD,10);
-        driveTrain.encoderDrive(.5,3, DriveTrain.Direction.FORWARD,10);
+        driveTrain.encoderDrive(.5,4, DriveTrain.Direction.FORWARD,10);
 //            driveTrain.strafeImuEncoderPDD(DriveTrain.Direction.LEFT, .3, 8, 4);
 //            Functions.waitFor(200);
 //            driveTrain.strafeImuEncoderPDD(DriveTrain.Direction.RIGHT, .2, 2, 2);
