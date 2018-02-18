@@ -76,6 +76,17 @@ public class IntakeTask extends TaskThread {
                 rpower = -.85;
                 lpower = -.85;
             }
+            else if(opMode.gamepad2.y){
+                rpower = -.3;
+                lpower = -.3;
+            }
+            else if (opMode.gamepad2.b) {
+                rpower = -.35;
+                lpower = -.35;
+            } else if (opMode.gamepad2.a) {
+                rpower = -.2;
+                lpower = -.2;
+            }
 //            if (opMode.gamepad2.b) {
 //                rpower = 0;
 //                lpower = 0;

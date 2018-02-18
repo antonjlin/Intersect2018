@@ -24,8 +24,8 @@ import org.firstinspires.ftc.teamcode.robotutil.IMU;
 import org.firstinspires.ftc.teamcode.robotutil.MRColorSensor;
 import org.firstinspires.ftc.teamcode.robotutil.Team;
 import org.firstinspires.ftc.teamcode.robotutil.VuMark;
-@Autonomous(name = "TouchAuto")
-public class AutoFull extends LinearOpMode {
+@Autonomous(name = "TouchAutoNotTest")
+public class AutoFullNotTest extends LinearOpMode {
     static double jewelArmInitPosition = .4, jewelArmDownPos = 0.9, jewelArmUpPos = 0.4 , cryptoDownPos = 0, cryptoUpPos = .5;
     static DcMotor rF, rB, lF, lB;
     static GyroSensor gyro;
@@ -63,23 +63,7 @@ public class AutoFull extends LinearOpMode {
 //            telemetry.addData("vumark", vumark);
 //            Functions.waitFor(2000);
 //        }
-        waitForStart();
-        long time = System.currentTimeMillis();
-        driveTrain.touch.setMode(DigitalChannel.Mode.INPUT);
-
-        //driveTrain.strafeImuEncoderPDD(DriveTrain.Direction.LEFT, .5, 20, 5);
-        //driveTrain.strafeImuPDD( DriveTrain.Direction.RIGHT, 0 , .4, 10);
-        //Functions.waitFor(20000);
-
-        while(opModeIsActive()){
-            if (gamepad1.b){
-                driveTrain.strafeImuPID(DriveTrain.Direction.RIGHT,0,0.4,4);
-                Functions.waitFor(200);
-            }
-            if (gamepad1.x){
-                driveTrain.strafeImuPDD(DriveTrain.Direction.RIGHT,0,0.4,4);
-                Functions.waitFor(200);
-            }
+        while(!gamepad1.start){
             if (gamepad1.a){
                 driveTrain.pGain += -.01;
                 Functions.waitFor(200);
@@ -107,21 +91,61 @@ public class AutoFull extends LinearOpMode {
             if (gamepad1.dpad_right){
                 driveTrain.iGain += 0.001;
                 Functions.waitFor(200);
-
             }
             telemetry.addData("pGain: ",driveTrain.pGain);
             telemetry.addData("dGain: ",driveTrain.dGain);
             telemetry.addData("iGain: ", driveTrain.iGain);
             telemetry.update();
         }
+        waitForStart();
+        long time = System.currentTimeMillis();
+        driveTrain.touch.setMode(DigitalChannel.Mode.INPUT);
+
+        //driveTrain.strafeImuEncoderPDD(DriveTrain.Direction.LEFT, .5, 20, 5);
+        //driveTrain.strafeImuPDD( DriveTrain.Direction.RIGHT, 0 , .4, 10);
+        //Functions.waitFor(20000);
+
+//        while(opModeIsActive()){
+//            if (gamepad1.b){
+//                driveTrain.strafeImuPDD(DriveTrain.Direction.RIGHT,0,0.4,4);
+//                Functions.waitFor(200);
+//            }
+//            if (gamepad1.a){
+//                driveTrain.pGain += -.01;
+//                Functions.waitFor(200);
+//
+//            }
+//            if (gamepad1.y){
+//                driveTrain.pGain += .01;
+//                Functions.waitFor(200);
+//
+//            }
+//            if (gamepad1.dpad_down){
+//                driveTrain.dGain += -.0001;
+//                Functions.waitFor(200);
+//
+//            }
+//            if (gamepad1.dpad_up){
+//                driveTrain.dGain += .0001;
+//                Functions.waitFor(200);
+//            }
+//            if (gamepad1.dpad_left){
+//                driveTrain.iGain += -0.001;
+//                Functions.waitFor(200);
+//
+//            }
+//            if (gamepad1.dpad_right){
+//                driveTrain.iGain += 0.001;
+//                Functions.waitFor(200);
+//
+//            }
+//            telemetry.addData("pGain: ",driveTrain.pGain);
+//            telemetry.addData("dGain: ",driveTrain.dGain);
+//            telemetry.addData("iGain: ", driveTrain.iGain);
+//            telemetry.update();
+//        }
         if (opModeIsActive()) {
-            for(int i = 0;i<5;i++){
-                driveTrain.strafeImuPDD(DriveTrain.Direction.RIGHT,0,0.4,10);
-                Functions.waitFor(3000);
-                driveTrain.strafeImuPDD(DriveTrain.Direction.LEFT,0,0.4,10);
-                Functions.waitFor(3000);
-            }
-            Functions.waitFor(200000);
+
             vumark = vm.detectColumn(5);
             telemetry.addData("vumark", vumark);
 
@@ -138,7 +162,7 @@ public class AutoFull extends LinearOpMode {
             driveTrain.rotateIMURamp(-90, .5, 5, this.telemetry);
             Functions.waitFor(100);
             driveTrain.strafeImuEncoderPDD(DriveTrain.Direction.LEFT,angle,  .5, 15.5, 5);
-            driveTrain.encoderDrive(.5,12, DriveTrain.Direction.BACKWARD,10);
+            driveTrain.encoderDrive(.5,16, DriveTrain.Direction.BACKWARD,10);
             driveTrain.encoderDrive(.5,3.5, DriveTrain.Direction.FORWARD,10);
 //            driveTrain.strafeImuEncoderPDD(DriveTrain.Direction.LEFT, .3, 8, 4);
 //            Functions.waitFor(200);
