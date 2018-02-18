@@ -156,10 +156,7 @@ public class AutoFull extends LinearOpMode {
         Functions.waitFor(500);
         driveTrain.rotateIMURamp(6 ,0.4,5,telemetry);
         Functions.waitFor(500);
-        telemetry("jewel"," up nigga");
-
         jewelArm.setPosition(jewelArmDownPos);
-        telemetry("jewel"," down nigga");
         Functions.waitFor(1000);
 //        colorSensor.telemetryDebug(this);
         if(colorSensor.correctColor()){
@@ -184,12 +181,12 @@ public class AutoFull extends LinearOpMode {
         Functions.waitFor(200);
         driveTrain.encoderDrive(.2, 5,DriveTrain.Direction.FORWARD, 5);
         jewelArm.setPosition(jewelArmInitPosition);
-        driveTrain.encoderDrive(.5, 19.5,DriveTrain.Direction.FORWARD, 5);
+        driveTrain.encoderDrive(.5, 21,DriveTrain.Direction.FORWARD, 5);
         Functions.waitFor(100);
         driveTrain.rotateIMURamp(-90, .5, 5, this.telemetry);
         Functions.waitFor(100);
         driveTrain.encoderDrive(.5,30, DriveTrain.Direction.BACKWARD,10);
-        driveTrain.encoderDrive(.5,4, DriveTrain.Direction.FORWARD,10);
+        driveTrain.encoderDrive(.5,3, DriveTrain.Direction.FORWARD,10);
 //            driveTrain.strafeImuEncoderPDD(DriveTrain.Direction.LEFT, .3, 8, 4);
 //            Functions.waitFor(200);
 //            driveTrain.strafeImuEncoderPDD(DriveTrain.Direction.RIGHT, .2, 2, 2);
