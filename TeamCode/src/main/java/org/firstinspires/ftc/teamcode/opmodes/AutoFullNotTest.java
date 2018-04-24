@@ -4,6 +4,7 @@ import android.util.Log;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
@@ -24,7 +25,8 @@ import org.firstinspires.ftc.teamcode.robotutil.IMU;
 import org.firstinspires.ftc.teamcode.robotutil.MRColorSensor;
 import org.firstinspires.ftc.teamcode.robotutil.Team;
 import org.firstinspires.ftc.teamcode.robotutil.VuMark;
-@Autonomous(name = "TouchAutoNotTest")
+@Autonomous(name = "Autonomous",group="FinalShit")
+
 public class AutoFullNotTest extends LinearOpMode {
     static double jewelArmInitPosition = .4, jewelArmDownPos = 0.9, jewelArmUpPos = 0.4 , cryptoDownPos = 0, cryptoUpPos = .5;
     static DcMotor rF, rB, lF, lB;
@@ -36,7 +38,7 @@ public class AutoFullNotTest extends LinearOpMode {
     DriveTrain driveTrain;
     ColorSensor jewelColor;
     MRColorSensor colorSensor;
-    StartingPositions startingPos = StartingPositions.CORNER;
+//    StartingPositions startingPos = StartingPositions.CORNER;
     int state;
     private BNO055IMU adaImu;
     private IMU imu;
@@ -52,167 +54,54 @@ public class AutoFullNotTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         initHardware();
-//       options();
-        red = true;
-        colorSensor.team = Team.RED;
-        startingPos = StartingPositions.CORNER;
+        options();
+//        red = false;
+//        colorSensor.team = Team.RED;
+//        startingPos = StartingPositions.CORNER;
 //        default is center
         vumark = RelicRecoveryVuMark.CENTER;
-//        while(opModeIsActive()){
-//            vumark = vm.detectColumn(5);
-//            telemetry.addData("vumark", vumark);
-//            Functions.waitFor(2000);
-//        }
-        while(!gamepad1.start){
-            if (gamepad1.a){
-                driveTrain.pGain += -.01;
-                Functions.waitFor(200);
 
-            }
-            if (gamepad1.y){
-                driveTrain.pGain += .01;
-                Functions.waitFor(200);
-
-            }
-            if (gamepad1.dpad_down){
-                driveTrain.dGain += -.0001;
-                Functions.waitFor(200);
-
-            }
-            if (gamepad1.dpad_up){
-                driveTrain.dGain += .0001;
-                Functions.waitFor(200);
-            }
-            if (gamepad1.dpad_left){
-                driveTrain.iGain += -0.001;
-                Functions.waitFor(200);
-
-            }
-            if (gamepad1.dpad_right){
-                driveTrain.iGain += 0.001;
-                Functions.waitFor(200);
-            }
-            telemetry.addData("pGain: ",driveTrain.pGain);
-            telemetry.addData("dGain: ",driveTrain.dGain);
-            telemetry.addData("iGain: ", driveTrain.iGain);
-            telemetry.update();
-        }
         waitForStart();
         long time = System.currentTimeMillis();
         driveTrain.touch.setMode(DigitalChannel.Mode.INPUT);
 
-        //driveTrain.strafeImuEncoderPDD(DriveTrain.Direction.LEFT, .5, 20, 5);
-        //driveTrain.strafeImuPDD( DriveTrain.Direction.RIGHT, 0 , .4, 10);
-        //Functions.waitFor(20000);
-
-//        while(opModeIsActive()){
-//            if (gamepad1.b){
-//                driveTrain.strafeImuPDD(DriveTrain.Direction.RIGHT,0,0.4,4);
-//                Functions.waitFor(200);
-//            }
-//            if (gamepad1.a){
-//                driveTrain.pGain += -.01;
-//                Functions.waitFor(200);
-//
-//            }
-//            if (gamepad1.y){
-//                driveTrain.pGain += .01;
-//                Functions.waitFor(200);
-//
-//            }
-//            if (gamepad1.dpad_down){
-//                driveTrain.dGain += -.0001;
-//                Functions.waitFor(200);
-//
-//            }
-//            if (gamepad1.dpad_up){
-//                driveTrain.dGain += .0001;
-//                Functions.waitFor(200);
-//            }
-//            if (gamepad1.dpad_left){
-//                driveTrain.iGain += -0.001;
-//                Functions.waitFor(200);
-//
-//            }
-//            if (gamepad1.dpad_right){
-//                driveTrain.iGain += 0.001;
-//                Functions.waitFor(200);
-//
-//            }
-//            telemetry.addData("pGain: ",driveTrain.pGain);
-//            telemetry.addData("dGain: ",driveTrain.dGain);
-//            telemetry.addData("iGain: ", driveTrain.iGain);
-//            telemetry.update();
-//        }
         if (opModeIsActive()) {
-
             vumark = vm.detectColumn(5);
             telemetry.addData("vumark", vumark);
-
             jewel();
-
-//            jewelArm.setPosition(jewelArmDownPos);
-//            jewelArm.setPosition(jewelArmInitPosition - .15);
-//            jewelArm.setPosition(jewelArmInitPosition);
             Functions.waitFor(200);
-            driveTrain.encoderDrive(.4, 25,DriveTrain.Direction.BACKWARD, 5);
-            //jewelArm.setPosition(jewelArmInitPosition);
-            //driveTrain.encoderDrive(.5, 21,DriveTrain.Direction.BACKWARD, 5);HH
-            Functions.waitFor(100);
-            driveTrain.rotateIMURamp(-90, .5, 5, this.telemetry);
-            Functions.waitFor(100);
-            driveTrain.strafeImuEncoderPDD(DriveTrain.Direction.LEFT,angle,  .5, 15.5, 5);
-            driveTrain.encoderDrive(.5,16, DriveTrain.Direction.BACKWARD,10);
-            driveTrain.encoderDrive(.5,3.5, DriveTrain.Direction.FORWARD,10);
-//            driveTrain.strafeImuEncoderPDD(DriveTrain.Direction.LEFT, .3, 8, 4);
-//            Functions.waitFor(200);
-//            driveTrain.strafeImuEncoderPDD(DriveTrain.Direction.RIGHT, .2, 2, 2);
-//            Functions.waitFor(100);
-//            driveTrain.encoderDrive(.4, 6.35, DriveTrain.Direction.BACKWARD, 4);
-//            Functions.waitFor(100);
-            driveTrain.touchServoRight.setPosition(driveTrain.touchDownPos);
-            Functions.waitFor(1300);
-            driveTrain.strafeImuPDD(DriveTrain.Direction.RIGHT, angle ,.4, 4);
-            Functions.waitFor(200);
-            driveTrain.touchServoRight.setPosition(driveTrain.touchUpPos);
-            Functions.waitFor(200);
-            driveTrain.columnBlockRed(vumark);
-
-
-
-//            if (red) {
-//
-//                if (startingPos == StartingPositions.CORNER) {
-//                    driveTrain.encoderDrive(0.4, 10, DriveTrain.Direction.FORWARD, 3);
-//                    vumark = vm.detectColumn(5);
-//                    driveTrain.encoderDrive(.4, 10, DriveTrain.Direction.FORWARD, 4);
-//                    driveTrain.rotateIMURamp(-90, .4,1, this.telemetry);
-//                    driveTrain.moveRightUntilTouch(.2,5000);
-//                    driveTrain.columnBlockRed(vumark);
-//
-//                } else {
-//
-//                    driveTrain.encoderDrive(0.5, 10, DriveTrain.Direction.BACKWARD, 10);
-//                    vumark = vm.detectColumn(5);
-//                }
-//
-//            } else {
-//                if (startingPos == StartingPositions.CORNER) {
-//                    driveTrain.encoderDrive(0.4, 10, DriveTrain.Direction.FORWARD, 3);
-//                    vumark = vm.detectColumn(5);
-//                    driveTrain.encoderDrive(.4, 25, DriveTrain.Direction.BACKWARD, 4);
-//                    driveTrain.rotateIMURamp(-90, .5, 5, telemetry);
-//                    driveTrain.moveUntilTouchBlue(5000);
-//                    driveTrain.columnBlockBlue(vumark);
-//
-//                } else {
-//                    flipServo.setPosition(0);
-//                    driveTrain.encoderDrive(0.5, 60, DriveTrain.Direction.BACKWARD, 10);
-//                    driveTrain.encoderDrive(0.5, 10, DriveTrain.Direction.FORWARD, 10);
-//                }
-//
-//
-//            }
+            if (red) {
+                driveTrain.encoderDrive(.2, 5,DriveTrain.Direction.FORWARD, 5);
+                jewelArm.setPosition(jewelArmInitPosition);
+                driveTrain.encoderDrive(.5, 21,DriveTrain.Direction.FORWARD, 5);
+                Functions.waitFor(100);
+                driveTrain.rotateIMURamp(-90, .5, 5, this.telemetry);
+                Functions.waitFor(100);
+                driveTrain.encoderDrive(.5,30, DriveTrain.Direction.BACKWARD,10);
+                driveTrain.encoderDrive(.5,3, DriveTrain.Direction.FORWARD,10);
+                driveTrain.touchServoRight.setPosition(driveTrain.touchDownPos);
+                Functions.waitFor(1300);
+                driveTrain.strafeImuPDD(DriveTrain.Direction.RIGHT, -90,.4, 4);
+                Functions.waitFor(200);
+                driveTrain.touchServoRight.setPosition(driveTrain.touchUpPos);
+                Functions.waitFor(200);
+                driveTrain.columnBlockRed(vumark);
+            } else {
+                driveTrain.encoderDrive(.4, 25,DriveTrain.Direction.BACKWARD, 5);
+                Functions.waitFor(100);
+                driveTrain.rotateIMURamp(-90, .5, 5, this.telemetry);
+                Functions.waitFor(100);
+                driveTrain.strafeImuEncoderPDD(DriveTrain.Direction.LEFT,angle,  .5, 15.5, 5);
+                driveTrain.encoderDrive(.5,16, DriveTrain.Direction.BACKWARD,10);
+                driveTrain.encoderDrive(.5,3.5, DriveTrain.Direction.FORWARD,10);
+                driveTrain.touchServoRight.setPosition(driveTrain.touchDownPos);
+                Functions.waitFor(1300);
+                driveTrain.strafeImuPDD(DriveTrain.Direction.RIGHT, angle ,.4, 4);
+                Functions.waitFor(200);
+                driveTrain.touchServoRight.setPosition(driveTrain.touchUpPos);
+                Functions.waitFor(200);
+                driveTrain.columnBlockRed(vumark);
+            }
         }
     }
     public void telemetry(String field1,String field2){
@@ -235,15 +124,11 @@ public class AutoFullNotTest extends LinearOpMode {
         Functions.waitFor(500);
         jewelArm.setPosition(jewelArmDownPos);
         Functions.waitFor(1000);
-//        colorSensor.telemetryDebug(this);
         if(colorSensor.correctColor()){
-            telemetry("color","red");
-            knockJewel(DriveTrain.Direction.BACKWARD);
-        }else {
-            telemetry("color","Blue");
             knockJewel(DriveTrain.Direction.FORWARD);
+        }else {
+            knockJewel(DriveTrain.Direction.BACKWARD);
         }
-//        Functions.waitFor(3000);
     }
 
     public void redCorner(){
@@ -372,9 +257,6 @@ public class AutoFullNotTest extends LinearOpMode {
         flipServo.setDirection(Servo.Direction.REVERSE);
         flipServo.setPosition(1);
 
-
-
-
         jewelArm.setPosition(jewelArmInitPosition);
 
         imu = new IMU(adaImu);
@@ -383,29 +265,59 @@ public class AutoFullNotTest extends LinearOpMode {
         driveTrain = new DriveTrain(this);
         driveTrain.touchServoRight.setPosition(driveTrain.touchUpPos);
 
-//        driveTrain.detectAmbientLight(jewelColor);
         vm = new VuMark(this);
 
     }
 
-//    public void options(){
-//        telemetry.addData("Team", "Blue");
-//        telemetry.update();
-//        boolean confirmed = false;
-//        red = false;
-//        while(!confirmed){
-//            if (gamepad1.a){
-//                red = true;
-//                colorSensor.team = Team.RED;
-//
-//                telemetry.addData("Team", red ? "Red": "Blue");
-//            }
-//            if (gamepad1.b){
-//                red = false;
-//                colorSensor.team = Team.BLUE;
-//
-//                telemetry.addData("Team", red ? "Red": "Blue");
-//            }
+    public void options(){
+        telemetry.addData("Team", "Blue");
+        telemetry.update();
+        boolean confirmed = false;
+        red = false;
+        while(!confirmed){
+            if (gamepad1.a){
+                red = true;
+                colorSensor.team = Team.RED;
+
+                telemetry.addData("Team", red ? "Red": "Blue");
+            }
+            if (gamepad1.b){
+                red = false;
+                colorSensor.team = Team.BLUE;
+
+                telemetry.addData("Team", red ? "Red": "Blue");
+            }
+            if (gamepad1.dpad_left){
+                driveTrain.pGain += -.01;
+                Functions.waitFor(200);
+
+            }
+            if (gamepad1.dpad_right){
+                driveTrain.pGain += .01;
+                Functions.waitFor(200);
+
+            }
+            if (gamepad1.dpad_down){
+                driveTrain.dGain += -.0001;
+                Functions.waitFor(200);
+
+            }
+            if (gamepad1.dpad_up){
+                driveTrain.dGain += .0001;
+                Functions.waitFor(200);
+            }
+
+            telemetry.addData("Team", red ? "Red": "Blue");
+            telemetry.addData("pGain: ",driveTrain.pGain);
+            telemetry.addData("dGain: ",driveTrain.dGain);
+            telemetry.addData("iGain: ", driveTrain.iGain);
+
+            if (gamepad1.left_stick_button && gamepad1.right_stick_button){
+                telemetry.addData("Team", red ? "Red" : "Blue");
+//                telemetry.addData("Starting Position", startingPos == StartingPositions.CORNER ? "corner": "sandwich");
+                telemetry.addData("Confirmed!", "");
+                confirmed = true;
+            }
 //            if (gamepad1.x){
 //                startingPos = StartingPositions.CORNER;
 //
@@ -416,19 +328,10 @@ public class AutoFullNotTest extends LinearOpMode {
 //
 //                telemetry.addData("Starting Position", startingPos == StartingPositions.CORNER ? "corner": "sandwich");
 //            }
-//
-//            telemetry.update();
-//
-//            if (gamepad1.left_stick_button && gamepad1.right_stick_button){
-//                telemetry.addData("Team", red ? "Red" : "Blue");
-//                telemetry.addData("Starting Position", startingPos == StartingPositions.CORNER ? "corner": "sandwich");
-//                telemetry.addData("Confirmed!", "");
-//                telemetry.update();
-//                confirmed = true;
-//            }
-//
-//        }
-//    }
+            telemetry.update();
+        }
+        telemetry.update();
+    }
 
     private void haltUntilPressStart() {
         while (!gamepad1.start  && !isStopRequested()) {

@@ -38,13 +38,14 @@ public class DriveTrain {
     public double touchDownPos = .7;
     public double touchUpPos = .35;
     // Tunable parameters
-//    public double pGain = .83;
-//    public double dGain = 0.0125;
-//    public double iGain = 0.005;
-
-    public double pGain = .37;
-    public double dGain = 0.0033;
+    public double pGain = .6;
+    public double dGain = 0.0100;
     public double iGain = 0.000;
+
+//    public double pGain = .37;
+//    public double dGain = 0.0033;
+//    public double iGain = 0.000;
+//    0.4,0.001
 
     private int conversionFactor = 50;
     public double balanceThreshold = 1.5;
@@ -130,17 +131,18 @@ public class DriveTrain {
     public void columnBlockRed(RelicRecoveryVuMark vuMark){
         switch(vuMark){
             case RIGHT:
-                strafeImuEncoderPDD(Direction.LEFT,-90,.3,2,3);
+                strafeImuEncoderPDD(Direction.LEFT,-120,.3,2,3);
                 break;
             case CENTER:
                 touchServoRight.setPosition(touchUpPos);
                 Functions.waitFor(100);
+                rotateIMURamp(-10,05,5,opMode.telemetry);
 
-                strafeImuEncoderPDD(Direction.RIGHT,-90, .4, 2.5, 2);
+                strafeImuEncoderPDD(Direction.RIGHT,-120, .4, 2.5, 2);
 
                 touchServoRight.setPosition(touchDownPos);
                 Functions.waitFor(100);
-                strafeImuPDD(Direction.RIGHT, -90,.4,3000);
+                strafeImuPDD(Direction.RIGHT, -120,.4,3000);
                 Functions.waitFor(100);
                 touchServoRight.setPosition(touchUpPos);
                 strafeImuEncoderPDD(Direction.LEFT, -90,.3,2,3);
@@ -148,12 +150,14 @@ public class DriveTrain {
             case LEFT:
                 touchServoRight.setPosition(touchUpPos);
                 Functions.waitFor(100);
-                strafeImuEncoderPDD(Direction.RIGHT, -90, .4,10.5,5);
+//                encoderDrive(.4,10.5,Direction.RIGHT,5);
+                rotateIMURamp(-10,05,5,opMode.telemetry);
+                strafeImuEncoderPDD(Direction.RIGHT, -120, .4,10.5,5);
                 Functions.waitFor(100);
                 touchServoRight.setPosition(touchDownPos);
                 Functions.waitFor(100);
-                strafeImuPDD(Direction.RIGHT, -90,.4, 2);
-                strafeImuEncoderPDD(Direction.LEFT,-90,.3,2 ,3);
+                strafeImuPDD(Direction.RIGHT, -120,.4, 2);
+                strafeImuEncoderPDD(Direction.LEFT,-90,.3,3 ,3);
                 touchServoRight.setPosition(touchUpPos);
                 break;
 
@@ -176,6 +180,7 @@ public class DriveTrain {
         encoderDrive(.4, 7, Direction.FORWARD, 3);
         dumpBlock();
         encoderDrive(.4, 7, Direction.BACKWARD, 3);
+        encoderDrive(.4, 6, Direction.FORWARD, 3);
 
         Log.d("columnBlockRed","exited");
     }
@@ -1217,10 +1222,10 @@ public class DriveTrain {
                 opMode.telemetry.addData("powerset",power+pf + velocity);
                 opMode.telemetry.update();
 
-                lF.setPower(-Math.abs(power+pf + velocity));
-                lB.setPower(Math.abs(power+pb-velocity));
-                rF.setPower(Math.abs(power+pf +velocity));
-                rB.setPower(-Math.abs(power+pb -velocity));
+                lF.setPower(-Math.abs(power+pf - velocity));
+                lB.setPower(Math.abs(power+pb+velocity));
+                rF.setPower(Math.abs(power+pf -velocity));
+                rB.setPower(-Math.abs(power+pb +velocity));
 
 
                 if(diff > 50 ) {
@@ -1436,7 +1441,7 @@ public class DriveTrain {
             long diff;
             int avg = 0;
 
-            while (System.currentTimeMillis() <= endtime && avg < ticksToMove && opMode.opModeIsActive()) {
+            while (System.currentTimeMillis() <= endtime && avg < ticksToMove ) {
 
                 diff = System.currentTimeMillis() - timecounter;
                 int encoLb = lB.getCurrentPosition();
@@ -1448,8 +1453,8 @@ public class DriveTrain {
                 anglePos = imu.getAnglePositive();
                 angleNeg = imu.getAngleNegative();
 
-                if(anglePos < Math.abs(angleNeg)){
-                        angle = anglePos;
+                if(imu.getAnglePositive() < Math.abs(angleNeg)){
+                    angle = anglePos;
                 }
                 else if( anglePos > Math.abs(angleNeg)){
                     angle  = angleNeg;
@@ -1464,37 +1469,37 @@ public class DriveTrain {
                 opMode.telemetry.addData("anglePos", anglePos);
                 opMode.telemetry.addData("angleNeg", angleNeg);
                 opMode.telemetry.addData("velocity", velocity);
-                opMode.telemetry.addData("touch" , touch.getState());
+                opMode.telemetry.addData("power set" , power+pf-velocity);
                 opMode.telemetry.addData("avgEnco", avg);
                 opMode.telemetry.addData("ticksToMove", ticksToMove);
                 opMode.telemetry.update();
 
-                lF.setPower(-Math.abs(power+pf + velocity));
-                lB.setPower(Math.abs(power+pb-velocity));
-                rF.setPower(Math.abs(power+pf +velocity));
-                rB.setPower(-Math.abs(power+pb -velocity));
+                lF.setPower(-Math.abs(power+pf - velocity));
+                lB.setPower(Math.abs(power+pb+velocity));
+                rF.setPower(Math.abs(power+pf -velocity));
+                rB.setPower(-Math.abs(power+pb +velocity));
 
 
-                if(diff > 50   ) {
-                    proportional = (((.01 * Math.abs(start - angle))*(pGain) )+ .2);
-
+                if(diff > 100   ) {
+                    proportional = (((.01 * Math.abs(start - angle))/3 )+ .02);
                     //velocity = Math.abs(start - angle)/diff;
                     velocity = (angle - angle1 )/ diff;
-                    velocity = velocity*dGain;
+                    velocity = velocity/150;
                     velocityDiff = velocity - velocity1;
                     accleration = velocityDiff/diff;
+
                     velocity1 = velocity;
                     angle1 = angle;
                     if (start - angle < -2) {
 
-                        pb = -proportional;
-                        pf =  proportional;
+                        pb =  proportional;
+                        pf = -proportional;
 
 
                     } else if (start - angle > 2) {
 
-                        pf = -proportional;
-                        pb =  proportional;
+                        pf =  proportional;
+                        pb =  -proportional;
 
                     } else {
                         pb = 0;
@@ -1506,6 +1511,89 @@ public class DriveTrain {
 
             }
             stopAll();
+//            long timecounter = System.currentTimeMillis();
+//            double anglePos = imu.getAngle();
+//            double angleNeg = imu.getAngle();
+//            double angle;
+//            double angle1 = imu.getAngle();
+//            double velocity = 0;
+//            double velocity1 = 0;
+//            double velocityDiff;
+//            double accleration;
+//            double proportional;
+//            long diff;
+//            int avg = 0;
+//
+//            while (System.currentTimeMillis() <= endtime && avg < ticksToMove && opMode.opModeIsActive()) {
+
+//                diff = System.currentTimeMillis() - timecounter;
+//                int encoLb = lB.getCurrentPosition();
+//                int encoLf = lF.getCurrentPosition();
+//                int encoRb = rB.getCurrentPosition();
+//                int encoRf = rF.getCurrentPosition();
+//                avg = (Math.abs(encoLb - lBstart) +Math.abs(encoLf - lFstart)+ Math.abs(encoRb - rBstart)+Math.abs(encoRf - rFstart))/4;
+//
+//                anglePos = imu.getAnglePositive();
+//                angleNeg = imu.getAngleNegative();
+//
+//                if(anglePos < Math.abs(angleNeg)){
+//                        angle = anglePos;
+//                }
+//                else if( anglePos > Math.abs(angleNeg)){
+//                    angle  = angleNeg;
+//                }
+//                else{
+//                    angle = imu.getAngle();
+//                }
+//
+//                opMode.telemetry.addData("Heading", angle);
+//                opMode.telemetry.addData("Start", start);
+//                opMode.telemetry.addData("diff", start -angle);
+//                opMode.telemetry.addData("anglePos", anglePos);
+//                opMode.telemetry.addData("angleNeg", angleNeg);
+//                opMode.telemetry.addData("velocity", velocity);
+//                opMode.telemetry.addData("touch" , touch.getState());
+//                opMode.telemetry.addData("avgEnco", avg);
+//                opMode.telemetry.addData("ticksToMove", ticksToMove);
+//                opMode.telemetry.update();
+//
+//                lF.setPower(-Math.abs(power+pf + velocity));
+//                lB.setPower(Math.abs(power+pb-velocity));
+//                rF.setPower(Math.abs(power+pf +velocity));
+//                rB.setPower(-Math.abs(power+pb -velocity));
+//
+//
+//                if(diff > 50   ) {
+//                    proportional = (((.01 * Math.abs(start - angle))*(pGain) )+ .2);
+//
+//                    //velocity = Math.abs(start - angle)/diff;
+//                    velocity = (angle - angle1 )/ diff;
+//                    velocity = velocity*dGain;
+//                    velocityDiff = velocity - velocity1;
+//                    accleration = velocityDiff/diff;
+//                    velocity1 = velocity;
+//                    angle1 = angle;
+//                    if (start - angle < -2) {
+//
+//                        pb = -proportional;
+//                        pf =  proportional;
+//
+//
+//                    } else if (start - angle > 2) {
+//
+//                        pf = -proportional;
+//                        pb =  proportional;
+//
+//                    } else {
+//                        pb = 0;
+//                        pf = 0;
+//
+//                    }
+//                    timecounter = System.currentTimeMillis();
+//                }
+//
+//            }
+//            stopAll();
 
         }
 

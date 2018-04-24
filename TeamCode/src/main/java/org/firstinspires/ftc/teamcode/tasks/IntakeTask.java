@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.tasks;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -73,19 +74,19 @@ public class IntakeTask extends TaskThread {
         lpower = opMode.gamepad2.left_stick_y;
         rpower = opMode.gamepad2.right_stick_y;
             if(opMode.gamepad2.x){
-                rpower = -.85;
-                lpower = -.85;
+                rpower = -.7;
+                lpower = -.7;
             }
             else if(opMode.gamepad2.y){
-                rpower = -.3;
-                lpower = -.3;
+                rpower = -.15;
+                lpower = -.15;
             }
             else if (opMode.gamepad2.b) {
-                rpower = -.35;
-                lpower = -.35;
+                rpower = -.9;
+                lpower = -.9;
             } else if (opMode.gamepad2.a) {
-                rpower = -.2;
-                lpower = -.2;
+                rpower = -.17;
+                lpower = -.17;
             }
 //            if (opMode.gamepad2.b) {
 //                rpower = 0;
